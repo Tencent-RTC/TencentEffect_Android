@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/te_beauty_color_FF000000">
+
+
+    <com.tencent.demo.camera.camerax.GLCameraXView
+        android:id="@+id/te_camera_layout_camerax_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:back_camera="false"
+        app:surface_view="false"
+        app:transparent="true" />
+
+
+    <LinearLayout
+        android:id="@+id/te_camera_layout_beauty_panel_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <ImageView
+            android:id="@+id/te_camera_layout_save_btn"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="20dp"
+            android:src="@mipmap/te_beauty_ok" />
+    </LinearLayout>
+
+
+    <com.tencent.demo.beauty.view.TETitleBar
+        android:id="@+id/te_camera_layout_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
