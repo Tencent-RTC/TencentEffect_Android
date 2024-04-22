@@ -1,0 +1,268 @@
+package com.tencent.effect.beautykit.provider;
+
+import android.content.Context;
+import android.text.TextUtils;
+import android.util.ArrayMap;
+
+import com.google.gson.Gson;
+import com.tencent.effect.beautykit.model.TEPanelDataModel;
+import com.tencent.effect.beautykit.model.TEUIProperty;
+import com.tencent.xmagic.XmagicConstant;
+import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
+import com.tencent.xmagic.util.FileUtil;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+
+abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
+
+    private static final String TAG = TEAbstractPanelDataProvider.class.getName();
+
+    protected Context applicationContext = null;
+    protected List<TEUIProperty> allData = null;
+
+
+    /**
+     * 用于存储TEParam.effectName和TEUIProperty的对应关系
+     */
+    private final Map<String, TEUIProperty> uiPropertyIndexByNameMap = new ArrayMap<>();
+
+    private List<TEPanelDataModel> panelDataModels = null;
+
+
+    @Override
+    public void setPanelDataList(List<TEPanelDataModel> dataModels) {
+        this.panelDataModels = dataModels;
+    }
+
+    /**
+     * 用于存放设置进来的数据，这个是原始数据
+     * 此数据主要用于将面板上的UI的选中状态还原到上次的状态
+     */
+    protected List<TEUIProperty.TESDKParam> originalParamList = null;
+
+    @Override
+    public void setUsedParams(List<TEUIProperty.TESDKParam> paramList) {
+        this.originalParamList = paramList;
+    }
+
+    @Override
+    public List<TEUIProperty> getPanelData(Context context) {
+        if (allData != null) {
+            return allData;
+        }
+        return this.forceRefreshPanelData(context);
+    }
+
+    @Override
+    public List<TEUIProperty> forceRefreshPanelData(Context context) {
+        this.applicationContext = context.getApplicationContext();
+        if (allData == null) {
+            allData = new ArrayList<>();
+        } else {
+            allData.clear();
+        }
+        uiPropertyIndexByNameMap.clear();
+        for (TEPanelDataModel dataModel : this.panelDataModels) {
+            if (TextUtils.isEmpty(dataModel.jsonFilePath)) {
+                continue;
+            }
+            String dataStr = null;
+            if (dataModel.jsonFilePath.startsWith(File.separator)) {  //根据路径是否以/开头来区分是否是SD卡路径，如果以/开头，则认为是SD路径，
+                dataStr = FileUtil.readFile(dataModel.jsonFilePath);
+            } else {
+                dataStr = FileUtil.readAssetFile(context, dataModel.jsonFilePath);
+            }
+            if (TextUtils.isEmpty(dataStr)) {
+                continue;
+            }
+            TEUIProperty uiProperty = new Gson().fromJson(dataStr.trim(), TEUIProperty.class);
+            uiProperty.uiCategory = dataModel.category;
+            this.completionParam(uiProperty.propertyList, dataModel.category, uiProperty);
+            this.putDataToMap(uiProperty);
+            this.allData.add(uiProperty);
+        }
+        this.syncUIState();
+        return allData;
+    }
+
+
+    /**
+     * 同步UI状态
+     */
+    private void syncUIState() {
+        if (this.originalParamList == null || this.originalParamList.size() == 0) {
+            return;
+        }
+        for (TEUIProperty.TESDKParam param : this.originalParamList) {
+            //先假设此数据是 美颜或者美体，通过effectName进行查询
+            TEUIProperty teuiProperty = uiPropertyIndexByNameMap.get(this.getNameMapKey(param));
+            //表示查询到了
+            if (teuiProperty != null) {
+                teuiProperty.sdkParam.effectValue = param.effectValue;
+                if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY || teuiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY) {
+                    teuiProperty.setUiState(TEUIProperty.UIState.IN_USE);
+                    ProviderUtils.changeParentUIState(teuiProperty, TEUIProperty.UIState.IN_USE);
+                } else {
+                    teuiProperty.setUiState(TEUIProperty.UIState.CHECKED_AND_IN_USE);
+                    ProviderUtils.changeParentUIState(teuiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
+                }
+            }
+        }
+        List<TEUIProperty> allBeautyPropertyList = new ArrayList<>();
+        for (TEUIProperty teuiProperty : allData) {
+            if (teuiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY
+                    && teuiProperty.propertyList != null) {
+                ProviderUtils.findFirstInUseItemAndMakeChecked(teuiProperty.propertyList);
+            }
+            if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY) {
+                allBeautyPropertyList.add(teuiProperty);
+            }
+        }
+        if (allBeautyPropertyList.size() > 0) {
+            ProviderUtils.findFirstInUseItemAndMakeChecked(allBeautyPropertyList);
+        }
+
+    }
+
+
+
+
+
+
+
+
+    /**
+     * 将数据添加到对应的map中
+     *
+     * @param property
+     */
+    private void putDataToMap(TEUIProperty property) {
+        if (this.originalParamList == null || this.originalParamList.size() == 0) {
+            return;
+        }
+        property.setUiState(TEUIProperty.UIState.INIT);   //去除JSON文件中设置的UI状态
+        if (property.sdkParam != null) {
+            uiPropertyIndexByNameMap.put(getNameMapKey(property.sdkParam), property);
+        }
+    }
+
+
+    @Override
+    public void onTabItemClick(int index) {
+        if (index < 0 || index >= allData.size()) {
+            return;
+        }
+        for (int i = 0; i < allData.size(); i++) {
+            TEUIProperty item = allData.get(i);
+            if (i == index) {
+                item.setUiState(TEUIProperty.UIState.CHECKED_AND_IN_USE);
+            } else {
+                item.setUiState(TEUIProperty.UIState.INIT);
+            }
+        }
+    }
+
+    @Override
+    public abstract List<TEUIProperty> onItemClick(TEUIProperty uiProperty);
+
+
+    @Override
+    public abstract List<TEUIProperty.TESDKParam> getRevertData(Context context);
+
+    @Override
+    public abstract List<TEUIProperty.TESDKParam> getCloseEffectItems(TEUIProperty uiProperty);
+
+
+    /**
+     * 获取使用过的美颜属性
+     *
+     * @return
+     */
+    @Override
+    public List<TEUIProperty.TESDKParam> getUsedProperties() {
+        return ProviderUtils.getUsedProperties(allData);
+    }
+
+    @Override
+    public boolean isShowCompareBtn() {
+        return true;
+    }
+
+
+    @Override
+    public List<TEUIProperty.TESDKParam> getBeautyTemplateData(TEUIProperty teuiProperty) {
+        return null;
+    }
+
+    @Override
+    public List<TEUIProperty.TESDKParam> getBeautyTemplateData() {
+        return null;
+    }
+
+
+    @Override
+    public String getOriginalParam() {
+        return null;
+    }
+
+    @Override
+    public void updateBeautyTemplateData(List<TEUIProperty.TESDKParam> paramList) {
+
+    }
+
+    @Override
+    public void putMutuallyExclusiveProvider(List<TEPanelDataProvider> providerList) {
+
+    }
+
+    @Override
+    public void unCheckAll() {
+
+    }
+
+    private String getNameMapKey(TEUIProperty.TESDKParam param) {
+        StringBuilder keyBuilder = new StringBuilder();
+        if (!TextUtils.isEmpty(param.effectName)) {
+            keyBuilder.append(param.effectName);
+        }
+        if (!TextUtils.isEmpty(param.resourcePath)) {
+            keyBuilder.append(param.resourcePath);
+        }
+        return keyBuilder.toString();
+    }
+
+    private void completionParam(List<TEUIProperty> list, TEUIProperty.UICategory category, TEUIProperty parentProperty) {
+        for (TEUIProperty property : list) {
+            property.parentUIProperty = parentProperty;
+            property.uiCategory = category;   //设置category
+            ProviderUtils.createDlModelAndSDKParam(property, category);
+            if (property.sdkParam != null) {   //设置effectName
+                switch (category) {
+                    case LUT:
+                        property.sdkParam.effectName = XmagicConstant.EffectName.EFFECT_LUT;
+                        break;
+                    case MAKEUP:
+                        property.sdkParam.effectName = XmagicConstant.EffectName.EFFECT_MAKEUP;
+                        break;
+                    case MOTION:
+                        property.sdkParam.effectName = XmagicConstant.EffectName.EFFECT_MOTION;
+                        break;
+                    case SEGMENTATION:
+                        property.sdkParam.effectName = XmagicConstant.EffectName.EFFECT_SEGMENTATION;
+                        break;
+                }
+            }
+            ProviderUtils.completionResPath(property);   //补全路径
+            this.putDataToMap(property);
+            if (property.propertyList != null) {
+                this.completionParam(property.propertyList, category, property);
+            }
+        }
+    }
+
+
+}

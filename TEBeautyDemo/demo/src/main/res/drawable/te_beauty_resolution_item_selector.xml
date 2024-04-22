@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_selected="true" android:drawable="@color/te_beauty_color_FFFFFFFF"/>
+    <item android:state_checked="true" android:drawable="@color/te_beauty_color_FFFFFFFF"/>
+    <item android:drawable="@color/te_beauty_color_33FFFFFF"/>
+</selector>

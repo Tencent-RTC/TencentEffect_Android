@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="te_beauty_gradient_tv_default_colors">
+        <item>@color/te_beauty_color_FF0052F2</item>
+        <item>@color/te_beauty_color_FF00E2F8</item>
+    </array>
+
+</resources>

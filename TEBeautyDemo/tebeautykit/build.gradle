@@ -1,0 +1,50 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    api fileTree(dir: "libs", include: ['*.aar'])
+    api fileTree(dir: "libs", include: ['*.jar'])
+    implementation rootProject.ext.gson
+    implementation rootProject.ext.okhttp
+
+    implementation rootProject.ext.glide
+    implementation rootProject.ext.glide_gifdecoder
+    implementation rootProject.ext.glide_disklrucache
+
+    implementation rootProject.ext.appcompat
+    implementation rootProject.ext.constraintlayout
+    implementation rootProject.ext.recyclerview
+
+    api 'com.tencent.mediacloud:TencentEffect_S1-07:3.6.0.4'
+
+
+}
+
+
+//用于保留方法参数名
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-parameters"
+    }
+}
