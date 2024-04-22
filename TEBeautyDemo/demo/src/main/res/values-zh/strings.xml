@@ -1,0 +1,79 @@
+<resources>
+    <string name="te_beauty_app_name">Tencent Effect</string>
+    <string name="te_beauty_not_support">当前设备不支持此属性</string>
+    <string name="te_beauty_not_support_beauty">当前设备不支持美颜</string>
+    <string name="te_beauty_check_no_auth_tip">没有权限或资源缺失，若有疑问请请联系接口人咨询</string>
+    <string name="te_beauty_launch_page_title">腾讯特效引擎</string>
+    <string name="te_beauty_use_rear_camera">使用后置摄像头</string>
+    <string name="te_beauty_copying_tip">资源拷贝中...</string>
+    <string name="te_beauty_auth_and_start_camera">鉴权并启动相机</string>
+    <string name="te_beauty_save_success_tip">保存相册成功</string>
+    <string name="te_beauty_property_invalid">美颜参数不合法，请检查参数设置</string>
+    <string name="te_beauty_function_not_available_tip">功能不可用，请下载完整版套餐demo</string>
+    <string name="te_beauty_menu_layout_menu_features">单点能力</string>
+    <string name="te_beauty_menu_layout_menu_editions">组合套餐</string>
+    <string name="te_beauty_check_feature_tips">当前套餐工程不包含此功能。</string>
+    <string name="te_beauty_check_combo_type_tips">当前工程的套餐类型是%s,请使用%s</string>
+
+
+
+    <string name="te_beauty_settings_page_title">设置</string>
+    <string name="te_beauty_settings_page_item1">高性能模式</string>
+    <string name="te_beauty_settings_page_item1_des">高性能模式开启后，美颜占用的系统CPU/GPU资源更少，可减少手机的发热和卡顿现象，更适合低端机长时间使用。\n但请注意：开启高性能模式后，以下美颜项将不可用：\n 1.眼部：眼宽、眼高、祛眼袋 \n 2.眉毛：角度、距离、高度、长度、粗细、眉峰\n 3.嘴部：微笑唇\n 4.面部：瘦脸（自然，女神，英俊），收下颌，祛皱、祛法令纹。建议用“脸型”实现综合大眼瘦脸效果</string>
+    <string name="te_beauty_settings_page_item2">扫一扫</string>
+    <string name="setting_scan_unsupported">外部demo版本不支持扫码</string>
+    <string name="te_beauty_check_license_info_error_tip">本Demo App中需要下载的滤镜和动效贴纸仅限腾讯特效Demo使用，请将其替换为您自己的资源再体验。</string>
+
+    <!--avatar文本信息-->
+    <string name="te_avatar_voice_start">开始讲话</string>
+    <string name="te_avatar_voice_stop">停止讲话</string>
+    <string name="te_avatar_voice_btn1">语音驱动表情(头部模型)</string>
+    <string name="te_avatar_voice_btn2">语音驱动表情</string>
+    <string name="te_avatar_body_driven">身体驱动</string>
+    <string name="te_avatar_qq_show">阳光男孩</string>
+
+    <string name="te_avatar_save">保存</string>
+    <string name="te_avatar_save_success">保存成功</string>
+    <string name="te_avatar_reset">还原</string>
+    <string name="te_avatar_reset_success">还原成功</string>
+    <string name="te_avatar_action_fail">操作失败，请稍后再试</string>
+
+    <string name="te_avatar_launcher_name1">捏脸</string>
+    <string name="te_avatar_launcher_name2">全身换装</string>
+    <string name="te_avatar_btn_name">Avatar 体验</string>
+    <string name="te_avatar_capture_main_tip">请将面部对准框内并拍照</string>
+    <string name="te_avatar_capture_sub_tip">将根据你的脸型自动生成虚拟形象</string>
+    <string name="te_avatar_gender_male">男生</string>
+    <string name="te_avatar_gender_female">女生</string>
+    <string name="te_avatar_gender_select_tip">请选择性别</string>
+    <string name="te_avatar_whole_body">全身</string>
+    <string name="te_avatar_half_body">半身</string>
+    <string name="te_avatar_launch_title">腾讯云音视频</string>
+    <string name="te_avatar_change_bg">换背景</string>
+    <string name="te_avatar_transparent_bg">背景透明</string>
+
+
+
+
+    <string name="te_avatar_type_text_edit">编辑形象</string>
+    <string name="te_avatar_type_text_capture">拍照生成</string>
+    <string name="te_avatar_type_text_drive">驱动</string>
+    <string name="te_avatar_type_text_interactive">互动</string>
+    <string name="te_avatar_title_bar_mode_manager_txt">形象管理</string>
+    <string name="te_avatar_title_bar_save_txt">保存</string>
+    <string name="te_avatar_property_type_layout_txt1">换装</string>
+    <string name="te_avatar_property_type_layout_txt2">捏脸</string>
+
+    <string name="te_avatar_action_menu_layout_txt1">性别</string>
+    <string name="te_avatar_action_menu_layout_txt2">背景</string>
+    <string name="te_avatar_action_menu_layout_txt3">视角</string>
+
+    <string name="te_avatar_driver_menu_txt1">面部驱动</string>
+    <string name="te_avatar_driver_menu_txt2">语音驱动</string>
+    <string name="te_avatar_driver_menu_txt3">身体驱动</string>
+    <string name="te_avatar_driver_menu_txt4">文本驱动</string>
+
+    <string name="te_avatar_mode_panel_title">形象管理</string>
+    <string name="te_avatar_mode_panel_btn">确定</string>
+    <string name="te_avatar_mode_panel_error_tip">暂时还没有保存的形象,请在编辑形象页面进行保存</string>
+</resources>

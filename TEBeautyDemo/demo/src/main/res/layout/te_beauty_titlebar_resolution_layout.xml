@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/te_titlebar_layout_resolution_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/te_beauty_resolution_layout_bg"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:id="@+id/te_titlebar_layout_resolution_group"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
+            android:orientation="horizontal"
+            android:padding="2dp">
+
+
+            <RadioButton
+                android:id="@+id/te_titlebar_layout_540p_btn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/te_beauty_resolution_item_selector"
+                android:button="@null"
+                android:gravity="center"
+                android:text="540P"
+                android:textColor="@color/te_beauty_color_FF000000"
+                android:textSize="12sp" />
+
+            <RadioButton
+                android:id="@+id/te_titlebar_layout_720p_btn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/te_beauty_resolution_item_selector"
+                android:button="@null"
+                android:checked="true"
+                android:gravity="center"
+                android:text="720P"
+                android:textColor="@color/te_beauty_color_FF000000"
+                android:textSize="12sp" />
+
+            <RadioButton
+                android:id="@+id/te_titlebar_layout_1080p_btn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/te_beauty_resolution_item_selector"
+                android:button="@null"
+                android:gravity="center"
+                android:text="1080P"
+                android:textColor="@color/te_beauty_color_FF000000"
+                android:textSize="12sp" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="15dp"
+            android:background="@color/te_beauty_color_80333333" />
+        <RelativeLayout
+                android:id="@+id/te_titlebar_layout_smart_beauty_switch_layout"
+                android:layout_width="match_parent"
+                android:visibility="visible"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+            <Switch
+                    android:id="@+id/te_titlebar_layout_smart_beauty_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:checked="false"
+                    android:thumb="@drawable/te_beauty_switch_thumb"
+                    android:track="@drawable/te_beauty_switch_track" />
+
+            <TextView
+                    android:id="@+id/te_titlebar_layout_smart_beauty_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@id/te_titlebar_layout_smart_beauty_switch"
+                    android:text="@string/te_beauty_panel_view_smart_beauty"
+                    android:textColor="@color/te_beauty_color_FFFFFFFF"
+                    android:textSize="14sp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/te_titlebar_layout_only_white_skin_switch_layout"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="35dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:text="@string/te_beauty_panel_view_only_white_skin"
+                android:textColor="@color/te_beauty_color_FFFFFFFF"
+                android:textSize="14sp" />
+
+            <Switch
+                android:id="@+id/te_titlebar_layout_only_white_skin_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:checked="false"
+                android:thumb="@drawable/te_beauty_switch_thumb"
+                android:track="@drawable/te_beauty_switch_track" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/te_titlebar_layout_crop_texture_switch_layout"
+            android:layout_width="match_parent"
+            android:layout_height="35dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:text="@string/te_beauty_panel_view_crop_texture"
+                android:textColor="@color/te_beauty_color_FFFFFFFF"
+                android:textSize="14sp" />
+
+            <Switch
+                android:id="@+id/te_titlebar_layout_crop_texture_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:checked="false"
+                android:thumb="@drawable/te_beauty_switch_thumb"
+                android:track="@drawable/te_beauty_switch_track" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/te_titlebar_layout_enhanced_mode_switch_layout"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_height="35dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:text="@string/te_beauty_panel_view_enhanced_mode"
+                android:textColor="@color/te_beauty_color_FFFFFFFF"
+                android:textSize="14sp" />
+
+            <Switch
+                android:id="@+id/te_titlebar_layout_enhanced_mode_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:checked="false"
+                android:thumb="@drawable/te_beauty_switch_thumb"
+                android:track="@drawable/te_beauty_switch_track" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/te_titlebar_layout_performance_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:text="FPS"
+                    android:textColor="@color/te_beauty_color_FFFFFFFF"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/te_titlebar_layout_fps_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:text="30"
+                    android:textColor="@color/te_beauty_color_FFFFFFFF"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="35dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="15dp"
+                    android:text="onDrawFrame"
+                    android:textColor="@color/te_beauty_color_FFFFFFFF"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/te_titlebar_layout_ondrawframe_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:text="30"
+                    android:textColor="@color/te_beauty_color_FFFFFFFF"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

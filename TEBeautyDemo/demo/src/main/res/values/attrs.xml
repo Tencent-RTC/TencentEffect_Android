@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TESettingSwitchItemView">
+        <attr name="switch_title" format="string" />
+        <attr name="switch_title_color" format="color" />
+        <attr name="switch_title_bold" format="boolean" />
+        <attr name="switch_selected" format="boolean" />
+        <attr name="switch_description" format="string" />
+        <attr name="switch_show_desc_type" format="enum">
+            <enum name="on" value="0"/>
+            <enum name="off" value="1"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="TESettingArrowItemView">
+        <attr name="arrow_title" format="string" />
+        <attr name="arrow_title_color" format="color" />
+        <attr name="arrow_title_bold" format="boolean" />
+    </declare-styleable>
+</resources>

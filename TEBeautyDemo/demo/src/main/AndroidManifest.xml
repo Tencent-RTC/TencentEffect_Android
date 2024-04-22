@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.tencent.demo">
+
+    <!-- bugly -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 必须的权限： -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 可选的权限： -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <application
+        android:name="com.tencent.demo.TEApplication"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/te_beauty_app_icon"
+        android:requestLegacyExternalStorage="true"
+        android:label="@string/te_beauty_app_name"
+        android:theme="@style/CUSTOM_THEME">
+        <!--   android:requestLegacyExternalStorage="true" 重要, 否则 ≥ Android 10 时仍然无法读取 sdcard     -->
+        <activity
+            android:name=".beauty.activity.TECameraBaseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <activity
+            android:name=".beauty.activity.TEMenuActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
