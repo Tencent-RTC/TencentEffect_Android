@@ -36,7 +36,7 @@ dependencies {
     implementation rootProject.ext.constraintlayout
     implementation rootProject.ext.recyclerview
 
-    api 'com.tencent.mediacloud:TencentEffect_S1-07:3.6.0.4'
+    api 'com.tencent.mediacloud:TencentEffect_S1-07:latest.release'
 
 
 }
