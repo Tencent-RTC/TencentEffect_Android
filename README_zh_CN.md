@@ -1,3 +1,5 @@
+中文版  |  [English](https://github.com/Tencent-RTC/TencentEffect_Android/blob/main/README.md)
+
 # TencentEffect_Android
 
 ## TEBeautyDemo
