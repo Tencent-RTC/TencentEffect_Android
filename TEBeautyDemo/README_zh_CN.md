@@ -29,8 +29,8 @@ TencentEffectSDK的不同套餐具备不同的能力，例如某些套餐没有�
 
 demo工程中自带了一些滤镜和动效素材，如果你有新增的素材，请按如下方式添加到指定目录：
 
-- 新增加滤镜：请将滤镜图片放到 "demo/assets/lut" 目录，滤镜icon放到 "demo/assets/beauty_panel/lut_icon"，然后修改 "demo/assets/beauty_panel/套餐名/lut.json"，参考已有的项目添加一项。
-- 新增加动效/美妆/分割：请放到 "demo/assets/MotionRes"的各个子目录，图标请放到 "demo/assets/beauty_panel/motions_icon"，然后修改"demo/assets/beauty_panel/套餐名"下面的makeup.json或motions.json或segmentation.json。
+- 新增加滤镜：请将滤镜图片放到 "demo/src/main/assets/lut" 目录，滤镜icon放到 "demo/src/main/assets/beauty_panel/lut_icon"，然后修改 "demo/src/main/assets/beauty_panel/套餐名/lut.json"，参考已有的项目添加一项。
+- 新增加动效/美妆/分割：请放到 "demo/src/main/assets/MotionRes"的各个子目录，图标请放到 "demo/src/main/assets/beauty_panel/motions_icon"，然后修改"demo/src/main/assets/beauty_panel/套餐名"下面的makeup.json或motions.json或segmentation.json。
 
 # 自定义美颜面板样式
 
