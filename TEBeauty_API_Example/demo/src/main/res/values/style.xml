@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="te_beauty_GLCameraView">
+        <attr name="back_camera" format="boolean" />
+        <attr name="surface_view" format="boolean" />
+        <attr name="transparent" format="boolean" />
+        <!-- 宽高比 -->
+        <attr name="ratio" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="te_beauty_faceView">
+        <attr name="oval_top" format="dimension" />
+        <attr name="oval_width" format="dimension" />
+        <attr name="ovalHeight" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="te_beauty_GradientTextView">
+        <attr name="gt_color_list" format="reference" />
+        <attr name="gt_gradient_direction" format="enum">
+            <enum name="left" value="0" />
+            <enum name="up" value="1" />
+            <enum name="right" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+    </declare-styleable>
+
+    <style name="te_beauty_loading_dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!--ShapeableImageView 圆角-->
+    <style name="te_beauty_ShapeImage_RoundedStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+    </style>
+
+
+    <!--首页美妆模板弹窗上图片圆角设置-->
+    <style name="te_beauty_template_dialog_shapeimage">
+        <item name="cornerFamilyTopLeft">rounded</item>
+        <item name="cornerSizeTopLeft">10dp</item>
+        <item name="cornerFamilyTopRight">rounded</item>
+        <item name="cornerSizeTopRight">10dp</item>
+
+    </style>
+
+</resources>

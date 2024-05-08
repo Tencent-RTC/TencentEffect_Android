@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FF000000">
+
+
+    <com.tencent.demo.camera.camerax.GLCameraXView
+            android:id="@+id/te_camera_layout_camerax_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:back_camera="false"
+            app:surface_view="false"
+            app:transparent="true" />
+
+    <TextView
+            android:id="@+id/textview_face_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="100dp"
+            android:visibility="invisible"
+            android:textSize="20sp" />
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:requiresFadingEdge="vertical"
+            android:background="#44000000"
+            android:fadingEdgeLength="30dp">
+
+        <LinearLayout
+                android:id="@+id/te_camera_layout_beauty_panel_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <CheckBox
+                    android:id="@+id/switch_enhance_mode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/beauty_enhance_mode" />
+
+            <CheckBox
+                    android:id="@+id/switch_smart_beauty_for_men_and_baby"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/beauty_smart_beauty" />
+
+            <CheckBox
+                    android:id="@+id/switch_face_detect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/beauty_face_detect" />
+
+            <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <CheckBox
+                        android:id="@+id/switch_whiten"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_whiten" />
+
+                <CheckBox
+                        android:id="@+id/switch_smooth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_smooth" />
+
+                <CheckBox
+                        android:id="@+id/switch_filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_filter" />
+
+                <CheckBox
+                        android:id="@+id/switch_thin_face_nature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_thin_face_nature" />
+            </LinearLayout>
+
+            <RadioGroup
+                    android:id="@+id/radio_group_lipstick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <RadioButton
+                        android:id="@+id/radio_lipstick_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_lipstick_0" />
+
+                <RadioButton
+                        android:id="@+id/radio_lipstick_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_lipstick_1" />
+
+                <RadioButton
+                        android:id="@+id/radio_lipstick_none"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_lipstick_none" />
+            </RadioGroup>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/beauty_makeup_and_motion" />
+
+            <RadioGroup
+                    android:id="@+id/radio_group_makeup_and_motion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <RadioButton
+                        android:id="@+id/radio_makeup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_makeup" />
+
+                <RadioButton
+                        android:id="@+id/radio_motion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_motion" />
+
+                <RadioButton
+                        android:id="@+id/radio_segmentation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_segmentation" />
+
+                <RadioButton
+                        android:id="@+id/radio_custom_segmentation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_custom_segmentation" />
+
+                <RadioButton
+                        android:id="@+id/radio_motion_merge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_motion_merge" />
+
+                <RadioButton
+                        android:id="@+id/radio_motion_none"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_motion_none" />
+
+            </RadioGroup>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
