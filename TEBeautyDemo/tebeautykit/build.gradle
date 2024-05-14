@@ -23,8 +23,8 @@ android {
 }
 
 dependencies {
-    api fileTree(dir: "libs", include: ['*.aar'])
-    api fileTree(dir: "libs", include: ['*.jar'])
+    implementation fileTree(dir: "libs", include: ['*.aar'])
+    implementation fileTree(dir: "libs", include: ['*.jar'])
     implementation rootProject.ext.gson
     implementation rootProject.ext.okhttp
 
@@ -36,7 +36,7 @@ dependencies {
     implementation rootProject.ext.constraintlayout
     implementation rootProject.ext.recyclerview
 
-    api 'com.tencent.mediacloud:TencentEffect_S1-07:latest.release'
+    implementation 'com.tencent.mediacloud:TencentEffect_S1-07:latest.release'
 
 
 }

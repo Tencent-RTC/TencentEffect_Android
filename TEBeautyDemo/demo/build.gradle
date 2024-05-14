@@ -31,9 +31,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    sourceSets.main.jniLibs.srcDirs += ['libs']
-    ndkVersion '21.4.7075529'
 }
 
 dependencies {
@@ -41,6 +38,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ['*.jar'])
 
     implementation project(':tebeautykit')
+    implementation 'com.tencent.mediacloud:TencentEffect_S1-07:latest.release'
 
     implementation rootProject.ext.camera_core, {
     }

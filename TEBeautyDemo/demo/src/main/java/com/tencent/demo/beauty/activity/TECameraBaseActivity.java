@@ -65,7 +65,7 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
         });
         TEBeautyKit.create(this.getApplicationContext(), beautyKit -> {
             mBeautyKit = beautyKit;
-            onInitApi(beautyKit);
+            initBeautyView(beautyKit);
         });
     }
 
@@ -83,7 +83,7 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
         }
     }
 
-    public void onInitApi(TEBeautyKit beautyKit){
+    public void initBeautyView(TEBeautyKit beautyKit){
         TEUIConfig.getInstance().setTEPanelViewRes("beauty_panel/S1_07/beauty.json", "beauty_panel/S1_07/beauty_body.json",
                 "beauty_panel/S1_07/lut.json", "beauty_panel/S1_07/motions.json",
                 "beauty_panel/S1_07/makeup.json", "beauty_panel/S1_07/segmentation.json");

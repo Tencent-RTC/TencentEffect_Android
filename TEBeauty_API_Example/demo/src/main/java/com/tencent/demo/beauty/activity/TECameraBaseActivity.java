@@ -1,9 +1,7 @@
 package com.tencent.demo.beauty.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -35,7 +33,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.light.device.OfflineConfig;
 
 public class TECameraBaseActivity extends AppCompatActivity implements CustomTextureProcessor, CompoundButton.OnCheckedChangeListener {
 
