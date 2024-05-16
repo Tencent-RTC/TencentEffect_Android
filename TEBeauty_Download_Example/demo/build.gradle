@@ -1,0 +1,65 @@
+
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.tencent.pitumotiondemo.effects"
+        minSdkVersion rootProject.ext.minSdkVersionDemo
+        targetSdkVersion rootProject.ext.targetSdkVersionDemo
+        versionCode 44166
+        versionName "2.10110.110.416"
+        ndk {
+            abiFilters "armeabi-v7a" , "arm64-v8a"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+             proguardFiles 'proguard-android-optimize.txt', 'proguard-rules_sdk.pro', 'proguard-rules_demo.pro'
+        }
+        debug {
+            minifyEnabled false
+             proguardFiles 'proguard-android-optimize.txt',  'proguard-rules_sdk.pro','proguard-rules_demo.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets.main.jniLibs.srcDirs += ['libs']
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ['*.aar'])
+    implementation fileTree(dir: "libs", include: ['*.jar'])
+
+    implementation 'com.tencent.tav:libpag:4.3.33-noffavc'
+
+    implementation rootProject.ext.camera_core, {
+    }
+    implementation rootProject.ext.camera_camera2, {
+    }
+    implementation rootProject.ext.camera_lifecycle, {
+    }
+
+    implementation rootProject.ext.gson
+    implementation rootProject.ext.okhttp
+
+    implementation rootProject.ext.glide
+    implementation rootProject.ext.glide_gifdecoder
+    implementation rootProject.ext.glide_disklrucache
+
+    implementation rootProject.ext.material
+    implementation rootProject.ext.appcompat
+    implementation rootProject.ext.constraintlayout
+    implementation rootProject.ext.recyclerview
+
+
+}
+
