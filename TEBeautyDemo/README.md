@@ -10,7 +10,7 @@ This project is a demo project for TencentEffectSDK, demonstrating how to integr
 
 # Quick Start
 
-- [Optional] Modify the SDK's package type and version number of TencentEffectSDK in `tebeautykit/build.gradle`. If not modified, the latest version of Maven for the S1_07 package will be used by default. To modify, change `api 'com.tencent.mediacloud:TencentEffect_S1-07:latest.release'` to the package and version number you are using, for example, `api 'com.tencent.mediacloud:TencentEffect_S1-07:3.6.0.4'`.
+- [Optional] Modify the SDK's package type and version number of TencentEffectSDK in `tebeautykit/build.gradle` and `demo/build.gradle`. If not modified, the latest version of Maven for the S1_07 package will be used by default. To modify, change `implementation 'com.tencent.mediacloud:TencentEffect_S1-07:latest.release'` to the package and version number you are using, for example, `implementation 'com.tencent.mediacloud:TencentEffect_S1-07:3.6.0.4'`.
 - Modify `LicenseConstant.java`: Set `mXMagicLicenceUrl` and `mXMagicKey` to the URL and Key you obtained from the Tencent Cloud Console.
 - Modify `demo/build.gradle`, change `applicationId` to your app's package name, and ensure that the package name matches the license URL and Key in the previous step.
 - Run the demo.

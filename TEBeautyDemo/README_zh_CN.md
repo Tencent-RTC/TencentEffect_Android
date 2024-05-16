@@ -10,7 +10,7 @@
 
 # 快速开始
 
-- 【可选】修改 tebeautykit/build.gradle 中的TencentEffectSDK的套餐和版本号。如果不修改，则默认使用S1_07套餐的Maven最新版本。如需修改，请将 api 'com.tencent.mediacloud:TencentEffect_S1-07:latest.release' 修改为你使用的套餐和版本号，例如 api 'com.tencent.mediacloud:TencentEffect_S1-07:3.6.0.4'
+- 【可选】修改 tebeautykit/build.gradle 和 demo/build.gradle 中的TencentEffectSDK的套餐和版本号。如果不修改，则默认使用S1_07套餐的Maven最新版本。如需修改，请将 implementation 'com.tencent.mediacloud:TencentEffect_S1-07:latest.release' 修改为你使用的套餐和版本号，例如 implementation 'com.tencent.mediacloud:TencentEffect_S1-07:3.6.0.4'
 - 修改 LicenseConstant.java：将 mXMagicLicenceUrl 和 mXMagicKey 设置为你在腾讯云控制台申请到的 URL 和 Key。
 - 修改 demo/build.gradle，将 applicationId 修改为你的包名，并确保该包名与上一步的 license url 和 Key 是匹配的。
 - 运行 demo
