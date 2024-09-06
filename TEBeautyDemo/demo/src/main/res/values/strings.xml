@@ -7,7 +7,6 @@
     <string name="te_beauty_use_rear_camera">use rear camera</string>
     <string name="te_beauty_launch_page_title">Tencent Effects Engine</string>
     <string name="te_beauty_copying_tip">resource copying...</string>
-    <string name="te_beauty_auth_and_start_camera">Auth And Start Camera</string>
     <string name="te_beauty_save_success_tip">Save the album successfully</string>
     <string name="te_beauty_property_invalid">Beauty parameters are illegal, please check the parameter settings</string>
     <string name="te_beauty_function_not_available_tip">The function is not available, please download the full version package demo</string>
@@ -22,10 +21,17 @@
 
     <string name="te_beauty_settings_page_title">Setting</string>
     <string name="te_beauty_settings_page_item1">High Performance Mode</string>
-    <string name="te_beauty_settings_page_item1_des">After enabling the high-performance mode, the beauty filter uses less system CPU/GPU resources, which can reduce the heating and lagging of the phone, making it more suitable for long-term use on low-end devices.\n However, please note that after enabling the high-performance mode, the following beauty filter options will not be available:\n 1.Eye: Eye width, Eye height, Eye bags\n 2.Eyebrow: Eyebrow angle, Eyebrow distance, Eyebrow Height, Eyebrow Length, Eyebrow Thickness, Eyebrow ridge\n 3.Mouth: Smile face\n 4.Facial: Thin face (Natural, Woman, Man), Slim jaw, Wrinkles, Smile lines. It is recommended to use Face shape to achieve a comprehensive effect of big eyes and thin face</string>
+    <string name="te_beauty_settings_page_item1_des">After enabling High Performance Mode, the beauty effects will consume fewer system CPU/GPU/memory resources, which can reduce phone overheating and lag, making it more suitable for prolonged use on low-end devices.\n\nAfter enabling High Performance Mode, the following beauty features will be unavailable:\n1. Face: Face shape, Jawline reduction, Wrinkle removal, Nasolabial fold removal. Only the "Natural Face Slimming" mode will be retained in face slimming.\n2. Eyes: Eye width, Eye height, Eye position, Eye bag removal.\n3. Eyebrows: Angle, Distance, Height, Length, Thickness, Eyebrow peak.\n4. Mouth: Smile lips.\n5. Beauty and Makeup: Beauty-black, Hair dyeing.\n6. Nose: Nose Bridge、Nasion.\n\nIt is recommended to enable High Performance Mode on low-end devices.\nTo determine whether the current device is low-end or mid-to-high-end, you can use the following interfaces:\nAndroid: getDeviceLevel method of XmagicApi\niOS: getDeviceLevel method of XMagic</string>
     <string name="te_beauty_settings_page_item2">Scan QR Code</string>
     <string name="setting_scan_unsupported">The demo does not support scanning qrcode</string>
     <string name="te_beauty_check_license_info_error_tip">The filters and animated stickers that need to be downloaded in this demo app are only intended for use in Tencent Effect Demo. Please replace them with your own resources before experiencing the app.</string>
+
+    <string name="te_beauty_panel_view_performance_parameter">Performance parameters</string>
+    <string name="te_beauty_panel_view_enhanced_mode">Enhanced mode</string>
+    <string name="te_beauty_panel_view_only_white_skin">Brightening only applies to skin</string>
+    <string name="te_beauty_panel_view_smart_beauty">Smart beauty\nmatching weak beauty and makeup effects for men and babies</string>
+    <string name="te_beauty_panel_view_crop_texture">Crop edges</string>
+    <string name="te_beauty_panel_view_face_block">Face occlusion detection\nPrevent makeup to be displayed on occluded objects.</string>
 
 
     <!--avatar文本信息-->

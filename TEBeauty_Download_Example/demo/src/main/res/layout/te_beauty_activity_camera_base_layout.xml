@@ -6,11 +6,10 @@
         android:background="#FF000000">
 
 
-    <com.tencent.demo.camera.camerax.GLCameraXView
+    <com.tencent.demo.opengl.view.GLCameraXView
             android:id="@+id/te_camera_layout_camerax_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:back_camera="false"
             app:surface_view="false"
             app:transparent="true" />
 

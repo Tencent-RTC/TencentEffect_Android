@@ -16,9 +16,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.tencent.demo.AppConfig;
 import com.tencent.demo.R;
-import com.tencent.demo.camera.CameraSize;
-import com.tencent.demo.camera.camerax.CustomTextureProcessor;
-import com.tencent.demo.camera.camerax.GLCameraXView;
+
+import com.tencent.demo.opengl.view.CameraSize;
+import com.tencent.demo.opengl.view.CustomTextureProcessor;
+import com.tencent.demo.opengl.view.GLCameraXView;
 import com.tencent.demo.utils.BitmapUtil;
 import com.tencent.demo.utils.LogUtils;
 import com.tencent.demo.utils.UriUtils;
@@ -53,7 +54,7 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
         setContentView(R.layout.te_beauty_activity_camera_base_layout);
         mPanelLayout = findViewById(R.id.te_camera_layout_beauty_panel_layout);
         mCameraXView = findViewById(R.id.te_camera_layout_camerax_view);
-        mCameraXView.setCameraSize(CameraSize.size1080, false);
+        mCameraXView.setCameraSize(CameraSize.size1080);
         mCameraXView.setCustomTextureProcessor(this);
         textViewFaceCount = findViewById(R.id.textview_face_count);
         ((CheckBox) findViewById(R.id.switch_face_detect)).setOnCheckedChangeListener(this);

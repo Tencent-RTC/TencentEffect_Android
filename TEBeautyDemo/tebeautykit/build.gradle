@@ -4,8 +4,8 @@ android {
     compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion rootProject.ext.minSdkVersionDemo
+        targetSdkVersion rootProject.ext.targetSdkVersionDemo
 
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -36,7 +36,7 @@ dependencies {
     implementation rootProject.ext.constraintlayout
     implementation rootProject.ext.recyclerview
 
-    implementation 'com.tencent.mediacloud:TencentEffect_S1-07:latest.release'
+    api 'com.tencent.mediacloud:TencentEffect_S1-07:latest.release'
 
 
 }

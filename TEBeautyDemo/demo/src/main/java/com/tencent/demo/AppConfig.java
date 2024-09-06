@@ -31,6 +31,8 @@ public class AppConfig {
 
     private String beautyFileDirName = "xmagic";
 
+    public float cropRatio = 0.9f;
+
 
 
 

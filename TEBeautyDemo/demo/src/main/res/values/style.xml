@@ -2,11 +2,14 @@
 <resources>
 
     <declare-styleable name="te_beauty_GLCameraView">
-        <attr name="back_camera" format="boolean" />
+        <attr name="front_camera" format="boolean" />
         <attr name="surface_view" format="boolean" />
         <attr name="transparent" format="boolean" />
-        <!-- 宽高比 -->
-        <attr name="ratio" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="te_beauty_GLImageView">
+        <attr name="src_image" format="reference" />
+        <attr name="surface" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="te_beauty_faceView">

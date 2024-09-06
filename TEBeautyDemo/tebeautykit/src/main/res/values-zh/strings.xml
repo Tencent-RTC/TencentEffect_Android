@@ -27,11 +27,7 @@
     <string name="te_beauty_panel_view_revert_tip_dialog_left_btn">取消</string>
     <string name="te_beauty_panel_view_revert_tip_dialog_right_btn">重置</string>
     <string name="te_beauty_panel_view_revert_btn_txt">重置</string>
-    <string name="te_beauty_panel_view_performance_parameter">性能参数</string>
-    <string name="te_beauty_panel_view_enhanced_mode">增强模式</string>
-    <string name="te_beauty_panel_view_only_white_skin">美白仅对皮肤生效</string>
-    <string name="te_beauty_panel_view_smart_beauty">智能美颜\n为男性、宝宝匹配减淡的美颜美妆效果</string>
-    <string name="te_beauty_panel_view_crop_texture">画面边缘裁剪</string>
+
     <string name="te_beauty_panel_view_download_dialog_tip">下载中</string>
 
 

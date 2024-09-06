@@ -14,28 +14,21 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 import com.tencent.demo.R;
+import com.tencent.demo.beauty.model.TEFeatureConfig;
 
+/**
+ * 标题栏view
+ */
 public class TETitleBar extends LinearLayout implements View.OnClickListener {
 
     private ImageView backBtn;
     private ImageView resolutionBtn;
+    private ImageView pickBtn;
     private ImageView cameraSwitchBtn;
 
     private TextView titleTxt;
-    private RESOLUTION resolution = RESOLUTION.R1080P;
-    private boolean isEnhancedModeIsTurnOn = false;
 
-    private boolean isSmartBeauty = false;
-    private boolean isWhiteSkinOnly = false;
 
-    private boolean isCropTexture = false;
-
-    private boolean isShowEnhancedModeSwitch = true;
-
-    private boolean isShowSmartBeauty = true;
-    private boolean isShowWhiteSkinOnly = true;
-
-    private TEResolutionPopupWindow resolutionPopupWindow;
     private TETitleBarClickListener teTitleBarClickListener = null;
 
     public TETitleBar(Context context) {
@@ -59,12 +52,18 @@ public class TETitleBar extends LinearLayout implements View.OnClickListener {
 
         resolutionBtn = findViewById(R.id.te_title_layout_resolution_btn);
         resolutionBtn.setOnClickListener(this);
+        pickBtn = findViewById(R.id.te_title_layout_pick_btn);
+        pickBtn.setOnClickListener(this);
         cameraSwitchBtn = findViewById(R.id.te_title_layout_camera_switch_btn);
         cameraSwitchBtn.setOnClickListener(this);
     }
 
     public ImageView getResolutionBtn() {
         return resolutionBtn;
+    }
+
+    public ImageView getPickBtn() {
+        return pickBtn;
     }
 
     public ImageView getCameraSwitchBtn() {
@@ -90,7 +89,11 @@ public class TETitleBar extends LinearLayout implements View.OnClickListener {
             ((Activity) getContext()).finish();
         } else if (v.getId() == R.id.te_title_layout_resolution_btn) {
             showResolutionPop(v);
-        }else if (v.getId() == R.id.te_title_layout_camera_switch_btn) {
+        } else if (v.getId() == R.id.te_title_layout_pick_btn) {
+            if (teTitleBarClickListener != null) {
+                teTitleBarClickListener.onClickPickBtn();
+            }
+        } else if (v.getId() == R.id.te_title_layout_camera_switch_btn) {
             if (teTitleBarClickListener != null) {
                 teTitleBarClickListener.onCameraSwitch();
             }
@@ -101,74 +104,72 @@ public class TETitleBar extends LinearLayout implements View.OnClickListener {
         teTitleBarClickListener = titleBarClickListener;
     }
 
-    public void setShowEnhancedModeSwitch(boolean isShowEnhancedModeSwitch) {
-        this.isShowEnhancedModeSwitch = isShowEnhancedModeSwitch;
-    }
-
-    public void setShowSmartBeautySwitch(boolean isShow) {
-        this.isShowSmartBeauty = isShow;
-    }
-
-    public void setShowOnlyWhiteOnSkySwitch(boolean isShow) {
-        this.isShowWhiteSkinOnly = isShow;
-    }
-
-
-    public void setResolution(RESOLUTION resolution) {
-        this.resolution = resolution;
-    }
-
-
 
     private void showResolutionPop(View targetView) {
-        resolutionPopupWindow = new TEResolutionPopupWindow();
-        resolutionPopupWindow.setShowEnhancedModeSwitch(isShowEnhancedModeSwitch);
-        resolutionPopupWindow.setShowOnlyWhiteOnSkySwitch(isShowWhiteSkinOnly);
-        resolutionPopupWindow.setShowSmartBeautySwitch(isShowSmartBeauty);
-        resolutionPopupWindow.setDefaultParameter(resolution, isEnhancedModeIsTurnOn, isWhiteSkinOnly,isCropTexture,isSmartBeauty);
-        resolutionPopupWindow.setTeTitleBarClickListener(new TETitleBarClickListener() {
+        TEResolutionPopupWindow resolutionPopupWindow = new TEResolutionPopupWindow(new TETitleBarClickListener() {
             @Override
             public void onCameraSwitch() {
 
             }
 
             @Override
+            public void onPerformanceSwitchTurnOn(boolean isTurnOn) {
+                TEFeatureConfig.getInstance().isOnPerformanceSwitch = isTurnOn;
+                if (teTitleBarClickListener != null) {
+                    teTitleBarClickListener.onPerformanceSwitchTurnOn(isTurnOn);
+                }
+            }
+
+            @Override
             public void onSwitchResolution(RESOLUTION onSwitchResolution) {
-                resolution = onSwitchResolution;
+                TEFeatureConfig.getInstance().resolution = onSwitchResolution;
                 if (teTitleBarClickListener != null) {
                     teTitleBarClickListener.onSwitchResolution(onSwitchResolution);
                 }
             }
 
             @Override
+            public void onClickPickBtn() {
+
+            }
+
+            @Override
             public void onEnhancedModeSwitchTurnOn(boolean isEnable) {
-                isEnhancedModeIsTurnOn = isEnable;
+                TEFeatureConfig.getInstance().isOnEnhancedMode = isEnable;
                 if (teTitleBarClickListener != null) {
-                    teTitleBarClickListener.onEnhancedModeSwitchTurnOn(isEnhancedModeIsTurnOn);
+                    teTitleBarClickListener.onEnhancedModeSwitchTurnOn(isEnable);
                 }
             }
 
             @Override
             public void onSmartBeautyTurnOn(boolean isTurnOn) {
-                isSmartBeauty = isTurnOn;
+                TEFeatureConfig.getInstance().isOnSmartBeautySwitch = isTurnOn;
                 if (teTitleBarClickListener != null) {
-                    teTitleBarClickListener.onSmartBeautyTurnOn(isSmartBeauty);
+                    teTitleBarClickListener.onSmartBeautyTurnOn(isTurnOn);
                 }
             }
 
             @Override
             public void onOnlyBeautyWhiteOnSkin(boolean isTurnOn) {
-                isWhiteSkinOnly = isTurnOn;
+                TEFeatureConfig.getInstance().isOnWhiteSkinOnlySwitch = isTurnOn;
                 if (teTitleBarClickListener != null) {
-                    teTitleBarClickListener.onOnlyBeautyWhiteOnSkin(isWhiteSkinOnly);
+                    teTitleBarClickListener.onOnlyBeautyWhiteOnSkin(isTurnOn);
                 }
             }
 
             @Override
             public void onCropTextureSwitchTurnOn(boolean isCrop) {
-                isCropTexture = isCrop;
+                TEFeatureConfig.getInstance().isOnCropTextureSwitch = isCrop;
                 if (teTitleBarClickListener != null) {
-                    teTitleBarClickListener.onCropTextureSwitchTurnOn(isCropTexture);
+                    teTitleBarClickListener.onCropTextureSwitchTurnOn(isCrop);
+                }
+            }
+
+            @Override
+            public void onFaceBlockSwitchTurnOn(boolean isTurnOn) {
+                TEFeatureConfig.getInstance().isOnFaceBlockSwitch = isTurnOn;
+                if (teTitleBarClickListener != null) {
+                    teTitleBarClickListener.onFaceBlockSwitchTurnOn(isTurnOn);
                 }
             }
         });
@@ -179,14 +180,26 @@ public class TETitleBar extends LinearLayout implements View.OnClickListener {
     public interface TETitleBarClickListener {
         void onCameraSwitch();
 
+        /**
+         * 性能参数  开关回调
+         *
+         * @param isTurnOn
+         */
+        void onPerformanceSwitchTurnOn(boolean isTurnOn);
+
         void onSwitchResolution(RESOLUTION resolution);
+
+        void onClickPickBtn();
 
         void onEnhancedModeSwitchTurnOn(boolean isEnable);
 
         void onSmartBeautyTurnOn(boolean isTurnOn);
+
         void onOnlyBeautyWhiteOnSkin(boolean isTurnOn);
 
         void onCropTextureSwitchTurnOn(boolean isCrop);
+
+        void onFaceBlockSwitchTurnOn(boolean isTurnOn);
     }
 
 

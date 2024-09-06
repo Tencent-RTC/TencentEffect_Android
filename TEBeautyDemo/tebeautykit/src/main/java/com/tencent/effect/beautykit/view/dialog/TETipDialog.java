@@ -38,7 +38,7 @@ public class TETipDialog extends AlertDialog {
         super(context, themeResId);
     }
 
-    public TETipDialog(@NonNull Context context, boolean cancelable, @Nullable DialogInterface.OnCancelListener cancelListener) {
+    public TETipDialog(@NonNull Context context, boolean cancelable, @Nullable OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
     }
 
@@ -113,7 +113,7 @@ public class TETipDialog extends AlertDialog {
 
 
 
-    public static void showRevertDialog(Context context, TETipDialog.TipDialogClickListener tipDialogClickListener) {
+    public static void showRevertDialog(Context context, TipDialogClickListener tipDialogClickListener) {
         Resources resources = context.getResources();
         String title = resources.getString(R.string.te_beauty_panel_view_revert_tip_title);
         String msg = resources.getString(R.string.te_beauty_panel_view_revert_tip_msg);
@@ -126,7 +126,7 @@ public class TETipDialog extends AlertDialog {
 
 
 
-    public static void showGreenScreenTipDialog(Context context, TETipDialog.TipDialogClickListener tipDialogClickListener) {
+    public static void showGreenScreenTipDialog(Context context, TipDialogClickListener tipDialogClickListener) {
         Resources resources = context.getResources();
         String title = resources.getString(R.string.te_beauty_panel_view_green_screen_tip_title);
         String msg = resources.getString(R.string.te_beauty_panel_view_green_screen_tip_msg);

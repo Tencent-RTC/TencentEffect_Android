@@ -1,6 +1,6 @@
 {
     "displayName":"美颜",
-    "displayNameEn":"Beauty",
+    "displayNameEn":"Beauty effects",
     "propertyList":[
         {
             "displayName":"关闭",
@@ -42,6 +42,31 @@
                 }
             ],
             "uiState":2
+        },
+        {
+            "displayName":"美黑",
+            "displayNameEn":"Black",
+            "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
+            "propertyList":[
+                {
+                    "displayName":"美黑",
+                    "displayNameEn":"Black",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
+                    "sdkParam":{
+                        "effectName":"beauty.lutBlackAlpha1",
+                        "effectValue":0
+                    }
+                },
+                {
+                    "displayName":"小麦色",
+                    "displayNameEn":"Brown",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
+                    "sdkParam":{
+                        "effectName":"beauty.lutBlackAlpha2",
+                        "effectValue":0
+                    }
+                }
+            ]
         },
         {
             "displayName":"磨皮",

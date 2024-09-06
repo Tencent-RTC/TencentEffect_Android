@@ -26,6 +26,7 @@ public class DefaultEnhancingStrategy implements TEParamEnhancingStrategy {
             case XmagicConstant.EffectName.BODY_ENLARGE_CHEST_STRENGTH:
             case XmagicConstant.EffectName.BODY_SLIM_HEAD_STRENGTH:
             case XmagicConstant.EffectName.BODY_SLIM_LEG_STRENGTH:
+            case XmagicConstant.EffectName.BODY_SLIM_ARM_STRENGTH:
             case XmagicConstant.EffectName.BODY_WAIST_STRENGTH:
             case XmagicConstant.EffectName.BODY_THIN_SHOULDER_STRENGTH:
                 return param;

@@ -149,9 +149,9 @@ public class TECapabilitiesPanelView extends FrameLayout implements View.OnClick
     private void initRadioGroup() {
         radioGroup.removeAllViews();
         if (capabilitiesItems.size() > 3) {
-            ((FrameLayout.LayoutParams) radioGroup.getLayoutParams()).gravity = Gravity.LEFT;
+            ((LayoutParams) radioGroup.getLayoutParams()).gravity = Gravity.LEFT;
         } else {
-            ((FrameLayout.LayoutParams) radioGroup.getLayoutParams()).gravity = Gravity.CENTER;
+            ((LayoutParams) radioGroup.getLayoutParams()).gravity = Gravity.CENTER;
         }
         TEUIConfig uiConfig = TEUIConfig.getInstance();
         for (int menuIndex = 0; menuIndex < capabilitiesItems.size(); menuIndex++) {

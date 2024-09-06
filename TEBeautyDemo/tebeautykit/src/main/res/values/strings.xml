@@ -24,11 +24,7 @@
     <string name="te_beauty_panel_view_revert_tip_dialog_left_btn">Cancel</string>
     <string name="te_beauty_panel_view_revert_tip_dialog_right_btn">Reset</string>
     <string name="te_beauty_panel_view_revert_btn_txt">Reset</string>
-    <string name="te_beauty_panel_view_performance_parameter">Performance parameters</string>
-    <string name="te_beauty_panel_view_enhanced_mode">Enhanced mode</string>
-    <string name="te_beauty_panel_view_only_white_skin">Brightening only applies to skin</string>
-    <string name="te_beauty_panel_view_smart_beauty">Smart beauty\nmatching weak beauty and makeup effects for men and babies</string>
-    <string name="te_beauty_panel_view_crop_texture">Crop edges</string>
+
     <string name="te_beauty_panel_view_download_dialog_tip">downloading</string>
 
     <string name="te_beauty_capabilities_panel_view_switch_turn_on">turn on</string>

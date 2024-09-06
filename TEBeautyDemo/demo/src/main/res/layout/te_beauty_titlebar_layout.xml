@@ -37,8 +37,22 @@
         android:layout_marginEnd="20dp"
         android:src="@mipmap/te_beauty_titlebar_more_icon"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/te_title_layout_camera_switch_btn"
+        app:layout_constraintRight_toLeftOf="@+id/te_title_layout_pick_btn"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/te_title_layout_pick_btn"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginEnd="20dp"
+        android:src="@mipmap/te_beauty_titlebar_pick_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/te_title_layout_camera_switch_btn"
+        app:layout_constraintTop_toTopOf="parent"
+
+        />
 
     <ImageView
         android:id="@+id/te_title_layout_camera_switch_btn"

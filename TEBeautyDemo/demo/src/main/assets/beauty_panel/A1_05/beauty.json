@@ -44,6 +44,31 @@
             "uiState":2
         },
         {
+            "displayName":"美黑",
+            "displayNameEn":"Black",
+            "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
+            "propertyList":[
+                {
+                    "displayName":"美黑",
+                    "displayNameEn":"Black",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
+                    "sdkParam":{
+                        "effectName":"beauty.lutBlackAlpha1",
+                        "effectValue":0
+                    }
+                },
+                {
+                    "displayName":"小麦色",
+                    "displayNameEn":"Brown",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
+                    "sdkParam":{
+                        "effectName":"beauty.lutBlackAlpha2",
+                        "effectValue":0
+                    }
+                }
+            ]
+        },
+        {
             "displayName":"磨皮",
             "displayNameEn":"Smoothskin",
             "icon":"beauty_panel/panel_icon/beauty/beauty_smooth.png",
@@ -99,6 +124,24 @@
                 "effectValue":30
             },
             "uiState":1
+        },
+        {
+            "displayName":"亮度",
+            "displayNameEn":"Brightness",
+            "icon":"beauty_panel/panel_icon/beauty/beauty_image_brightness.png",
+            "sdkParam":{
+                "effectName":"beauty.imageBrightness",
+                "effectValue":0
+            }
+        },
+        {
+            "displayName":"弱光降噪",
+            "displayNameEn":"Denoise",
+            "icon":"beauty_panel/panel_icon/beauty/beauty_denoise.png",
+            "sdkParam":{
+                "effectName":"postEffect.denoise",
+                "effectValue":0
+            }
         },
         {
             "displayName":"色温",

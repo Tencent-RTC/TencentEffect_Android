@@ -22,6 +22,10 @@ public class ProviderUtils {
             XmagicConstant.EffectName.BEAUTY_WHITEN_3,
 
     };
+    private static final String[] BEAUTY_BLACK_EFFECT_NAMES = {
+            XmagicConstant.EffectName.BEAUTY_BLACK_1,
+            XmagicConstant.EffectName.BEAUTY_BLACK_2,
+    };
     private static final String[] BEAUTY_FACE_EFFECT_NAMES = {
               XmagicConstant.EffectName.BEAUTY_FACE_NATURE,
               XmagicConstant.EffectName.BEAUTY_FACE_GODNESS,
@@ -108,6 +112,9 @@ public class ProviderUtils {
             return true;
         }
         if (ProviderUtils.contains(BEAUTY_WHITEN_EFFECT_NAMES, property.sdkParam.effectName) && ProviderUtils.contains(BEAUTY_WHITEN_EFFECT_NAMES, property2.sdkParam.effectName)) {
+            return true;
+        }
+        if (ProviderUtils.contains(BEAUTY_BLACK_EFFECT_NAMES, property.sdkParam.effectName) && ProviderUtils.contains(BEAUTY_BLACK_EFFECT_NAMES, property2.sdkParam.effectName)) {
             return true;
         }
         if (ProviderUtils.contains(BEAUTY_FACE_EFFECT_NAMES, property.sdkParam.effectName) && ProviderUtils.contains(BEAUTY_FACE_EFFECT_NAMES, property2.sdkParam.effectName)) {

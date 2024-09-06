@@ -9,7 +9,6 @@ import androidx.camera.core.CameraXConfig;
 import com.tencent.demo.constant.LicenseConstant;
 import com.tencent.effect.beautykit.TEBeautyKit;
 
-import java.io.File;
 
 
 public class TEApplication extends Application implements CameraXConfig.Provider {

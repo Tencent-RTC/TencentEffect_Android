@@ -52,6 +52,9 @@ public class TEParamManager {
             case XmagicConstant.EffectName.BEAUTY_WHITEN_2:
             case XmagicConstant.EffectName.BEAUTY_WHITEN_3:
                 return XmagicConstant.EffectName.BEAUTY_WHITEN;
+            case XmagicConstant.EffectName.BEAUTY_BLACK_1:
+            case XmagicConstant.EffectName.BEAUTY_BLACK_2:
+                return XmagicConstant.EffectName.BEAUTY_BLACK_1;
             case XmagicConstant.EffectName.BEAUTY_FACE_NATURE:
             case XmagicConstant.EffectName.BEAUTY_FACE_GODNESS:
             case XmagicConstant.EffectName.BEAUTY_FACE_MALE_GOD:

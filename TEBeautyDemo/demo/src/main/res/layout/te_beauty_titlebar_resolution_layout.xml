@@ -72,7 +72,6 @@
         <RelativeLayout
                 android:id="@+id/te_titlebar_layout_smart_beauty_switch_layout"
                 android:layout_width="match_parent"
-                android:visibility="visible"
                 android:layout_height="wrap_content"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp">
@@ -178,6 +177,57 @@
                 android:thumb="@drawable/te_beauty_switch_thumb"
                 android:track="@drawable/te_beauty_switch_track" />
         </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:text="@string/te_beauty_panel_view_performance_parameter"
+                android:textColor="@color/te_beauty_color_FFFFFFFF"
+                android:textSize="14sp" />
+
+            <Switch
+                android:id="@+id/te_titlebar_layout_performance_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:checked="false"
+                android:thumb="@drawable/te_beauty_switch_thumb"
+                android:track="@drawable/te_beauty_switch_track" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:minHeight="35dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:text="@string/te_beauty_panel_view_face_block"
+                android:textColor="@color/te_beauty_color_FFFFFFFF"
+                android:textSize="14sp" />
+
+            <Switch
+                android:id="@+id/te_titlebar_layout_face_block_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:checked="false"
+                android:thumb="@drawable/te_beauty_switch_thumb"
+                android:track="@drawable/te_beauty_switch_track" />
+        </RelativeLayout>
+
 
         <LinearLayout
             android:id="@+id/te_titlebar_layout_performance_layout"

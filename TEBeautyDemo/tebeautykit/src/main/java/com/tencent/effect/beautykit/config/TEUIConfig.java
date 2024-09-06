@@ -39,7 +39,7 @@ public class TEUIConfig {
     }
 
     public static TEUIConfig getInstance() {
-        return TEUIConfig.ClassHolder.TUI_CONFIG;
+        return ClassHolder.TUI_CONFIG;
     }
 
 

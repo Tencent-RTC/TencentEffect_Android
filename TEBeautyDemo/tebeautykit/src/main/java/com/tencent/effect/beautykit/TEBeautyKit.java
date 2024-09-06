@@ -23,6 +23,7 @@ import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.enhance.DefaultEnhancingStrategy;
 import com.tencent.effect.beautykit.manager.TEParamManager;
 import com.tencent.effect.beautykit.utils.WorkThread;
+import com.tencent.xmagic.XmagicConstant.DeviceLevel;
 import com.tencent.xmagic.bean.TEImageOrientation;
 import com.tencent.xmagic.telicense.TELicenseCheck;
 import com.tencent.xmagic.util.FileUtil;
@@ -57,6 +58,8 @@ public class TEBeautyKit implements SensorEventListener {
     private EventListener mEventListener = null;
 
     private XmagicApi.ExportTextureCallback mTextureCallback = null;
+
+    private boolean additionalProcess = false;
 
     /**
      *  Conventional ending with "/", for easy concatenation.
@@ -117,7 +120,7 @@ public class TEBeautyKit implements SensorEventListener {
             LogUtils.e(TAG, "createXMagicApi  errorMsg = " + errorMsg + "  code = " + code);
         });
         if (isEnableHighPerformance) {
-            api.setDowngradePerformance();
+            api.enableHighPerformance();
         }
 
 //        api.setFeatureEnableDisable(FeatureName.ANIMOJI_52_EXPRESSION, true);
@@ -162,6 +165,9 @@ public class TEBeautyKit implements SensorEventListener {
         }
     }
 
+    public static DeviceLevel getDeviceLevel(Context context){
+        return XmagicApi.getDeviceLevel(context);
+    }
 
     public Bitmap process(Bitmap bitmap, boolean needReset) {
         if (this.mEffectState == EffectState.DISABLED) {
@@ -176,6 +182,7 @@ public class TEBeautyKit implements SensorEventListener {
 
     public int process(int textureId, int width, int height) {
         if (this.mEffectState == EffectState.DISABLED) {
+            additionalProcess = true;
             if (this.mTextureCallback != null) {
                 Bitmap bitmap = GlUtil.readTexture(textureId, width, height);
                 this.mTextureCallback.onCallback(bitmap);
@@ -184,6 +191,10 @@ public class TEBeautyKit implements SensorEventListener {
             return textureId;
         }
         if (this.mXMagicApi != null) {
+            if (additionalProcess) {
+                this.mXMagicApi.process(textureId, width, height);
+                additionalProcess = false;
+            }
             return this.mXMagicApi.process(textureId, width, height);
         }
         return textureId;
@@ -327,17 +338,28 @@ public class TEBeautyKit implements SensorEventListener {
         if (event.sensor == accelerometer) {
             float currentXAxis = event.values[0];
             float currentYAxis = event.values[1];
-            if (Math.abs(currentYAxis) > Math.abs(currentXAxis)) {
-                if (currentYAxis > 1) {
-                    deviceDirection = DeviceDirection.PORTRAIT_UP;
-                } else if (currentYAxis < -1) {
-                    deviceDirection = DeviceDirection.PORTRAIT_DOWN;
-                }
-            } else {
-                if (currentXAxis > 1) {
-                    deviceDirection = DeviceDirection.LANDSCAPE_LEFT;
-                } else if (currentXAxis < -1) {
-                    deviceDirection = DeviceDirection.LANDSCAPE_RIGHT;
+            float currentZAxis = event.values[2];
+            // 检测手机是否水平朝上
+            if (Math.abs(currentXAxis) < 1 && Math.abs(currentYAxis) < 1 && currentZAxis > 9) { // 手机水平放置朝上
+                deviceDirection = DeviceDirection.HORIZONTAL_UP;
+                LogUtils.i("dispatchOrientation", "HORIZONTAL_UP");
+            } else if (Math.abs(currentXAxis) < 1 && Math.abs(currentYAxis) < 1 && currentZAxis < -9) { // 手机水平放置朝下
+                deviceDirection = DeviceDirection.HORIZONTAL_DOWN;
+                LogUtils.i("dispatchOrientation", "HORIZONTAL_DOWN");
+            } else {  // 手机非水平放置
+                LogUtils.i("dispatchOrientation","not HORIZONTAL");
+                if (Math.abs(currentYAxis) > Math.abs(currentXAxis)) {
+                    if (currentYAxis > 1) {
+                        deviceDirection = DeviceDirection.PORTRAIT_UP;
+                    } else if (currentYAxis < -1) {
+                        deviceDirection = DeviceDirection.PORTRAIT_DOWN;
+                    }
+                } else {
+                    if (currentXAxis > 1) {
+                        deviceDirection = DeviceDirection.LANDSCAPE_LEFT;
+                    } else if (currentXAxis < -1) {
+                        deviceDirection = DeviceDirection.LANDSCAPE_RIGHT;
+                    }
                 }
             }
         }

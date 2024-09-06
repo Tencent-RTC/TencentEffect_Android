@@ -6,7 +6,6 @@
     <string name="te_beauty_launch_page_title">腾讯特效引擎</string>
     <string name="te_beauty_use_rear_camera">使用后置摄像头</string>
     <string name="te_beauty_copying_tip">资源拷贝中...</string>
-    <string name="te_beauty_auth_and_start_camera">鉴权并启动相机</string>
     <string name="te_beauty_save_success_tip">保存相册成功</string>
     <string name="te_beauty_property_invalid">美颜参数不合法，请检查参数设置</string>
     <string name="te_beauty_function_not_available_tip">功能不可用，请下载完整版套餐demo</string>
@@ -19,10 +18,17 @@
 
     <string name="te_beauty_settings_page_title">设置</string>
     <string name="te_beauty_settings_page_item1">高性能模式</string>
-    <string name="te_beauty_settings_page_item1_des">高性能模式开启后，美颜占用的系统CPU/GPU资源更少，可减少手机的发热和卡顿现象，更适合低端机长时间使用。\n但请注意：开启高性能模式后，以下美颜项将不可用：\n 1.眼部：眼宽、眼高、祛眼袋 \n 2.眉毛：角度、距离、高度、长度、粗细、眉峰\n 3.嘴部：微笑唇\n 4.面部：瘦脸（自然，女神，英俊），收下颌，祛皱、祛法令纹。建议用“脸型”实现综合大眼瘦脸效果</string>
+    <string name="te_beauty_settings_page_item1_des">高性能模式开启后，美颜占用的系统CPU/GPU/内存资源更少，可减少手机的发热和卡顿现象，更适合低端机长时间使用。\n\n开启高性能模式后，以下美颜项不可用：\n1.面部：脸型、收下颌、祛皱、祛法令纹，瘦脸中只保留“自然瘦脸”一种模式。\n2.眼部：眼宽、眼高、眼睛位置、祛眼袋。\n3.眉毛：角度、距离、高度、长度、粗细、眉峰。\n4.嘴部：微笑唇。\n5.美颜美妆：美黑、染发。\n6.鼻子：鼻梁、山根。\n\n建议在低端机开启高性能模式\n\n判断当前设备是低端机还是中高端机，可以使用以下接口：\nAndroid： XmagicApi的getDeviceLevel方法\niOS：XMagic的getDeviceLevel方法</string>
     <string name="te_beauty_settings_page_item2">扫一扫</string>
     <string name="setting_scan_unsupported">外部demo版本不支持扫码</string>
     <string name="te_beauty_check_license_info_error_tip">本Demo App中需要下载的滤镜和动效贴纸仅限腾讯特效Demo使用，请将其替换为您自己的资源再体验。</string>
+
+    <string name="te_beauty_panel_view_performance_parameter">性能参数</string>
+    <string name="te_beauty_panel_view_enhanced_mode">增强模式</string>
+    <string name="te_beauty_panel_view_only_white_skin">美白仅对皮肤生效</string>
+    <string name="te_beauty_panel_view_smart_beauty">智能美颜\n为男性、宝宝匹配减淡的美颜美妆效果</string>
+    <string name="te_beauty_panel_view_crop_texture">画面边缘裁剪</string>
+    <string name="te_beauty_panel_view_face_block">人脸遮挡检测\n开启此功能避免美妆画到遮挡物上</string>
 
     <!--avatar文本信息-->
     <string name="te_avatar_voice_start">开始讲话</string>

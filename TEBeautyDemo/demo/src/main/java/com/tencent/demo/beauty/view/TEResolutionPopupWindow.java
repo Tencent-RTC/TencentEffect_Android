@@ -11,130 +11,115 @@ import android.widget.PopupWindow;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 
-import com.tencent.demo.beauty.view.TETitleBar.RESOLUTION;
 import com.tencent.demo.R;
+import com.tencent.demo.beauty.model.TEFeatureConfig;
+import com.tencent.demo.beauty.view.TETitleBar.RESOLUTION;
+
+/**
+ *
+ */
 
 public class TEResolutionPopupWindow {
 
-    private TETitleBar.RESOLUTION resolution = TETitleBar.RESOLUTION.R720P;
     private TETitleBar.TETitleBarClickListener teTitleBarClickListener = null;
-    private boolean isShowEnhancedModeSwitch = false;
-
-    private boolean isShowSmartBeauty = false;
-    private boolean isShowWhiteSkinOnly = false;
-    private boolean isEnhancedModeIsTurnOn = false;
-
-    private boolean isSmartBeauty = false;
-    private boolean isWhiteSkinOnly = false;
-
-    private boolean isCropTexture = false;
-
-    private Switch smartBeautySwitch;
-    private Switch whiteSkinOnlySwitch;
-
-    private Switch cropTextureSwitch;
-
     private PopupWindow popupWindow;
 
+    public TEResolutionPopupWindow(TETitleBar.TETitleBarClickListener teTitleBarClickListener) {
+        this.teTitleBarClickListener = teTitleBarClickListener;
+    }
 
     @SuppressLint("NonConstantResourceId")
     private View createPopLayout(Context context) {
         View contentView = LayoutInflater.from(context).inflate(R.layout.te_beauty_titlebar_resolution_layout, null);
-        RadioGroup resolutionRadioGroup = contentView.findViewById(R.id.te_titlebar_layout_resolution_group);
 
-        if (isShowSmartBeauty) {
-            contentView.findViewById(R.id.te_titlebar_layout_smart_beauty_switch_layout).setVisibility(View.VISIBLE);
-            smartBeautySwitch = contentView.findViewById(R.id.te_titlebar_layout_smart_beauty_switch);
-            smartBeautySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                isSmartBeauty = isChecked;
-                if (teTitleBarClickListener != null) {
-                    teTitleBarClickListener.onSmartBeautyTurnOn(isSmartBeauty);
-                }
-            });
-            smartBeautySwitch.setChecked(isSmartBeauty);
-        }
-
-
-        if (isShowWhiteSkinOnly) {
-            contentView.findViewById(R.id.te_titlebar_layout_only_white_skin_switch_layout).setVisibility(View.VISIBLE);
-            whiteSkinOnlySwitch = contentView.findViewById(R.id.te_titlebar_layout_only_white_skin_switch);
-            whiteSkinOnlySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                isWhiteSkinOnly = isChecked;
-                if (teTitleBarClickListener != null) {
-                    teTitleBarClickListener.onOnlyBeautyWhiteOnSkin(isWhiteSkinOnly);
-                }
-            });
-            whiteSkinOnlySwitch.setChecked(isWhiteSkinOnly);
-        }
-
-        cropTextureSwitch = contentView.findViewById(R.id.te_titlebar_layout_crop_texture_switch);
-        cropTextureSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            isCropTexture = isChecked;
+        contentView.findViewById(R.id.te_titlebar_layout_smart_beauty_switch_layout).setVisibility(View.VISIBLE);
+        Switch smartBeautySwitch = contentView.findViewById(R.id.te_titlebar_layout_smart_beauty_switch);
+        smartBeautySwitch.setChecked(TEFeatureConfig.getInstance().isOnSmartBeautySwitch);
+        smartBeautySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (teTitleBarClickListener != null) {
-                teTitleBarClickListener.onCropTextureSwitchTurnOn(isCropTexture);
+                teTitleBarClickListener.onSmartBeautyTurnOn(isChecked);
             }
         });
-        cropTextureSwitch.setChecked(isCropTexture);
 
-        if (isShowEnhancedModeSwitch) {
-            contentView.findViewById(R.id.te_titlebar_layout_enhanced_mode_switch_layout).setVisibility(View.VISIBLE);
-            Switch enhancedModeSwitch = contentView.findViewById(R.id.te_titlebar_layout_enhanced_mode_switch);
-            enhancedModeSwitch.setChecked(isEnhancedModeIsTurnOn);
-            enhancedModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                isEnhancedModeIsTurnOn = isChecked;
+
+        if (TEFeatureConfig.getInstance().isShowWhiteSkinOnlySwitch) {
+            contentView.findViewById(R.id.te_titlebar_layout_only_white_skin_switch_layout).setVisibility(View.VISIBLE);
+            Switch whiteSkinOnlySwitch = contentView.findViewById(R.id.te_titlebar_layout_only_white_skin_switch);
+            whiteSkinOnlySwitch.setChecked(TEFeatureConfig.getInstance().isOnWhiteSkinOnlySwitch);
+            whiteSkinOnlySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (teTitleBarClickListener != null) {
-                    teTitleBarClickListener.onEnhancedModeSwitchTurnOn(isEnhancedModeIsTurnOn);
+                    teTitleBarClickListener.onOnlyBeautyWhiteOnSkin(isChecked);
                 }
             });
+
+        } else {
+            contentView.findViewById(R.id.te_titlebar_layout_only_white_skin_switch_layout).setVisibility(View.GONE);
         }
-        if (resolution == RESOLUTION.R540P) {
+
+        Switch cropTextureSwitch = contentView.findViewById(R.id.te_titlebar_layout_crop_texture_switch);
+        cropTextureSwitch.setChecked(TEFeatureConfig.getInstance().isOnCropTextureSwitch);
+        cropTextureSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (teTitleBarClickListener != null) {
+                teTitleBarClickListener.onCropTextureSwitchTurnOn(isChecked);
+            }
+        });
+
+        Switch performanceSwitch = contentView.findViewById(R.id.te_titlebar_layout_performance_switch);
+        performanceSwitch.setChecked(TEFeatureConfig.getInstance().isOnPerformanceSwitch);
+        performanceSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (teTitleBarClickListener != null) {
+                teTitleBarClickListener.onPerformanceSwitchTurnOn(isChecked);
+            }
+        });
+
+        if (TEFeatureConfig.getInstance().isShowEnhancedModeSwitch) {
+            contentView.findViewById(R.id.te_titlebar_layout_enhanced_mode_switch_layout).setVisibility(View.VISIBLE);
+            Switch enhancedModeSwitch = contentView.findViewById(R.id.te_titlebar_layout_enhanced_mode_switch);
+            enhancedModeSwitch.setChecked(TEFeatureConfig.getInstance().isOnEnhancedMode);
+            enhancedModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (teTitleBarClickListener != null) {
+                    teTitleBarClickListener.onEnhancedModeSwitchTurnOn(isChecked);
+                }
+            });
+        } else {
+            contentView.findViewById(R.id.te_titlebar_layout_enhanced_mode_switch_layout).setVisibility(View.GONE);
+        }
+
+        Switch faceBlockSwitch = contentView.findViewById(R.id.te_titlebar_layout_face_block_switch);
+        faceBlockSwitch.setChecked(TEFeatureConfig.getInstance().isOnFaceBlockSwitch);
+        faceBlockSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (teTitleBarClickListener != null) {
+                teTitleBarClickListener.onFaceBlockSwitchTurnOn(isChecked);
+            }
+        });
+
+        RadioGroup resolutionRadioGroup = contentView.findViewById(R.id.te_titlebar_layout_resolution_group);
+        if (TEFeatureConfig.getInstance().resolution == RESOLUTION.R540P) {
             resolutionRadioGroup.check(R.id.te_titlebar_layout_540p_btn);
-        } else if (resolution == RESOLUTION.R720P) {
+        } else if (TEFeatureConfig.getInstance().resolution == RESOLUTION.R720P) {
             resolutionRadioGroup.check(R.id.te_titlebar_layout_720p_btn);
-        } else if (resolution == RESOLUTION.R1080P) {
+        } else if (TEFeatureConfig.getInstance().resolution == RESOLUTION.R1080P) {
             resolutionRadioGroup.check(R.id.te_titlebar_layout_1080p_btn);
         }
         resolutionRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
                 case R.id.te_titlebar_layout_540p_btn:
-                    resolution = RESOLUTION.R540P;
+                    TEFeatureConfig.getInstance().resolution = RESOLUTION.R540P;
                     break;
                 case R.id.te_titlebar_layout_1080p_btn:
-                    resolution = RESOLUTION.R1080P;
+                    TEFeatureConfig.getInstance().resolution = RESOLUTION.R1080P;
                     break;
                 default:
-                    resolution = RESOLUTION.R720P;
+                    TEFeatureConfig.getInstance().resolution = RESOLUTION.R720P;
                     break;
             }
             if (teTitleBarClickListener != null) {
-                teTitleBarClickListener.onSwitchResolution(resolution);
+                teTitleBarClickListener.onSwitchResolution(TEFeatureConfig.getInstance().resolution);
             }
         });
         return contentView;
     }
 
-    public void setShowEnhancedModeSwitch(boolean isShowEnhancedModeSwitch) {
-        this.isShowEnhancedModeSwitch = isShowEnhancedModeSwitch;
-    }
-
-    public void setShowSmartBeautySwitch(boolean isShow) {
-        this.isShowSmartBeauty = isShow;
-    }
-
-    public void setShowOnlyWhiteOnSkySwitch(boolean isShow) {
-        this.isShowWhiteSkinOnly = isShow;
-    }
-
-
-    public void setDefaultParameter(TETitleBar.RESOLUTION resolution,
-                                    boolean isEnhancedModeIsTurnOn, boolean isWhiteSkin, boolean isCropTexture,
-                                    boolean isSmartBeauty) {
-        this.resolution = resolution;
-        this.isEnhancedModeIsTurnOn = isEnhancedModeIsTurnOn;
-        this.isWhiteSkinOnly = isWhiteSkin;
-        this.isCropTexture = isCropTexture;
-        this.isSmartBeauty = isSmartBeauty;
-    }
 
     public void showResolutionPop(View targetView) {
         View contentView = createPopLayout(targetView.getContext());
@@ -148,7 +133,8 @@ public class TEResolutionPopupWindow {
         });
     }
 
-    public void setTeTitleBarClickListener(TETitleBar.TETitleBarClickListener teTitleBarClickListener) {
-        this.teTitleBarClickListener = teTitleBarClickListener;
-    }
+
+
+
+
 }

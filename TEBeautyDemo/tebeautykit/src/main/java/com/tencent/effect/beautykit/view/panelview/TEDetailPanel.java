@@ -224,7 +224,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     private void initRadioGroup(List<TEUIProperty> propertyList) {
         expandViewRadioGroup.removeAllViews();
 //        if (propertyList.size() > 3) {
-            ((FrameLayout.LayoutParams) expandViewRadioGroup.getLayoutParams()).gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
+            ((LayoutParams) expandViewRadioGroup.getLayoutParams()).gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
 //        } else {
 //            ((FrameLayout.LayoutParams) expandViewRadioGroup.getLayoutParams()).gravity = Gravity.CENTER;
 //        }
@@ -805,7 +805,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
 
 
-    private class CompareBtnTouchListener implements View.OnTouchListener {
+    private class CompareBtnTouchListener implements OnTouchListener {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {

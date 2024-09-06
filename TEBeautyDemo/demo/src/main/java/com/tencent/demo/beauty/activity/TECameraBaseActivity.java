@@ -21,9 +21,9 @@ import com.tencent.demo.R;
 
 import com.tencent.demo.beauty.view.TETitleBar;
 
-import com.tencent.demo.camera.CameraSize;
-import com.tencent.demo.camera.camerax.CustomTextureProcessor;
-import com.tencent.demo.camera.camerax.GLCameraXView;
+import com.tencent.demo.opengl.view.CameraSize;
+import com.tencent.demo.opengl.view.CustomTextureProcessor;
+import com.tencent.demo.opengl.view.GLCameraXView;
 import com.tencent.demo.utils.BitmapUtil;
 import com.tencent.demo.utils.UriUtils;
 import com.tencent.effect.beautykit.TEBeautyKit;
@@ -58,7 +58,7 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
         mTitleBar.setTeTitleBarClickListener(this);
         mPanelLayout = findViewById(R.id.te_camera_layout_beauty_panel_layout);
         mCameraXView = findViewById(R.id.te_camera_layout_camerax_view);
-        mCameraXView.setCameraSize(CameraSize.size1080, false);
+        mCameraXView.setCameraSize(CameraSize.size1080);
         mCameraXView.setCustomTextureProcessor(this);
         findViewById(R.id.te_camera_layout_save_btn).setOnClickListener(view -> {
             saveCurrentBeautyParams();
@@ -173,6 +173,10 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
     }
 
     @Override
+    public void onPerformanceSwitchTurnOn(boolean isTurnOn) {
+    }
+
+    @Override
     public void onSwitchResolution(TETitleBar.RESOLUTION resolution) {
         LogUtils.i(TAG, "onSwitchResolution: " + resolution.name());
         Size size = null;
@@ -188,10 +192,14 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
                 break;
         }
         if (mCameraXView != null && size != null) {
-            mCameraXView.setCameraSize(size, false);
+            mCameraXView.setCameraSize(size);
             mCameraXView.previewAgain();
         }
 
+    }
+
+    @Override
+    public void onClickPickBtn() {
     }
 
     @Override
@@ -209,8 +217,13 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
     @Override
     public void onCropTextureSwitchTurnOn(boolean isCrop) {
         if (mCameraXView != null) {
-            mCameraXView.notifyCropStateChange(isCrop);
+            mCameraXView.setCropRatio(isCrop ? AppConfig.getInstance().cropRatio : 1f);
         }
+    }
+
+    @Override
+    public void onFaceBlockSwitchTurnOn(boolean isTurnOn) {
+        mBeautyKit.setFeatureEnableDisable(FeatureName.SEGMENTATION_FACE_BLOCK, isTurnOn);
     }
 
     @Override
