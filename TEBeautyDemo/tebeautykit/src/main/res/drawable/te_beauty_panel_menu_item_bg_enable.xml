@@ -2,6 +2,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
 
-    <solid android:color="@color/te_beauty_color_EEFFFFFF"/>
+    <solid android:color="@color/te_beauty_color_4D000000"/>
 
 </shape>

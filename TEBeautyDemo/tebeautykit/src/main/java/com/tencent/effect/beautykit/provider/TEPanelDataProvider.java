@@ -83,4 +83,6 @@ public interface TEPanelDataProvider {
     void updateBeautyTemplateData(List<TEUIProperty.TESDKParam> paramList);
 
 
+    boolean isShowEntryBtn();
+
 }

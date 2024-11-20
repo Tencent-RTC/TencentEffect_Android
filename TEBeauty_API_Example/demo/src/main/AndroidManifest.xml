@@ -7,26 +7,30 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:name="com.tencent.demo.TEApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/te_beauty_app_icon"
-        android:requestLegacyExternalStorage="true"
         android:label="@string/te_beauty_app_name"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/CUSTOM_THEME">
         <!--   android:requestLegacyExternalStorage="true" -->
         <activity
             android:name=".beauty.activity.TECameraBaseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-
+        <activity
+            android:name=".beauty.activity.TEImageBaseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".beauty.activity.TEMenuActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:exported="true">
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

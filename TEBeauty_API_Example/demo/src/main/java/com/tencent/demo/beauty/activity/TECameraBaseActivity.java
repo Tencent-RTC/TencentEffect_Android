@@ -78,7 +78,7 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
     private void initXMagicAPI() {
         mXmagicApi = new XmagicApi(this, AppConfig.resPathForSDK);
         if (AppConfig.isEnableDowngradePerformance) {
-            mXmagicApi.setDowngradePerformance();
+            mXmagicApi.enableHighPerformance();
         }
         mXmagicApi.setXmagicLogLevel(Log.ERROR);//the default log level is Log.WARN
         mXmagicApi.setAIDataListener(new XmagicAIDataListener() {

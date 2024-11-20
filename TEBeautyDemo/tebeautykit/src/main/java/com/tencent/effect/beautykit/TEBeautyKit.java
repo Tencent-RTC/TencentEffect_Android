@@ -1,6 +1,7 @@
 package com.tencent.effect.beautykit;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.tencent.effect.beautykit.config.DeviceDirection;
+import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
 import com.tencent.xmagic.GlUtil;
 import com.tencent.xmagic.XmagicApi;
 import com.tencent.effect.beautykit.enhance.TEParamEnhancingStrategy;
@@ -23,7 +25,9 @@ import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.enhance.DefaultEnhancingStrategy;
 import com.tencent.effect.beautykit.manager.TEParamManager;
 import com.tencent.effect.beautykit.utils.WorkThread;
+import com.tencent.xmagic.XmagicConstant;
 import com.tencent.xmagic.XmagicConstant.DeviceLevel;
+import com.tencent.xmagic.XmagicConstant.EffectMode;
 import com.tencent.xmagic.bean.TEImageOrientation;
 import com.tencent.xmagic.telicense.TELicenseCheck;
 import com.tencent.xmagic.util.FileUtil;
@@ -42,7 +46,7 @@ public class TEBeautyKit implements SensorEventListener {
     private Sensor mAccelerometer;
     private boolean isEnableEnhancedMode = false;
 
-    private boolean mIsMute = false;
+    private boolean mIsMute = true;
 
     private int mBeautyStreamType = XmagicApi.PROCESS_TYPE_CAMERA_STREAM;
     private XmagicApi.XmagicAIDataListener mAIDataListener = null;
@@ -53,7 +57,7 @@ public class TEBeautyKit implements SensorEventListener {
 
     private TEParamEnhancingStrategy mParamEnhancingStrategy = new DefaultEnhancingStrategy();
     private EffectState mEffectState = EffectState.ENABLED;
-    private int mLogLevel = Log.WARN;
+    private int mLogLevel = Log.INFO;
     private Context mApplicationContext = null;
     private EventListener mEventListener = null;
 
@@ -67,33 +71,30 @@ public class TEBeautyKit implements SensorEventListener {
      */
     private static String mResPath = null;
 
+    private boolean hasLightMakeup = false;
 
+    @Deprecated
     public static void create(@NonNull Context context, @NonNull OnInitListener initListener) {
-        TEBeautyKit.create(context, false, initListener);
+        TEBeautyKit.create(context, EffectMode.PRO, initListener);
     }
 
-
-
+    @Deprecated
     public static void create(@NonNull Context context, boolean isEnableHighPerformance, @NonNull OnInitListener initListener) {
-        new TEBeautyKit(context, isEnableHighPerformance, initListener);
+        TEBeautyKit.create(context, isEnableHighPerformance? EffectMode.NORMAL : EffectMode.PRO, initListener);
     }
 
-
-
-    private TEBeautyKit(Context context, @NonNull OnInitListener initListener) {
-        this(context, false, initListener);
+    public static void create(@NonNull Context context, EffectMode effectMode, @NonNull OnInitListener initListener) {
+        new TEBeautyKit(context, effectMode, initListener);
     }
 
-
-
-    private TEBeautyKit(Context context, boolean isEnableHighPerformance, @NonNull OnInitListener initListener) {
+    private TEBeautyKit(Context context, EffectMode effectMode, @NonNull OnInitListener initListener) {
         this.initSensor(context);
         WorkThread.getInstance().run(() -> {
             synchronized (this.mLock) {
                 if (this.isXMagicApiDestroyed) {
                     return;
                 }
-                this.mXMagicApi = initXMagicApi(mApplicationContext, isEnableHighPerformance);
+                this.mXMagicApi = initXMagicApi(mApplicationContext, effectMode);
                 this.mHandler.post(() -> {
                     initListener.onInitResult(this);
                 });
@@ -102,27 +103,26 @@ public class TEBeautyKit implements SensorEventListener {
 
     }
 
-
-
+    @Deprecated
     public TEBeautyKit(Context context) {
-        this(context, false);
+        this(context, EffectMode.PRO);
     }
 
-
+    @Deprecated
     public TEBeautyKit(Context context, boolean isEnableHighPerformance) {
+        this(context, isEnableHighPerformance? EffectMode.NORMAL : EffectMode.PRO);
+    }
+
+    public TEBeautyKit(Context context, EffectMode effectMode) {
         this.initSensor(context);
-        this.mXMagicApi = this.initXMagicApi(mApplicationContext, isEnableHighPerformance);
+        this.mXMagicApi = this.initXMagicApi(mApplicationContext, effectMode);
     }
 
 
-    private XmagicApi initXMagicApi(Context context, boolean isEnableHighPerformance) {
-        XmagicApi api = new XmagicApi(context, mResPath, (errorMsg, code) -> {
+    private XmagicApi initXMagicApi(Context context, EffectMode effectMode) {
+        XmagicApi api = new XmagicApi(context, effectMode, mResPath, (errorMsg, code) -> {
             LogUtils.e(TAG, "createXMagicApi  errorMsg = " + errorMsg + "  code = " + code);
         });
-        if (isEnableHighPerformance) {
-            api.enableHighPerformance();
-        }
-
 //        api.setFeatureEnableDisable(FeatureName.ANIMOJI_52_EXPRESSION, true);
 //        api.setFeatureEnableDisable(FeatureName.BODY_3D_POINT, true);
 //        api.setFeatureEnableDisable(FeatureName.HAND_DETECT, true);
@@ -217,8 +217,32 @@ public class TEBeautyKit implements SensorEventListener {
         }
         TEUIProperty.TESDKParam param = this.isEnableEnhancedMode ? this.mParamEnhancingStrategy.enhanceParam(teParam) : teParam;
         LogUtils.d(TAG, "setEffect " + this.isEnableEnhancedMode + "    " + param.toString());
-        this.mXMagicApi.setEffect(param.effectName, param.effectValue, param.resourcePath, param.extraInfo);
+        this.setSdkParam(param);
         this.mParamManager.putTEParam(teParam);
+    }
+
+
+
+    /**
+     * 在真正设置参数的进行判断，因为轻美妆和单点美妆在效果上要进行互斥，但是SDK没有实现
+     * （SDK实现了 设置单点美妆后再设置轻美妆，会清除单点美妆的效果，但是没有实现设置单点美妆清除轻美妆的问题）
+     *
+     * @param sdkParam
+     */
+    private void setSdkParam(TEUIProperty.TESDKParam sdkParam) {
+        this.clearLightMakeup(sdkParam);
+        this.mXMagicApi.setEffect(sdkParam.effectName, sdkParam.effectValue, sdkParam.resourcePath, sdkParam.extraInfo);
+    }
+
+
+    private void clearLightMakeup(TEUIProperty.TESDKParam sdkParam) {
+        if (XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP.equals(sdkParam.effectName)) {
+            hasLightMakeup = true;
+        }
+        if (hasLightMakeup && ProviderUtils.isPointMakeup(sdkParam)) {
+            hasLightMakeup = false;
+            this.mXMagicApi.setEffect(XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP, 0, null, null);
+        }
     }
 
 
@@ -282,6 +306,7 @@ public class TEBeautyKit implements SensorEventListener {
                 this.mXMagicApi = null;
             }
         }
+        this.hasLightMakeup = false;
         this.mParamManager.clear();
     }
 
@@ -342,12 +367,12 @@ public class TEBeautyKit implements SensorEventListener {
             // 检测手机是否水平朝上
             if (Math.abs(currentXAxis) < 1 && Math.abs(currentYAxis) < 1 && currentZAxis > 9) { // 手机水平放置朝上
                 deviceDirection = DeviceDirection.HORIZONTAL_UP;
-                LogUtils.i("dispatchOrientation", "HORIZONTAL_UP");
+                LogUtils.d("dispatchOrientation", "HORIZONTAL_UP");
             } else if (Math.abs(currentXAxis) < 1 && Math.abs(currentYAxis) < 1 && currentZAxis < -9) { // 手机水平放置朝下
                 deviceDirection = DeviceDirection.HORIZONTAL_DOWN;
-                LogUtils.i("dispatchOrientation", "HORIZONTAL_DOWN");
+                LogUtils.d("dispatchOrientation", "HORIZONTAL_DOWN");
             } else {  // 手机非水平放置
-                LogUtils.i("dispatchOrientation","not HORIZONTAL");
+                LogUtils.d("dispatchOrientation","not HORIZONTAL");
                 if (Math.abs(currentYAxis) > Math.abs(currentXAxis)) {
                     if (currentYAxis > 1) {
                         deviceDirection = DeviceDirection.PORTRAIT_UP;
@@ -498,6 +523,54 @@ public class TEBeautyKit implements SensorEventListener {
                 teLicenseCheckListener.onLicenseCheckFinish(i, s);
             }));
         }
+    }
+
+
+    /**
+     * This method aggregates the setResPath, copyRes, and setTELicense methods,
+     * therefore, it includes the copying of resource files and the verification of License information
+     *
+     * @param context      Application context
+     * @param licenseUrl   License URL obtained from the platform
+     * @param licenseKey   License key obtained from the platform
+     * @param callback     SetupSDKCallback interface
+     */
+    public static void setupSDK(Context context, String licenseUrl, String licenseKey, @NonNull SetupSDKCallback callback) {
+        mResPath = new File(context.getFilesDir(), "xmagic").getAbsolutePath();
+        if (isNeedCopy(context)) {
+            LogUtils.i(TAG, "need to copy resource");
+            new Thread(() -> {
+                if (copyRes(context)) {
+                    LogUtils.i(TAG, "Success to copy resource");
+                    writeVersionToSp(context);
+                    TELicenseCheck.getInstance().setTELicense(context, licenseUrl, licenseKey, callback::onResult);
+                } else {
+                    LogUtils.i(TAG, "Failed to copy resource");
+                    callback.onResult(-14, "Failed to copy resource");
+                    TELicenseCheck.getInstance().setTELicense(context, licenseUrl, licenseKey, null);
+                }
+            }).start();
+        } else {
+            LogUtils.i(TAG, "No need to copy resources.");
+            TELicenseCheck.getInstance().setTELicense(context, licenseUrl, licenseKey, callback::onResult);
+        }
+    }
+
+    public interface SetupSDKCallback {
+        void onResult(int errorCode, String msg);
+    }
+
+    private static final String XMAGIC_SP_NAME = "xmagic_version_sp";
+    private static final String XMAGIC_SP_KEY_VERSION = "xmagic_version";
+
+    private static boolean isNeedCopy(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(XMAGIC_SP_NAME, Context.MODE_PRIVATE);
+        String spVersion = sp.getString(XMAGIC_SP_KEY_VERSION, "");
+        return !XmagicApi.VERSION.equals(spVersion);
+    }
+
+    private static void writeVersionToSp(Context context) {
+        context.getSharedPreferences(XMAGIC_SP_NAME, Context.MODE_PRIVATE).edit().putString(XMAGIC_SP_KEY_VERSION, XmagicApi.VERSION).commit();
     }
 
 

@@ -2,6 +2,7 @@
     "displayName":"虚拟背景",
     "displayNameEn":"Virtual background",
     "downloadPath":"MotionRes/segmentMotionRes/",
+    "isShowGridLayout":true,
     "propertyList":[
         {
             "displayName":"无",

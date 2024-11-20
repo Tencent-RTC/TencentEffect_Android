@@ -25,6 +25,7 @@
     <string name="te_beauty_check_license_info_error_tip">本Demo App中需要下载的滤镜和动效贴纸仅限腾讯特效Demo使用，请将其替换为您自己的资源再体验。</string>
 
     <string name="beauty_auth_and_start_camera">鉴权并启动相机</string>
+    <string name="beauty_auth_and_start_img">鉴权和图片美颜</string>
     <string name="beauty_normal_mode">普通模式</string>
     <string name="beauty_enable_downgrade_performance">高性能模式</string>
     <string name="beauty_enhance_mode">增强模式</string>

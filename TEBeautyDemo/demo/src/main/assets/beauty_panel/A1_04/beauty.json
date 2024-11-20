@@ -13,14 +13,23 @@
             "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
             "propertyList":[
                 {
+                    "displayName":"靓白",
+                    "displayNameEn":"Bright White",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_whiten_liangbai.png",
+                    "sdkParam":{
+                        "effectName":"beauty.lutFoundationAlpha0",
+                        "effectValue":40
+                    },
+                    "uiState":2
+                },
+                {
                     "displayName":"自然",
                     "displayNameEn":"Natural",
                     "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
                     "sdkParam":{
                         "effectName":"beauty.lutFoundationAlpha",
-                        "effectValue":40
-                    },
-                    "uiState":2
+                        "effectValue":0
+                    }
                 },
                 {
                     "displayName":"粉白",
@@ -46,12 +55,12 @@
         {
             "displayName":"美黑",
             "displayNameEn":"Black",
-            "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
+            "icon":"beauty_panel/panel_icon/beauty/beauty_black.png",
             "propertyList":[
                 {
                     "displayName":"美黑",
                     "displayNameEn":"Black",
-                    "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_black_01.png",
                     "sdkParam":{
                         "effectName":"beauty.lutBlackAlpha1",
                         "effectValue":0
@@ -60,7 +69,7 @@
                 {
                     "displayName":"小麦色",
                     "displayNameEn":"Brown",
-                    "icon":"beauty_panel/panel_icon/beauty/beauty_whiten.png",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_black_wheat.png",
                     "sdkParam":{
                         "effectName":"beauty.lutBlackAlpha2",
                         "effectValue":0
@@ -243,6 +252,33 @@
                 "effectValue":20
             },
             "uiState":1
+        }, 
+        {
+            "displayName":"鼻子位置",
+            "displayNameEn":"Noseposition",
+            "icon":"beauty_panel/panel_icon/beauty/beauty_nose_position.png",
+            "sdkParam":{
+                "effectName":"basicV7.noseHeight",
+                "effectValue":0
+            }
+        },
+        {
+            "displayName":"嘴型",
+            "displayNameEn":"Lipshape",
+            "icon":"beauty_panel/panel_icon/beauty/beauty_mouth_size.png",
+            "sdkParam":{
+                "effectName":"basicV7.mouthSize",
+                "effectValue":0
+            }
+        },
+        {
+            "displayName":"脸型",
+            "displayNameEn":"Faceshape",
+            "icon":"beauty_panel/panel_icon/beauty/beauty_basic_face.png",
+            "sdkParam":{
+                "effectName":"liquefaction.basic3",
+                "effectValue":0
+            }
         }
     ],
     "uiState":2

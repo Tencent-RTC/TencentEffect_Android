@@ -20,11 +20,12 @@ public class TEDefaultDownloader implements TEDownloader {
 
     private static final String TAG = TEDefaultDownloader.class.getName();
     private boolean ENABLE_RESUME_FROM_BREAKPOINT = true;
+    private final OkHttpClient defaultClient = new OkHttpClient();
 
 
     private void downloadWithoutResumeBreakPoint(final String url, String filePath, final TEDownloadListener listener) {
         Request request = new Request.Builder().url(url).build();
-        new OkHttpClient().newCall(request).enqueue(new Callback() {
+        defaultClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 LogUtils.e(TAG, "enqueue onFailure: e=" + e.toString());
@@ -94,7 +95,7 @@ public class TEDefaultDownloader implements TEDownloader {
         });
     }
 
-    private static void downloadWithResumeBreakPoint(final String url, final String filePath, final TEDownloadListener listener) throws FileNotFoundException {
+    private void downloadWithResumeBreakPoint(final String url, final String filePath, final TEDownloadListener listener) throws FileNotFoundException {
         File file = new File(filePath);
         RandomAccessFile accessFile = new RandomAccessFile(file, "rw");
 
@@ -106,7 +107,7 @@ public class TEDefaultDownloader implements TEDownloader {
                 .url(url)
                 .header("range", range)
                 .build();
-        new OkHttpClient().newCall(request).enqueue(new Callback() {
+        defaultClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 LogUtils.e(TAG, "enqueue onFailure: e=" + e.toString());

@@ -68,7 +68,9 @@ light.update = function (deltaTime, entityManager, eventManager) {
 
 	var shadow_pos = shadowTransform.pivot;
 	shadow_pos.y = shadowY;
-	shadowTransform.pivot(shadow_pos);
+	// shadowTransform.pivot(shadow_pos);
+	shadowTransform.pivot.x = shadow_pos.x;
+	shadowTransform.pivot.y = shadow_pos.y;
 
 }
 

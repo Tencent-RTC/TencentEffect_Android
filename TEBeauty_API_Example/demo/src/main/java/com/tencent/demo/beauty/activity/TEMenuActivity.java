@@ -39,7 +39,10 @@ public class TEMenuActivity extends AppCompatActivity {
         setContentView(R.layout.te_beauty_activity_menu_layout);
         mLoadingView = findViewById(R.id.te_menu_loading_view);
         findViewById(R.id.btn_start_camera).setOnClickListener(view -> {
-            authAndStartCamera();
+            authAndStartCamera(TECameraBaseActivity.class);
+        });
+        findViewById(R.id.btn_start_img).setOnClickListener(view -> {
+            authAndStartCamera(TEImageBaseActivity.class);
         });
         ((RadioButton) findViewById(R.id.radio_normal_mode)).setOnCheckedChangeListener((compoundButton, checked) -> {
             if (checked) {
@@ -64,7 +67,7 @@ public class TEMenuActivity extends AppCompatActivity {
         copyRes();
     }
 
-    private void authAndStartCamera() {
+    private void authAndStartCamera(Class<?> cls) {
         if (authState == LicenseConstant.AUTH_STATE_SUCCEED) {
             Intent intent = new Intent(this, TECameraBaseActivity.class);
             startActivity(intent);
@@ -76,14 +79,19 @@ public class TEMenuActivity extends AppCompatActivity {
         }
         authState = LicenseConstant.AUTH_STATE_AUTHING;
         TELicenseCheck.getInstance().setTELicense(this.getApplicationContext(),LicenseConstant.mXMagicLicenceUrl,LicenseConstant.mXMagicKey, (errorCode, msg) -> {
-            if (errorCode == TELicenseCheck.ERROR_OK) {
-                authState = LicenseConstant.AUTH_STATE_SUCCEED;
-                Intent intent = new Intent(this, TECameraBaseActivity.class);
-                startActivity(intent);
-            } else {
-                authState = LicenseConstant.AUTH_STATE_FAILED;
-                Toast.makeText(this, "Auth failed，errorCode " + errorCode, Toast.LENGTH_LONG).show();
-            }
+           runOnUiThread(new Runnable() {
+               @Override
+               public void run() {
+                   if (errorCode == TELicenseCheck.ERROR_OK) {
+                       authState = LicenseConstant.AUTH_STATE_SUCCEED;
+                       Intent intent = new Intent(TEMenuActivity.this, cls);
+                       startActivity(intent);
+                   } else {
+                       authState = LicenseConstant.AUTH_STATE_FAILED;
+                       Toast.makeText(TEMenuActivity.this, "Auth failed，errorCode " + errorCode, Toast.LENGTH_LONG).show();
+                   }
+               }
+           });
         });
     }
 

@@ -13,7 +13,6 @@ import java.util.List;
 
 public class TEMotionPanelDataProvider extends TEAbstractPanelDataProvider {
 
-    private List<TEPanelDataProvider> dependentProviderList = null;
 
     @Override
     public List<TEUIProperty> onItemClick(TEUIProperty uiProperty) {
@@ -23,11 +22,6 @@ public class TEMotionPanelDataProvider extends TEAbstractPanelDataProvider {
         if ((uiProperty.propertyList == null && uiProperty.sdkParam != null) || uiProperty.isNoneItem()) {
             ProviderUtils.revertUIState(allData, uiProperty);
             ProviderUtils.changeParamUIState(uiProperty,TEUIProperty.UIState.CHECKED_AND_IN_USE);
-            if (this.dependentProviderList != null) {
-                for (TEPanelDataProvider dependentProvider : this.dependentProviderList) {
-                    dependentProvider.unCheckAll();
-                }
-            }
         }
         return uiProperty.propertyList;
     }
@@ -50,16 +44,8 @@ public class TEMotionPanelDataProvider extends TEAbstractPanelDataProvider {
     }
 
 
-
     @Override
-    public void putMutuallyExclusiveProvider(List<TEPanelDataProvider> providerList) {
-        super.putMutuallyExclusiveProvider(providerList);
-        this.dependentProviderList = providerList;
-    }
-
-    @Override
-    public void unCheckAll() {
-        super.unCheckAll();
-        ProviderUtils.revertUIState(allData, null);
+    public boolean isShowEntryBtn() {
+        return true;
     }
 }

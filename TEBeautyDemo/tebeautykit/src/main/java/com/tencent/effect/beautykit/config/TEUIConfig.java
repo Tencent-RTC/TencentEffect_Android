@@ -6,9 +6,11 @@ import android.text.TextUtils;
 import androidx.annotation.ColorInt;
 
 import com.tencent.effect.beautykit.model.TEPanelDataModel;
+import com.tencent.effect.beautykit.model.TEPanelViewResModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,6 +29,10 @@ public class TEUIConfig {
     @ColorInt
     public int seekBarProgressColor = 0xFF006EFF; //Progress bar color
 
+    public int panelViewHeight = 335;
+
+    public List<TEUIProperty.UICategory> hiddenCategories = Arrays.asList(TEUIProperty.UICategory.BEAUTY, TEUIProperty.UICategory.BODY_BEAUTY, TEUIProperty.UICategory.LUT);
+
 
     private Locale mLocale = Locale.getDefault();
 
@@ -39,7 +45,7 @@ public class TEUIConfig {
     }
 
     public static TEUIConfig getInstance() {
-        return ClassHolder.TUI_CONFIG;
+        return TEUIConfig.ClassHolder.TUI_CONFIG;
     }
 
 
@@ -59,6 +65,18 @@ public class TEUIConfig {
      */
     public void setTEPanelViewRes(String beauty, String beautyBody, String lut, String motion, String makeup, String segmentation) {
         this.defaultPanelDataList.clear();
+        this.addPanelViewRes(beauty, beautyBody, lut, motion, makeup, segmentation,null);
+    }
+
+    /**
+     * 3.9.0新增接口，增加了设置轻美妆的能力
+     */
+    public void setTEPanelViewRes(TEPanelViewResModel resModel) {
+        this.defaultPanelDataList.clear();
+        this.addPanelViewRes(resModel.beauty, resModel.beautyBody, resModel.lut, resModel.motion, resModel.makeup, resModel.segmentation, resModel.lightMakeup);
+    }
+
+    private void addPanelViewRes(String beauty, String beautyBody, String lut, String motion, String makeup, String segmentation, String lightMakeup) {
         if (!TextUtils.isEmpty(beauty)) {
             this.defaultPanelDataList.add(new TEPanelDataModel(beauty, TEUIProperty.UICategory.BEAUTY));
         }
@@ -67,6 +85,9 @@ public class TEUIConfig {
         }
         if (!TextUtils.isEmpty(lut)) {
             this.defaultPanelDataList.add(new TEPanelDataModel(lut, TEUIProperty.UICategory.LUT));
+        }
+        if (!TextUtils.isEmpty(lightMakeup)) {
+            this.defaultPanelDataList.add(new TEPanelDataModel(lightMakeup, TEUIProperty.UICategory.LIGHT_MAKEUP));
         }
         if (!TextUtils.isEmpty(motion)) {
             this.defaultPanelDataList.add(new TEPanelDataModel(motion, TEUIProperty.UICategory.MOTION));

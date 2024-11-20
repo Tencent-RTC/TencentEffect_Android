@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingTop="5dp"
-    android:paddingBottom="20dp">
+    android:paddingBottom="48dp">
 
 
     <RelativeLayout
@@ -23,8 +23,9 @@
             android:id="@+id/te_panel_menu_layout_motion_item_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/te_beauty_panel_menu_item_bg"
+            android:background="@drawable/te_beauty_panel_menu_item_bg_enable"
             android:padding="10dp"
+            android:alpha="0.5"
             android:src="@drawable/te_beauty_panel_menu_sticker" />
 
 
@@ -58,8 +59,9 @@
             android:id="@+id/te_panel_menu_layout_beauty_item_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/te_beauty_panel_menu_item_bg"
+            android:background="@drawable/te_beauty_panel_menu_item_bg_enable"
             android:padding="10dp"
+            android:alpha="0.5"
             android:src="@drawable/te_beauty_panel_menu_beauty" />
 
 
@@ -103,8 +105,9 @@
             android:id="@+id/te_panel_menu_layout_makeup_item_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/te_beauty_panel_menu_item_bg"
+            android:background="@drawable/te_beauty_panel_menu_item_bg_enable"
             android:padding="10dp"
+            android:alpha="0.5"
             android:src="@drawable/te_beauty_panel_menu_makeup" />
 
 
@@ -136,8 +139,9 @@
             android:id="@+id/te_panel_menu_layout_lut_item_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/te_beauty_panel_menu_item_bg"
+            android:background="@drawable/te_beauty_panel_menu_item_bg_enable"
             android:padding="10dp"
+            android:alpha="0.5"
             android:src="@drawable/te_beauty_panel_menu_lut" />
 
 

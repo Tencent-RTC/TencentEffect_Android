@@ -9,6 +9,7 @@ import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.utils.FileUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ProviderUtils {
@@ -17,9 +18,10 @@ public class ProviderUtils {
 
    // This is used to store beauty properties that cannot be applied simultaneously, such as having three different whitening effects in the "whitening" category. These three effects cannot be applied simultaneously, so the UIState on the UI needs special handling.
     private static final String[] BEAUTY_WHITEN_EFFECT_NAMES = {
-            XmagicConstant.EffectName.BEAUTY_WHITEN,
-            XmagicConstant.EffectName.BEAUTY_WHITEN_2,
-            XmagicConstant.EffectName.BEAUTY_WHITEN_3,
+           XmagicConstant.EffectName.BEAUTY_WHITEN_0,
+           XmagicConstant.EffectName.BEAUTY_WHITEN,
+           XmagicConstant.EffectName.BEAUTY_WHITEN_2,
+           XmagicConstant.EffectName.BEAUTY_WHITEN_3,
 
     };
     private static final String[] BEAUTY_BLACK_EFFECT_NAMES = {
@@ -97,6 +99,27 @@ public class ProviderUtils {
             } else {
                 changeParamUIState(property, TEUIProperty.UIState.INIT);
             }
+        }
+    }
+
+
+    /**
+     * 将item的状态强制设置为 init
+     * @param uiPropertyList
+     */
+    public static void revertUIStateToInit(List<TEUIProperty> uiPropertyList) {
+        if (uiPropertyList == null) {
+            return;
+        }
+        for (TEUIProperty property : uiPropertyList) {
+            if (property == null) {
+                continue;
+            }
+            ProviderUtils.revertUIStateToInit(property.propertyList);
+            if (property.getUiState() == TEUIProperty.UIState.INIT) {
+                continue;
+            }
+            changeParamUIState(property, TEUIProperty.UIState.INIT);
         }
     }
 
@@ -208,6 +231,7 @@ public class ProviderUtils {
             case LUT:
             case MAKEUP:
             case MOTION:
+            case LIGHT_MAKEUP:
             case SEGMENTATION:
                 if (!TextUtils.isEmpty(teuiProperty.resourceUri)) {
                     String downloadPath = ProviderUtils.getDownloadPath(teuiProperty);
@@ -281,4 +305,25 @@ public class ProviderUtils {
         }
     }
 
+    public static boolean isPointMakeup(TEUIProperty.TESDKParam sdkParam) {
+        if (sdkParam == null || TextUtils.isEmpty(sdkParam.effectName)) {
+            return false;
+        }
+        return pointMakeupEffectName.contains(sdkParam.effectName);
+    }
+
+    public static List<String> pointMakeupEffectName = Arrays.asList(
+            XmagicConstant.EffectName.BEAUTY_MOUTH_LIPSTICK,
+            XmagicConstant.EffectName.BEAUTY_FACE_RED_CHEEK,
+            XmagicConstant.EffectName.BEAUTY_FACE_SOFTLIGHT,
+            XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYE_SHADOW,
+            XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYE_LINER,
+            XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYELASH,
+            XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYE_SEQUINS,
+            XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYEBROW,
+            XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYEBALL,
+            XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYELIDS,
+            XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYEWOCAN,
+            XmagicConstant.EffectName.EFFECT_LUT
+    );
 }

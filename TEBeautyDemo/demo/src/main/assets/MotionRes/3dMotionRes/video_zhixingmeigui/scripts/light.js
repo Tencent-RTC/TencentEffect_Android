@@ -1,8 +1,4 @@
 
-/*** light-js-config
-  //@requireAbility
-***/
-
 (function (light) {
   if(light.studioLibLoaded) {
     return;
@@ -16,20 +12,17 @@ var SDKRuntime = /** @class */ (function () {
     SDKRuntime.prototype.initialize = function (entityManager, eventManager, scriptSystem) {
         var _this = this;
         var entities = entityManager.entitiesWithComponents(light.ScriptBehaviors.componentType);
-        entities.forEach(function (entity) {
+        entities.forEach(function (entity, i) {
             var idComponent = entity.getComponent(light.EntityIdentifier);
             var lightBehaviorComponent = entity.getComponent(light.ScriptBehaviors);
             console.log("JS::lightBehaviorComponent: " + JSON.stringify(lightBehaviorComponent));
             if (!lightBehaviorComponent) {
                 return;
             }
-            lightBehaviorComponent.behaviorProperties.forEach(function (behaviorPropertiesJson) {
+            lightBehaviorComponent.behaviorProperties.forEach(function (behaviorPropertiesJson, i) {
                 console.log("JS::behaviorPropertiesJson: " + behaviorPropertiesJson);
                 var behaviorProperties = JSON.parse(behaviorPropertiesJson);
                 var BehaviorClass = SDKRuntime.BehaviorClasses[behaviorProperties.type];
-                if (!BehaviorClass) {
-                    return;
-                }
                 var behavior = new BehaviorClass(idComponent.id, entityManager, eventManager, scriptSystem);
                 Object.assign(behavior, behaviorProperties);
                 _this.addBehavior(behavior);
@@ -201,44 +194,24 @@ light.NodeContext = /** @class */ (function () {
     NodeContext.prototype.create = function (type) {
         var Clazz = NodeClasses[type];
         if (Clazz) {
-            var it_1 = new Clazz();
-            it_1.entityManager = this.entityManager;
-            it_1.eventManager = this.eventManager;
-            it_1.scriptSystem = this.scriptSystem;
-            return it_1;
+            var it = new Clazz();
+            it.entityManager = this.entityManager;
+            it.eventManager = this.eventManager;
+            it.scriptSystem = this.scriptSystem;
+            return it;
         }
         console.log("Cannot find node: " + type);
     };
     NodeContext.prototype.connectData = function (source, property, target, targetProperty) {
+        // 重写应该基于 instance
         var descriptor = {
             configurable: true,
             enumerable: true,
             get: function () {
-                return source["_studio_" + property];
-            },
-            set: function (val) {
-                source["_studio_" + property] = val;
-                // set值的时候 会触发函数
-                var tasks = source['outputArray'];
-                tasks.forEach(function (task) { return task(); });
+                return source[property];
             },
         };
-        source["_studio_" + property] = source[property];
-        Object.defineProperty(source, property, descriptor);
-        if (!source['outputArray']) {
-            source['outputArray'] = [];
-        }
-        var tasks = source['outputArray'];
-        var task = function () {
-            if (light.sendLightCommand) {
-                light.sendLightCommand(source, property, target, targetProperty, JSON.stringify(source[property]));
-            }
-            target[targetProperty] = source[property];
-            if (target['Process'] != undefined) {
-                target['Process']();
-            }
-        };
-        tasks.push(task);
+        Object.defineProperty(target, targetProperty, descriptor);
     };
     NodeContext.prototype.connectEvent = function (source, property, target, targetProperty) {
         var propertyTasksName = property + "Tasks__";
@@ -256,13 +229,8 @@ light.NodeContext = /** @class */ (function () {
             source[propertyTasksName] = [];
         }
         var tasks = source[propertyTasksName];
-        var task = function () {
-            if (light.sendLightCommand) {
-                light.sendLightCommand(source, property, target, targetProperty);
-            }
-            target[targetProperty]();
-        };
-        tasks.push(task);
+        var task = target[targetProperty];
+        tasks.push(task.bind(target));
     };
     return NodeContext;
 }());
@@ -323,199 +291,867 @@ function __extends(d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 
-var FaceAction$1;
-(function (FaceAction) {
-    FaceAction[FaceAction["FaceDetected"] = 0] = "FaceDetected";
-    FaceAction[FaceAction["OpenMouth"] = 1] = "OpenMouth";
-    FaceAction[FaceAction["BlinkEyebrow"] = 2] = "BlinkEyebrow";
-    FaceAction[FaceAction["BlinkEye"] = 3] = "BlinkEye";
-    FaceAction[FaceAction["ShakeHead"] = 4] = "ShakeHead";
-    FaceAction[FaceAction["Kiss"] = 5] = "Kiss";
-    FaceAction[FaceAction["BlinkLeftEye"] = 6] = "BlinkLeftEye";
-    FaceAction[FaceAction["BlinkRightEye"] = 7] = "BlinkRightEye";
-    FaceAction[FaceAction["Nod"] = 8] = "Nod";
-    FaceAction[FaceAction["Smile"] = 9] = "Smile";
-    FaceAction[FaceAction["MouthOccluded"] = 10] = "MouthOccluded";
-    FaceAction[FaceAction["LeftEyeOccluded"] = 11] = "LeftEyeOccluded";
-    FaceAction[FaceAction["RightEyeOccluded"] = 12] = "RightEyeOccluded";
-    FaceAction[FaceAction["DoubleEyeOccluded"] = 13] = "DoubleEyeOccluded";
-})(FaceAction$1 || (FaceAction$1 = {}));
-var GestureAction$1;
-(function (GestureAction) {
-    GestureAction[GestureAction["HEART"] = 0] = "HEART";
-    GestureAction[GestureAction["PAPER"] = 1] = "PAPER";
-    GestureAction[GestureAction["SCISSOR"] = 2] = "SCISSOR";
-    GestureAction[GestureAction["FIST"] = 3] = "FIST";
-    GestureAction[GestureAction["ONE"] = 4] = "ONE";
-    GestureAction[GestureAction["LOVE"] = 5] = "LOVE";
-    GestureAction[GestureAction["LIKE"] = 6] = "LIKE";
-    GestureAction[GestureAction["OK"] = 7] = "OK";
-    GestureAction[GestureAction["ROCK"] = 8] = "ROCK";
-    GestureAction[GestureAction["SIX"] = 9] = "SIX";
-    GestureAction[GestureAction["EIGHT"] = 10] = "EIGHT";
-    GestureAction[GestureAction["LIFT"] = 11] = "LIFT";
-    GestureAction[GestureAction["CONGRATULATE"] = 12] = "CONGRATULATE";
-})(GestureAction$1 || (GestureAction$1 = {}));
-// 记录一次流程生命周期已开启的AI能力
-var enabledAI = [];
-function openAIFeature(features, entityManager, eventManager) {
-    var aiRequire = new light.VectorString();
-    features === null || features === void 0 ? void 0 : features.forEach(function (feature) {
-        if (enabledAI.indexOf(feature) === -1) {
-            aiRequire.add(feature);
-            enabledAI.push(feature);
-        }
-    });
-    if (aiRequire.size() > 0) {
-        var event = new light.ScriptOpenAIEvent(entityManager, aiRequire);
-        eventManager.emit(event);
-    }
-}
-function getAIDataFromAIDataCenter(features, entityManager) {
-    var results = [];
-    features === null || features === void 0 ? void 0 : features.forEach(function (feature) {
-        var featureAIResult = [];
-        var AIData = light.AIDataUtils.GetAIDataFromAIDataCenter(entityManager, feature);
-        for (var i = 0; i < AIData.size(); i++) {
-            var aiDetectData = AIData.get(i);
-            var detectParams = {};
-            var AIDetectNames = aiDetectData.detect_params_.getKeys();
-            for (var j = 0; j < AIDetectNames.size(); j++) {
-                var AIDetectName = AIDetectNames.get(j);
-                var AIDetectResultList = aiDetectData.detect_params_.get(AIDetectName);
-                var AIDetectResults = [];
-                for (var k = 0; k < AIDetectResultList.size(); k++) {
-                    AIDetectResults.push(AIDetectResultList.get(k));
-                }
-                detectParams[AIDetectName] = AIDetectResults;
-            }
-            var jsAIDetectData = {
-                aiType: aiDetectData.ai_type_,
-                traceID: aiDetectData.trace_id_,
-                detectParams: detectParams,
-            };
-            featureAIResult.push(jsAIDetectData);
-        }
-        results.push(featureAIResult);
-    });
-    return results;
-}
-function getAIClassData(features, entityManager) {
-    var aiClassData = {};
-    features === null || features === void 0 ? void 0 : features.forEach(function (feature) {
-        var datas = light.AIDataUtils.GetJsEventListFromAIDataCenter(entityManager, feature);
-        var keys = datas.getKeys();
-        for (var i = 0; i < keys.size(); i++) {
-            var key = keys.get(i);
-            var value = JSON.parse(datas.get(key));
-            aiClassData[key] = value;
-        }
-    });
-    return aiClassData;
-}
-function getAIPointData(feature, entityManager) {
-    var datas = light.AIDataUtils.GetAIPointDataFromAIDataCenter(entityManager, feature);
-    var res = [];
-    for (var i = 0; i < datas.size(); i++) {
-        var data = JSON.parse(JSON.stringify(datas.get(i)));
-        var points = [];
-        var pointsData = datas.get(i)['point_array_'];
-        if (pointsData === null || pointsData === void 0 ? void 0 : pointsData.size()) {
-            for (var j = 0; j < pointsData.size(); j++) {
-                points.push(pointsData.get(j));
-            }
-            data.point_array_ = points;
-        }
-        res.push(data);
-    }
-    return res;
-}
-function actionNameToEvent(name) {
-    var str = name.toLowerCase();
-    str = str.replace(/^\S/, function (s) { return s.toUpperCase(); });
-    return "on" + str;
+var constant = function(x){
+  return function(){
+    return x;
+  }
+};
+
+function linear(a, d) {
+  return function(t) {
+    return a + t * d;
+  };
 }
 
-var Node = /** @class */ (function () {
-    function Node() {
+function exponential(a, b, y) {
+  return a = Math.pow(a, y), b = Math.pow(b, y) - a, y = 1 / y, function(t) {
+    return Math.pow(a + t * b, y);
+  };
+}
+
+function gamma(y) {
+  return (y = +y) === 1 ? nogamma : function(a, b) {
+    return b - a ? exponential(a, b, y) : constant(isNaN(a) ? b : a);
+  };
+}
+
+function nogamma(a, b) {
+  var d = b - a;
+  return d ? linear(a, d) : constant(isNaN(a) ? b : a);
+}
+
+function define(constructor, factory, prototype) {
+  constructor.prototype = factory.prototype = prototype;
+  prototype.constructor = constructor;
+}
+
+function extend(parent, definition) {
+  var prototype = Object.create(parent.prototype);
+  for (var key in definition) prototype[key] = definition[key];
+  return prototype;
+}
+
+function Color() {}
+
+var darker = 0.7;
+var brighter = 1 / darker;
+
+var reI = "\\s*([+-]?\\d+)\\s*",
+    reN = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*",
+    reP = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
+    reHex = /^#([0-9a-f]{3,8})$/,
+    reRgbInteger = new RegExp("^rgb\\(" + [reI, reI, reI] + "\\)$"),
+    reRgbPercent = new RegExp("^rgb\\(" + [reP, reP, reP] + "\\)$"),
+    reRgbaInteger = new RegExp("^rgba\\(" + [reI, reI, reI, reN] + "\\)$"),
+    reRgbaPercent = new RegExp("^rgba\\(" + [reP, reP, reP, reN] + "\\)$"),
+    reHslPercent = new RegExp("^hsl\\(" + [reN, reP, reP] + "\\)$"),
+    reHslaPercent = new RegExp("^hsla\\(" + [reN, reP, reP, reN] + "\\)$");
+
+var named = {
+  aliceblue: 0xf0f8ff,
+  antiquewhite: 0xfaebd7,
+  aqua: 0x00ffff,
+  aquamarine: 0x7fffd4,
+  azure: 0xf0ffff,
+  beige: 0xf5f5dc,
+  bisque: 0xffe4c4,
+  black: 0x000000,
+  blanchedalmond: 0xffebcd,
+  blue: 0x0000ff,
+  blueviolet: 0x8a2be2,
+  brown: 0xa52a2a,
+  burlywood: 0xdeb887,
+  cadetblue: 0x5f9ea0,
+  chartreuse: 0x7fff00,
+  chocolate: 0xd2691e,
+  coral: 0xff7f50,
+  cornflowerblue: 0x6495ed,
+  cornsilk: 0xfff8dc,
+  crimson: 0xdc143c,
+  cyan: 0x00ffff,
+  darkblue: 0x00008b,
+  darkcyan: 0x008b8b,
+  darkgoldenrod: 0xb8860b,
+  darkgray: 0xa9a9a9,
+  darkgreen: 0x006400,
+  darkgrey: 0xa9a9a9,
+  darkkhaki: 0xbdb76b,
+  darkmagenta: 0x8b008b,
+  darkolivegreen: 0x556b2f,
+  darkorange: 0xff8c00,
+  darkorchid: 0x9932cc,
+  darkred: 0x8b0000,
+  darksalmon: 0xe9967a,
+  darkseagreen: 0x8fbc8f,
+  darkslateblue: 0x483d8b,
+  darkslategray: 0x2f4f4f,
+  darkslategrey: 0x2f4f4f,
+  darkturquoise: 0x00ced1,
+  darkviolet: 0x9400d3,
+  deeppink: 0xff1493,
+  deepskyblue: 0x00bfff,
+  dimgray: 0x696969,
+  dimgrey: 0x696969,
+  dodgerblue: 0x1e90ff,
+  firebrick: 0xb22222,
+  floralwhite: 0xfffaf0,
+  forestgreen: 0x228b22,
+  fuchsia: 0xff00ff,
+  gainsboro: 0xdcdcdc,
+  ghostwhite: 0xf8f8ff,
+  gold: 0xffd700,
+  goldenrod: 0xdaa520,
+  gray: 0x808080,
+  green: 0x008000,
+  greenyellow: 0xadff2f,
+  grey: 0x808080,
+  honeydew: 0xf0fff0,
+  hotpink: 0xff69b4,
+  indianred: 0xcd5c5c,
+  indigo: 0x4b0082,
+  ivory: 0xfffff0,
+  khaki: 0xf0e68c,
+  lavender: 0xe6e6fa,
+  lavenderblush: 0xfff0f5,
+  lawngreen: 0x7cfc00,
+  lemonchiffon: 0xfffacd,
+  lightblue: 0xadd8e6,
+  lightcoral: 0xf08080,
+  lightcyan: 0xe0ffff,
+  lightgoldenrodyellow: 0xfafad2,
+  lightgray: 0xd3d3d3,
+  lightgreen: 0x90ee90,
+  lightgrey: 0xd3d3d3,
+  lightpink: 0xffb6c1,
+  lightsalmon: 0xffa07a,
+  lightseagreen: 0x20b2aa,
+  lightskyblue: 0x87cefa,
+  lightslategray: 0x778899,
+  lightslategrey: 0x778899,
+  lightsteelblue: 0xb0c4de,
+  lightyellow: 0xffffe0,
+  lime: 0x00ff00,
+  limegreen: 0x32cd32,
+  linen: 0xfaf0e6,
+  magenta: 0xff00ff,
+  maroon: 0x800000,
+  mediumaquamarine: 0x66cdaa,
+  mediumblue: 0x0000cd,
+  mediumorchid: 0xba55d3,
+  mediumpurple: 0x9370db,
+  mediumseagreen: 0x3cb371,
+  mediumslateblue: 0x7b68ee,
+  mediumspringgreen: 0x00fa9a,
+  mediumturquoise: 0x48d1cc,
+  mediumvioletred: 0xc71585,
+  midnightblue: 0x191970,
+  mintcream: 0xf5fffa,
+  mistyrose: 0xffe4e1,
+  moccasin: 0xffe4b5,
+  navajowhite: 0xffdead,
+  navy: 0x000080,
+  oldlace: 0xfdf5e6,
+  olive: 0x808000,
+  olivedrab: 0x6b8e23,
+  orange: 0xffa500,
+  orangered: 0xff4500,
+  orchid: 0xda70d6,
+  palegoldenrod: 0xeee8aa,
+  palegreen: 0x98fb98,
+  paleturquoise: 0xafeeee,
+  palevioletred: 0xdb7093,
+  papayawhip: 0xffefd5,
+  peachpuff: 0xffdab9,
+  peru: 0xcd853f,
+  pink: 0xffc0cb,
+  plum: 0xdda0dd,
+  powderblue: 0xb0e0e6,
+  purple: 0x800080,
+  rebeccapurple: 0x663399,
+  red: 0xff0000,
+  rosybrown: 0xbc8f8f,
+  royalblue: 0x4169e1,
+  saddlebrown: 0x8b4513,
+  salmon: 0xfa8072,
+  sandybrown: 0xf4a460,
+  seagreen: 0x2e8b57,
+  seashell: 0xfff5ee,
+  sienna: 0xa0522d,
+  silver: 0xc0c0c0,
+  skyblue: 0x87ceeb,
+  slateblue: 0x6a5acd,
+  slategray: 0x708090,
+  slategrey: 0x708090,
+  snow: 0xfffafa,
+  springgreen: 0x00ff7f,
+  steelblue: 0x4682b4,
+  tan: 0xd2b48c,
+  teal: 0x008080,
+  thistle: 0xd8bfd8,
+  tomato: 0xff6347,
+  turquoise: 0x40e0d0,
+  violet: 0xee82ee,
+  wheat: 0xf5deb3,
+  white: 0xffffff,
+  whitesmoke: 0xf5f5f5,
+  yellow: 0xffff00,
+  yellowgreen: 0x9acd32
+};
+
+define(Color, color, {
+  copy: function(channels) {
+    return Object.assign(new this.constructor, this, channels);
+  },
+  displayable: function() {
+    return this.rgb().displayable();
+  },
+  hex: color_formatHex, // Deprecated! Use color.formatHex.
+  formatHex: color_formatHex,
+  formatHsl: color_formatHsl,
+  formatRgb: color_formatRgb,
+  toString: color_formatRgb
+});
+
+function color_formatHex() {
+  return this.rgb().formatHex();
+}
+
+function color_formatHsl() {
+  return hslConvert(this).formatHsl();
+}
+
+function color_formatRgb() {
+  return this.rgb().formatRgb();
+}
+
+function color(format) {
+  var m, l;
+  format = (format + "").trim().toLowerCase();
+  return (m = reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? rgbn(m) // #ff0000
+      : l === 3 ? new Rgb((m >> 8 & 0xf) | (m >> 4 & 0xf0), (m >> 4 & 0xf) | (m & 0xf0), ((m & 0xf) << 4) | (m & 0xf), 1) // #f00
+      : l === 8 ? rgba(m >> 24 & 0xff, m >> 16 & 0xff, m >> 8 & 0xff, (m & 0xff) / 0xff) // #ff000000
+      : l === 4 ? rgba((m >> 12 & 0xf) | (m >> 8 & 0xf0), (m >> 8 & 0xf) | (m >> 4 & 0xf0), (m >> 4 & 0xf) | (m & 0xf0), (((m & 0xf) << 4) | (m & 0xf)) / 0xff) // #f000
+      : null) // invalid hex
+      : (m = reRgbInteger.exec(format)) ? new Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
+      : (m = reRgbPercent.exec(format)) ? new Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
+      : (m = reRgbaInteger.exec(format)) ? rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
+      : (m = reRgbaPercent.exec(format)) ? rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) // rgb(100%, 0%, 0%, 1)
+      : (m = reHslPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
+      : (m = reHslaPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
+      : named.hasOwnProperty(format) ? rgbn(named[format]) // eslint-disable-line no-prototype-builtins
+      : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0)
+      : null;
+}
+
+function rgbn(n) {
+  return new Rgb(n >> 16 & 0xff, n >> 8 & 0xff, n & 0xff, 1);
+}
+
+function rgba(r, g, b, a) {
+  if (a <= 0) r = g = b = NaN;
+  return new Rgb(r, g, b, a);
+}
+
+function rgbConvert(o) {
+  if (!(o instanceof Color)) o = color(o);
+  if (!o) return new Rgb;
+  o = o.rgb();
+  return new Rgb(o.r, o.g, o.b, o.opacity);
+}
+
+function rgb(r, g, b, opacity) {
+  return arguments.length === 1 ? rgbConvert(r) : new Rgb(r, g, b, opacity == null ? 1 : opacity);
+}
+
+function Rgb(r, g, b, opacity) {
+  this.r = +r;
+  this.g = +g;
+  this.b = +b;
+  this.opacity = +opacity;
+}
+
+define(Rgb, rgb, extend(Color, {
+  brighter: function(k) {
+    k = k == null ? brighter : Math.pow(brighter, k);
+    return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
+  },
+  darker: function(k) {
+    k = k == null ? darker : Math.pow(darker, k);
+    return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
+  },
+  rgb: function() {
+    return this;
+  },
+  displayable: function() {
+    return (-0.5 <= this.r && this.r < 255.5)
+        && (-0.5 <= this.g && this.g < 255.5)
+        && (-0.5 <= this.b && this.b < 255.5)
+        && (0 <= this.opacity && this.opacity <= 1);
+  },
+  hex: rgb_formatHex, // Deprecated! Use color.formatHex.
+  formatHex: rgb_formatHex,
+  formatRgb: rgb_formatRgb,
+  toString: rgb_formatRgb
+}));
+
+function rgb_formatHex() {
+  return "#" + hex(this.r) + hex(this.g) + hex(this.b);
+}
+
+function rgb_formatRgb() {
+  var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
+  return (a === 1 ? "rgb(" : "rgba(")
+      + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", "
+      + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", "
+      + Math.max(0, Math.min(255, Math.round(this.b) || 0))
+      + (a === 1 ? ")" : ", " + a + ")");
+}
+
+function hex(value) {
+  value = Math.max(0, Math.min(255, Math.round(value) || 0));
+  return (value < 16 ? "0" : "") + value.toString(16);
+}
+
+function hsla(h, s, l, a) {
+  if (a <= 0) h = s = l = NaN;
+  else if (l <= 0 || l >= 1) h = s = NaN;
+  else if (s <= 0) h = NaN;
+  return new Hsl(h, s, l, a);
+}
+
+function hslConvert(o) {
+  if (o instanceof Hsl) return new Hsl(o.h, o.s, o.l, o.opacity);
+  if (!(o instanceof Color)) o = color(o);
+  if (!o) return new Hsl;
+  if (o instanceof Hsl) return o;
+  o = o.rgb();
+  var r = o.r / 255,
+      g = o.g / 255,
+      b = o.b / 255,
+      min = Math.min(r, g, b),
+      max = Math.max(r, g, b),
+      h = NaN,
+      s = max - min,
+      l = (max + min) / 2;
+  if (s) {
+    if (r === max) h = (g - b) / s + (g < b) * 6;
+    else if (g === max) h = (b - r) / s + 2;
+    else h = (r - g) / s + 4;
+    s /= l < 0.5 ? max + min : 2 - max - min;
+    h *= 60;
+  } else {
+    s = l > 0 && l < 1 ? 0 : h;
+  }
+  return new Hsl(h, s, l, o.opacity);
+}
+
+function hsl(h, s, l, opacity) {
+  return arguments.length === 1 ? hslConvert(h) : new Hsl(h, s, l, opacity == null ? 1 : opacity);
+}
+
+function Hsl(h, s, l, opacity) {
+  this.h = +h;
+  this.s = +s;
+  this.l = +l;
+  this.opacity = +opacity;
+}
+
+define(Hsl, hsl, extend(Color, {
+  brighter: function(k) {
+    k = k == null ? brighter : Math.pow(brighter, k);
+    return new Hsl(this.h, this.s, this.l * k, this.opacity);
+  },
+  darker: function(k) {
+    k = k == null ? darker : Math.pow(darker, k);
+    return new Hsl(this.h, this.s, this.l * k, this.opacity);
+  },
+  rgb: function() {
+    var h = this.h % 360 + (this.h < 0) * 360,
+        s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
+        l = this.l,
+        m2 = l + (l < 0.5 ? l : 1 - l) * s,
+        m1 = 2 * l - m2;
+    return new Rgb(
+      hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2),
+      hsl2rgb(h, m1, m2),
+      hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2),
+      this.opacity
+    );
+  },
+  displayable: function() {
+    return (0 <= this.s && this.s <= 1 || isNaN(this.s))
+        && (0 <= this.l && this.l <= 1)
+        && (0 <= this.opacity && this.opacity <= 1);
+  },
+  formatHsl: function() {
+    var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
+    return (a === 1 ? "hsl(" : "hsla(")
+        + (this.h || 0) + ", "
+        + (this.s || 0) * 100 + "%, "
+        + (this.l || 0) * 100 + "%"
+        + (a === 1 ? ")" : ", " + a + ")");
+  }
+}));
+
+/* From FvD 13.37, CSS Color Module Level 3 */
+function hsl2rgb(h, m1, m2) {
+  return (h < 60 ? m1 + (m2 - m1) * h / 60
+      : h < 180 ? m2
+      : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60
+      : m1) * 255;
+}
+
+var interpolateRgb = (function rgbGamma(y) {
+  var color = gamma(y);
+
+  function rgb$1(start, end) {
+    var r = color((start = rgb(start)).r, (end = rgb(end)).r),
+        g = color(start.g, end.g),
+        b = color(start.b, end.b),
+        opacity = nogamma(start.opacity, end.opacity);
+    return function(t) {
+      start.r = r(t);
+      start.g = g(t);
+      start.b = b(t);
+      start.opacity = opacity(t);
+      return start + "";
+    };
+  }
+
+  rgb$1.gamma = rgbGamma;
+
+  return rgb$1;
+})(1);
+
+/**
+ * @param keyframesValue "255,255,0,50" 表示rgba
+ * @return rgba(255, 255, 0, 0.5)
+ */
+/**
+ * @param hex "#fbafff" 表示16进制
+ * @return rgba(251,175,255,1)
+ */
+function transformHexToRgba(hex) {
+    hex = hex.replace('#', '0x');
+    var colorNum = Number(hex);
+    var r = (colorNum >>> 24);
+    var g = (colorNum >>> 16) & 0x00ff;
+    var b = (colorNum >>> 8) & 0x0000ff;
+    var a = colorNum & 0x000000ff;
+    return "rgba(" + r + "," + g + "," + b + "," + a / 255.0 + ")";
+}
+/**
+ * @param hex "#fbafff" 表示16进制
+ * @return { r: 251, g: 175, b: 255, a: 100 }
+ */
+function transformHexToRgbaObj(hex) {
+    hex = hex.replace('#', '0x');
+    var colorNum = Number(hex);
+    var r = (colorNum >>> 24);
+    var g = (colorNum >>> 16) & 0x00ff;
+    var b = (colorNum >>> 8) & 0x0000ff;
+    var a = (colorNum & 0x000000ff) / 255.0 * 100;
+    return { r: r, g: g, b: b, a: a };
+}
+/** rgba(0, 233, 250, 0.9448125164992826)
+ * @param rgba rgba(251, 175, 255, 0.5)
+ * @return { r: 251, g: 175, b: 255, a: 100 }
+ */
+function transformRgbaToRgbaObj(rgba) {
+    var match = rgba.match(/rgba?\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d\.]+))?\s*\)/);
+    if (!match)
+        return { r: 0, g: 0, b: 0, a: 0 };
+    var _a = [Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4])], r = _a[0], g = _a[1], b = _a[2], a = _a[3];
+    return { r: r, g: g, b: b, a: isNaN(a) ? 100 : a * 100 };
+}
+
+var InterpolateColor = /** @class */ (function () {
+    function InterpolateColor(beginValue, endValue) {
+        this.startColor = transformHexToRgba(beginValue);
+        this.endColor = transformHexToRgba(endValue);
+        this.interpolator = new interpolateRgb(this.startColor, this.endColor);
     }
-    Node.prototype.addListener = function (name, func) {
-        var bindFunc = func.bind(this);
-        if (!this.bindFuncs) {
-            this.bindFuncs = [];
-        }
-        this.bindFuncs.push(bindFunc);
-        // @ts-ignore
-        light.on(name, bindFunc);
+    InterpolateColor.prototype.value = function (time) {
+        var value = this.interpolator(time);
+        return transformRgbaToRgbaObj(value);
     };
-    Node.prototype.removeListener = function (name) {
-        if (this.bindFuncs && this.bindFuncs.length > 0) {
-            this.bindFuncs.forEach(function (bindFunc) {
-                light.removeListener(name, bindFunc);
-            });
-            this.bindFuncs = [];
-        }
-    };
-    Node.prototype.getEntityById = function (entityId) {
-        if (typeof (entityId) !== 'number') {
-            return undefined;
-        }
-        return this.entityManager.getEntityById(entityId);
-    };
-    return Node;
+    return InterpolateColor;
 }());
-var EventNode = /** @class */ (function (_super) {
-    __extends(EventNode, _super);
-    function EventNode() {
-        return _super !== null && _super.apply(this, arguments) || this;
+
+/**
+ * Bezier Curves formulas obtained from
+ * http://en.wikipedia.org/wiki/Bézier_curve
+ */
+function CubicBezierP0(t, p) {
+    var k = 1 - t;
+    return k * k * k * p;
+}
+function CubicBezierP1(t, p) {
+    var k = 1 - t;
+    return 3 * k * k * t * p;
+}
+function CubicBezierP2(t, p) {
+    return 3 * (1 - t) * t * t * p;
+}
+function CubicBezierP3(t, p) {
+    return t * t * t * p;
+}
+function CubicBezier(t, p0, p1, p2, p3) {
+    return (CubicBezierP0(t, p0)
+        + CubicBezierP1(t, p1)
+        + CubicBezierP2(t, p2)
+        + CubicBezierP3(t, p3));
+}
+var Bezier = /** @class */ (function () {
+    function Bezier(c1, c2, c3, c4) {
+        this.c1 = 0.0;
+        this.c2 = 0.0;
+        this.c3 = 0.0;
+        this.c4 = 0.0;
+        this.c1 = c1;
+        this.c2 = c2;
+        this.c3 = c3;
+        this.c4 = c4;
     }
-    return EventNode;
-}(Node));
-var DataProcessNode = /** @class */ (function (_super) {
-    __extends(DataProcessNode, _super);
-    function DataProcessNode() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    return DataProcessNode;
-}(Node));
-var AITriggerNode = /** @class */ (function (_super) {
-    __extends(AITriggerNode, _super);
-    function AITriggerNode() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        // 是否已触发
-        _this.triggered = false;
-        return _this;
-    }
-    AITriggerNode.prototype.Run = function () {
-        openAIFeature(this.features, this.entityManager, this.eventManager);
-        light.on('update', this.update.bind(this));
+    Bezier.prototype.evaluate = function (t) {
+        return CubicBezier(t, this.c1, this.c2, this.c3, this.c4);
     };
-    AITriggerNode.prototype.update = function () {
-        if (this.shouldTrigger()) {
-            this.on();
-            if (!this.triggered) {
-                this.detected();
-            }
-            this.triggered = true;
-        }
-        else {
-            this.off();
-            if (this.triggered) {
-                this.lost();
-            }
-            this.triggered = false;
-        }
+    return Bezier;
+}());
+
+var InterpolateBezier = /** @class */ (function () {
+    function InterpolateBezier(startValue, endValue) {
+        this.startValue = startValue;
+        this.endValue = endValue;
+        var inter = endValue - startValue;
+        var c1 = this.startValue;
+        var c2 = this.startValue + (inter) * 0.25;
+        var c3 = this.startValue + (inter) * 0.75;
+        var c4 = this.endValue;
+        this.interpolator = new Bezier(c1, c2, c3, c4);
+    }
+    InterpolateBezier.prototype.value = function (time) {
+        return this.interpolator.evaluate(time);
     };
-    // 有时触发
-    AITriggerNode.prototype.on = function () { };
-    // 无时触发
-    AITriggerNode.prototype.off = function () { };
-    // 从无到有时触发
-    AITriggerNode.prototype.detected = function () { };
-    // 从有到无时触发
-    AITriggerNode.prototype.lost = function () { };
-    return AITriggerNode;
-}(EventNode));
+    return InterpolateBezier;
+}());
+
+/**
+ * Abstract base class of interpolants over parametric samples.
+ *
+ * The parameter domain is one dimensional, typically the time or a path
+ * along a curve defined by the data.
+ *
+ * The sample values can have any dimensionality and derived classes may
+ * apply special interpretations to the data.
+ *
+ * This class provides the interval seek in a Template Method, deferring
+ * the actual interpolation to derived classes.
+ *
+ * Time complexity is O(1) for linear access crossing at most two points
+ * and O(log N) for random access, where N is the number of positions.
+ *
+ * References:
+ *
+ * 		http://www.oodesign.com/template-method-pattern.html
+ *
+ * @author tschw
+ */
+function Interpolant(parameterPositions, sampleValues, sampleSize, resultBuffer) {
+  this.parameterPositions = parameterPositions;
+  this._cachedIndex = 0;
+  this.resultBuffer = resultBuffer !== undefined ? resultBuffer : new sampleValues.constructor(sampleSize);
+  this.sampleValues = sampleValues;
+  this.valueSize = sampleSize;
+}
+
+Object.assign(Interpolant.prototype, {
+  evaluate: function evaluate(t) {
+    var pp = this.parameterPositions;
+    var i1 = this._cachedIndex;
+    var t1 = pp[i1];
+    var t0 = pp[i1 - 1];
+
+    validate_interval: {
+      seek: {
+        var right;
+
+        linear_scan: {
+          // - See http://jsperf.com/comparison-to-undefined/3
+          // - slower code:
+          // -
+          // - 				if ( t >= t1 || t1 === undefined ) {
+          forward_scan: if (!(t < t1)) {
+            for (var giveUpAt = i1 + 2;;) {
+              if (t1 === undefined) {
+                if (t < t0) break forward_scan; // after end
+
+                i1 = pp.length;
+                this._cachedIndex = i1;
+                return this.afterEnd_(i1 - 1, t, t0);
+              }
+
+              if (i1 === giveUpAt) break; // this loop
+
+              t0 = t1;
+              t1 = pp[++i1];
+
+              if (t < t1) {
+                // we have arrived at the sought interval
+                break seek;
+              }
+            } // prepare binary search on the right side of the index
+
+
+            right = pp.length;
+            break linear_scan;
+          } // - slower code:
+          // -					if ( t < t0 || t0 === undefined ) {
+
+
+          if (!(t >= t0)) {
+            // looping?
+            var t1global = pp[1];
+
+            if (t < t1global) {
+              i1 = 2; // + 1, using the scan for the details
+
+              t0 = t1global;
+            } // linear reverse scan
+
+
+            for (var _giveUpAt = i1 - 2;;) {
+              if (t0 === undefined) {
+                // before start
+                this._cachedIndex = 0;
+                return this.beforeStart_(0, t, t1);
+              }
+
+              if (i1 === _giveUpAt) break; // this loop
+
+              t1 = t0;
+              t0 = pp[--i1 - 1];
+
+              if (t >= t0) {
+                // we have arrived at the sought interval
+                break seek;
+              }
+            } // prepare binary search on the left side of the index
+
+
+            right = i1;
+            i1 = 0;
+            break linear_scan;
+          } // the interval is valid
+
+
+          break validate_interval;
+        } // linear scan
+        // binary search
+
+
+        while (i1 < right) {
+          var mid = i1 + right >>> 1;
+
+          if (t < pp[mid]) {
+            right = mid;
+          } else {
+            i1 = mid + 1;
+          }
+        }
+
+        t1 = pp[i1];
+        t0 = pp[i1 - 1]; // check boundary cases, again
+
+        if (t0 === undefined) {
+          this._cachedIndex = 0;
+          return this.beforeStart_(0, t, t1);
+        }
+
+        if (t1 === undefined) {
+          i1 = pp.length;
+          this._cachedIndex = i1;
+          return this.afterEnd_(i1 - 1, t0, t);
+        }
+      } // seek
+
+
+      this._cachedIndex = i1;
+      this.intervalChanged_(i1, t0, t1);
+    } // validate_interval
+
+
+    return this.interpolate_(i1, t0, t, t1);
+  },
+  settings: null,
+  // optional, subclass-specific settings structure
+  // Note: The indirection allows central control of many interpolants.
+  // --- Protected interface
+  DefaultSettings_: {},
+  getSettings_: function getSettings_() {
+    return this.settings || this.DefaultSettings_;
+  },
+  copySampleValue_: function copySampleValue_(index) {
+    // copies a sample value to the result buffer
+    var result = this.resultBuffer;
+    var values = this.sampleValues;
+    var stride = this.valueSize;
+    var offset = index * stride;
+
+    for (var i = 0; i !== stride; ++i) {
+      result[i] = values[offset + i];
+    }
+
+    return result;
+  },
+  // Template methods for derived classes:
+  interpolate_: function interpolate_()
+  /* i1, t0, t, t1 */
+  {
+    throw new Error('call to abstract method'); // implementations shall return this.resultBuffer
+  },
+  intervalChanged_: function intervalChanged_()
+  /* i1, t0, t1 */
+  {// empty
+  }
+}); // DECLARE ALIAS AFTER assign prototype
+
+Object.assign(Interpolant.prototype, {
+  // ( 0, t, t0 ), returns this.resultBuffer
+  beforeStart_: Interpolant.prototype.copySampleValue_,
+  // ( N-1, tN-1, t ), returns this.resultBuffer
+  afterEnd_: Interpolant.prototype.copySampleValue_
+});
+
+/**
+ * @author tschw
+ */
+
+function LinearInterpolant(parameterPositions, sampleValues, sampleSize, resultBuffer) {
+  Interpolant.call(this, parameterPositions, sampleValues, sampleSize, resultBuffer);
+}
+
+LinearInterpolant.prototype = Object.assign(Object.create(Interpolant.prototype), {
+  constructor: LinearInterpolant,
+  interpolate_: function interpolate_(i1, t0, t, t1) {
+    var result = this.resultBuffer;
+    var values = this.sampleValues;
+    var stride = this.valueSize;
+    var offset1 = i1 * stride;
+    var offset0 = offset1 - stride;
+    var weight1 = (t - t0) / (t1 - t0);
+    var weight0 = 1 - weight1;
+
+    for (var i = 0; i !== stride; ++i) {
+      result[i] = values[offset0 + i] * weight0 + values[offset1 + i] * weight1;
+    }
+
+    return result;
+  }
+});
+
+var InterpolateLinear = /** @class */ (function () {
+    function InterpolateLinear(startValue, endValue) {
+        this.startValue = startValue;
+        this.endValue = endValue;
+        var times = [0, 1];
+        var values = [startValue, endValue];
+        var valueSize = values.length / times.length;
+        this.interpolator = new LinearInterpolant(times, values, valueSize);
+    }
+    InterpolateLinear.prototype.value = function (time) {
+        var value = this.interpolator.evaluate(time);
+        return value[0];
+    };
+    return InterpolateLinear;
+}());
+
+// 插值类型
+var InterpolationType;
+(function (InterpolationType) {
+    InterpolationType[InterpolationType["Linear"] = 0] = "Linear";
+    InterpolationType[InterpolationType["Bezier"] = 1] = "Bezier";
+})(InterpolationType || (InterpolationType = {}));
+// 关键帧动画类型
+var KeyframeMode;
+(function (KeyframeMode) {
+    KeyframeMode[KeyframeMode["Continuous"] = 0] = "Continuous";
+    KeyframeMode[KeyframeMode["Discontinuous"] = 1] = "Discontinuous";
+})(KeyframeMode || (KeyframeMode = {}));
+// 关键帧外插模式 (曲线在第一个关键帧之前和最后一个关键帧之后的延伸方式)
+var ExtrapolationMode;
+(function (ExtrapolationMode) {
+    ExtrapolationMode[ExtrapolationMode["Constant"] = 0] = "Constant";
+    ExtrapolationMode[ExtrapolationMode["Linear"] = 1] = "Linear";
+})(ExtrapolationMode || (ExtrapolationMode = {}));
+// 默认的插值类型
+var DEFAULT_EASING = InterpolationType.Linear;
+// 默认的关键帧
+var DEFAULT_KEYFRAME = [0, 0, InterpolationType.Linear];
+// 默认的外插模式
+var DEFAULT_EXTRAPOLATION_MODE = ExtrapolationMode.Linear;
+var AnimationClipState;
+(function (AnimationClipState) {
+    AnimationClipState[AnimationClipState["Stopped"] = 0] = "Stopped";
+    AnimationClipState[AnimationClipState["Playing"] = 1] = "Playing";
+    AnimationClipState[AnimationClipState["Paused"] = 2] = "Paused";
+})(AnimationClipState || (AnimationClipState = {}));
+var AnimationClipType;
+(function (AnimationClipType) {
+    AnimationClipType[AnimationClipType["Component"] = 0] = "Component";
+    AnimationClipType[AnimationClipType["GlTF"] = 1] = "GlTF";
+})(AnimationClipType || (AnimationClipType = {}));
+var ValueType;
+(function (ValueType) {
+    ValueType[ValueType["Num"] = 0] = "Num";
+    ValueType[ValueType["Hex"] = 1] = "Hex";
+    ValueType[ValueType["Mat3f"] = 2] = "Mat3f";
+    ValueType[ValueType["Quaternion"] = 3] = "Quaternion";
+})(ValueType || (ValueType = {}));
+var PropertyValueType;
+(function (PropertyValueType) {
+    PropertyValueType[PropertyValueType["number"] = 0] = "number";
+    PropertyValueType[PropertyValueType["string"] = 1] = "string";
+    PropertyValueType[PropertyValueType["quaternion"] = 2] = "quaternion";
+})(PropertyValueType || (PropertyValueType = {}));
+
+var InterpolateMat3f = /** @class */ (function () {
+    function InterpolateMat3f(startValue, endValue, interpolationType) {
+        var _this = this;
+        this.startValues = startValue.split(',').map(parseFloat);
+        this.endValues = endValue.split(',').map(parseFloat);
+        this.interpolators = this.startValues.map(function (v1, index) {
+            if (interpolationType === InterpolationType.Bezier) {
+                return new InterpolateLinear(v1, _this.endValues[index]);
+            }
+            return new InterpolateBezier(v1, _this.endValues[index]);
+        });
+    }
+    InterpolateMat3f.prototype.value = function (time) {
+        var values = this.interpolators.map(function (interpolator) { return interpolator.value(time); });
+        return values.join(',');
+    };
+    return InterpolateMat3f;
+}());
+
+var Keyframe = /** @class */ (function () {
+    function Keyframe(keyFrameArray) {
+        var _a = keyFrameArray || DEFAULT_KEYFRAME, time = _a[0], value = _a[1], interpolationType = _a[2];
+        this.time = time;
+        this.value = value;
+        this.interpolationType = interpolationType;
+    }
+    Keyframe.prototype.getTime = function () {
+        return this.time;
+    };
+    Keyframe.prototype.getValue = function () {
+        return this.value;
+    };
+    Keyframe.prototype.getType = function () {
+        return this.interpolationType;
+    };
+    return Keyframe;
+}());
 
 /**
  * @author alteredq / http://alteredqualia.com/
@@ -2582,1164 +3218,6 @@ Object.assign(Euler.prototype, {
 });
 
 /**
- * @author mrdoob / http://mrdoob.com/
- * @author philogb / http://blog.thejit.org/
- * @author egraether / http://egraether.com/
- * @author zz85 / http://www.lab4games.net/zz85/blog
- */
-function Vector2() {
-  var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-  var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-  this.x = x;
-  this.y = y;
-}
-
-Object.defineProperties(Vector2.prototype, {
-  width: {
-    get: function get() {
-      return this.x;
-    },
-    set: function set(value) {
-      this.x = value;
-    }
-  },
-  height: {
-    get: function get() {
-      return this.y;
-    },
-    set: function set(value) {
-      this.y = value;
-    }
-  }
-});
-Object.assign(Vector2.prototype, {
-  isVector2: true,
-  set: function set(x, y) {
-    this.x = x;
-    this.y = y;
-    return this;
-  },
-  setScalar: function setScalar(scalar) {
-    this.x = scalar;
-    this.y = scalar;
-    return this;
-  },
-  setX: function setX(x) {
-    this.x = x;
-    return this;
-  },
-  setY: function setY(y) {
-    this.y = y;
-    return this;
-  },
-  setComponent: function setComponent(index, value) {
-    switch (index) {
-      case 0:
-        this.x = value;
-        break;
-
-      case 1:
-        this.y = value;
-        break;
-
-      default:
-        throw new Error("index is out of range: ".concat(index));
-    }
-
-    return this;
-  },
-  getComponent: function getComponent(index) {
-    switch (index) {
-      case 0:
-        return this.x;
-
-      case 1:
-        return this.y;
-
-      default:
-        throw new Error("index is out of range: ".concat(index));
-    }
-  },
-  clone: function clone() {
-    return new this.constructor(this.x, this.y);
-  },
-  copy: function copy(v) {
-    this.x = v.x;
-    this.y = v.y;
-    return this;
-  },
-  add: function add(v, w) {
-    if (w !== undefined) {
-      console.warn('THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.');
-      return this.addVectors(v, w);
-    }
-
-    this.x += v.x;
-    this.y += v.y;
-    return this;
-  },
-  addScalar: function addScalar(s) {
-    this.x += s;
-    this.y += s;
-    return this;
-  },
-  addVectors: function addVectors(a, b) {
-    this.x = a.x + b.x;
-    this.y = a.y + b.y;
-    return this;
-  },
-  addScaledVector: function addScaledVector(v, s) {
-    this.x += v.x * s;
-    this.y += v.y * s;
-    return this;
-  },
-  sub: function sub(v, w) {
-    if (w !== undefined) {
-      console.warn('THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.');
-      return this.subVectors(v, w);
-    }
-
-    this.x -= v.x;
-    this.y -= v.y;
-    return this;
-  },
-  subScalar: function subScalar(s) {
-    this.x -= s;
-    this.y -= s;
-    return this;
-  },
-  subVectors: function subVectors(a, b) {
-    this.x = a.x - b.x;
-    this.y = a.y - b.y;
-    return this;
-  },
-  multiply: function multiply(v) {
-    this.x *= v.x;
-    this.y *= v.y;
-    return this;
-  },
-  multiplyScalar: function multiplyScalar(scalar) {
-    this.x *= scalar;
-    this.y *= scalar;
-    return this;
-  },
-  divide: function divide(v) {
-    this.x /= v.x;
-    this.y /= v.y;
-    return this;
-  },
-  divideScalar: function divideScalar(scalar) {
-    return this.multiplyScalar(1 / scalar);
-  },
-  applyMatrix3: function applyMatrix3(m) {
-    var x = this.x;
-    var y = this.y;
-    var e = m.elements;
-    this.x = e[0] * x + e[3] * y + e[6];
-    this.y = e[1] * x + e[4] * y + e[7];
-    return this;
-  },
-  min: function min(v) {
-    this.x = Math.min(this.x, v.x);
-    this.y = Math.min(this.y, v.y);
-    return this;
-  },
-  max: function max(v) {
-    this.x = Math.max(this.x, v.x);
-    this.y = Math.max(this.y, v.y);
-    return this;
-  },
-  clamp: function clamp(min, max) {
-    // assumes min < max, componentwise
-    this.x = Math.max(min.x, Math.min(max.x, this.x));
-    this.y = Math.max(min.y, Math.min(max.y, this.y));
-    return this;
-  },
-  clampScalar: function clampScalar(minVal, maxVal) {
-    this.x = Math.max(minVal, Math.min(maxVal, this.x));
-    this.y = Math.max(minVal, Math.min(maxVal, this.y));
-    return this;
-  },
-  clampLength: function clampLength(min, max) {
-    var length = this.length();
-    return this.divideScalar(length || 1).multiplyScalar(Math.max(min, Math.min(max, length)));
-  },
-  floor: function floor() {
-    this.x = Math.floor(this.x);
-    this.y = Math.floor(this.y);
-    return this;
-  },
-  ceil: function ceil() {
-    this.x = Math.ceil(this.x);
-    this.y = Math.ceil(this.y);
-    return this;
-  },
-  round: function round() {
-    this.x = Math.round(this.x);
-    this.y = Math.round(this.y);
-    return this;
-  },
-  roundToZero: function roundToZero() {
-    this.x = this.x < 0 ? Math.ceil(this.x) : Math.floor(this.x);
-    this.y = this.y < 0 ? Math.ceil(this.y) : Math.floor(this.y);
-    return this;
-  },
-  negate: function negate() {
-    this.x = -this.x;
-    this.y = -this.y;
-    return this;
-  },
-  dot: function dot(v) {
-    return this.x * v.x + this.y * v.y;
-  },
-  cross: function cross(v) {
-    return this.x * v.y - this.y * v.x;
-  },
-  lengthSq: function lengthSq() {
-    return this.x * this.x + this.y * this.y;
-  },
-  length: function length() {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
-  },
-  manhattanLength: function manhattanLength() {
-    return Math.abs(this.x) + Math.abs(this.y);
-  },
-  normalize: function normalize() {
-    return this.divideScalar(this.length() || 1);
-  },
-  angle: function angle() {
-    // computes the angle in radians with respect to the positive x-axis
-    var angle1 = Math.atan2(-this.y, -this.x) + Math.PI;
-    return angle1;
-  },
-  distanceTo: function distanceTo(v) {
-    return Math.sqrt(this.distanceToSquared(v));
-  },
-  distanceToSquared: function distanceToSquared(v) {
-    var dx = this.x - v.x;
-    var dy = this.y - v.y;
-    return dx * dx + dy * dy;
-  },
-  manhattanDistanceTo: function manhattanDistanceTo(v) {
-    return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
-  },
-  setLength: function setLength(length) {
-    return this.normalize().multiplyScalar(length);
-  },
-  lerp: function lerp(v, alpha) {
-    this.x += (v.x - this.x) * alpha;
-    this.y += (v.y - this.y) * alpha;
-    return this;
-  },
-  lerpVectors: function lerpVectors(v1, v2, alpha) {
-    this.x = v1.x + (v2.x - v1.x) * alpha;
-    this.y = v1.y + (v2.y - v1.y) * alpha;
-    return this;
-  },
-  equals: function equals(v) {
-    return v.x === this.x && v.y === this.y;
-  },
-  fromArray: function fromArray(array, offset) {
-    if (offset === undefined) offset = 0;
-    this.x = array[offset];
-    this.y = array[offset + 1];
-    return this;
-  },
-  toArray: function toArray(array, offset) {
-    if (array === undefined) array = [];
-    if (offset === undefined) offset = 0;
-    array[offset] = this.x;
-    array[offset + 1] = this.y;
-    return array;
-  },
-  fromBufferAttribute: function fromBufferAttribute(attribute, index, offset) {
-    if (offset !== undefined) {
-      console.warn('THREE.Vector2: offset has been removed from .fromBufferAttribute().');
-    }
-
-    this.x = attribute.getX(index);
-    this.y = attribute.getY(index);
-    return this;
-  },
-  rotateAround: function rotateAround(center, angle) {
-    var c = Math.cos(angle);
-    var s = Math.sin(angle);
-    var x = this.x - center.x;
-    var y = this.y - center.y;
-    this.x = x * c - y * s + center.x;
-    this.y = x * s + y * c + center.y;
-    return this;
-  },
-  random: function random() {
-    this.x = Math.random();
-    this.y = Math.random();
-    return this;
-  }
-});
-
-var constant = function(x){
-  return function(){
-    return x;
-  }
-};
-
-function linear(a, d) {
-  return function(t) {
-    return a + t * d;
-  };
-}
-
-function exponential(a, b, y) {
-  return a = Math.pow(a, y), b = Math.pow(b, y) - a, y = 1 / y, function(t) {
-    return Math.pow(a + t * b, y);
-  };
-}
-
-function gamma(y) {
-  return (y = +y) === 1 ? nogamma : function(a, b) {
-    return b - a ? exponential(a, b, y) : constant(isNaN(a) ? b : a);
-  };
-}
-
-function nogamma(a, b) {
-  var d = b - a;
-  return d ? linear(a, d) : constant(isNaN(a) ? b : a);
-}
-
-function define(constructor, factory, prototype) {
-  constructor.prototype = factory.prototype = prototype;
-  prototype.constructor = constructor;
-}
-
-function extend(parent, definition) {
-  var prototype = Object.create(parent.prototype);
-  for (var key in definition) prototype[key] = definition[key];
-  return prototype;
-}
-
-function Color() {}
-
-var darker = 0.7;
-var brighter = 1 / darker;
-
-var reI = "\\s*([+-]?\\d+)\\s*",
-    reN = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*",
-    reP = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
-    reHex = /^#([0-9a-f]{3,8})$/,
-    reRgbInteger = new RegExp("^rgb\\(" + [reI, reI, reI] + "\\)$"),
-    reRgbPercent = new RegExp("^rgb\\(" + [reP, reP, reP] + "\\)$"),
-    reRgbaInteger = new RegExp("^rgba\\(" + [reI, reI, reI, reN] + "\\)$"),
-    reRgbaPercent = new RegExp("^rgba\\(" + [reP, reP, reP, reN] + "\\)$"),
-    reHslPercent = new RegExp("^hsl\\(" + [reN, reP, reP] + "\\)$"),
-    reHslaPercent = new RegExp("^hsla\\(" + [reN, reP, reP, reN] + "\\)$");
-
-var named = {
-  aliceblue: 0xf0f8ff,
-  antiquewhite: 0xfaebd7,
-  aqua: 0x00ffff,
-  aquamarine: 0x7fffd4,
-  azure: 0xf0ffff,
-  beige: 0xf5f5dc,
-  bisque: 0xffe4c4,
-  black: 0x000000,
-  blanchedalmond: 0xffebcd,
-  blue: 0x0000ff,
-  blueviolet: 0x8a2be2,
-  brown: 0xa52a2a,
-  burlywood: 0xdeb887,
-  cadetblue: 0x5f9ea0,
-  chartreuse: 0x7fff00,
-  chocolate: 0xd2691e,
-  coral: 0xff7f50,
-  cornflowerblue: 0x6495ed,
-  cornsilk: 0xfff8dc,
-  crimson: 0xdc143c,
-  cyan: 0x00ffff,
-  darkblue: 0x00008b,
-  darkcyan: 0x008b8b,
-  darkgoldenrod: 0xb8860b,
-  darkgray: 0xa9a9a9,
-  darkgreen: 0x006400,
-  darkgrey: 0xa9a9a9,
-  darkkhaki: 0xbdb76b,
-  darkmagenta: 0x8b008b,
-  darkolivegreen: 0x556b2f,
-  darkorange: 0xff8c00,
-  darkorchid: 0x9932cc,
-  darkred: 0x8b0000,
-  darksalmon: 0xe9967a,
-  darkseagreen: 0x8fbc8f,
-  darkslateblue: 0x483d8b,
-  darkslategray: 0x2f4f4f,
-  darkslategrey: 0x2f4f4f,
-  darkturquoise: 0x00ced1,
-  darkviolet: 0x9400d3,
-  deeppink: 0xff1493,
-  deepskyblue: 0x00bfff,
-  dimgray: 0x696969,
-  dimgrey: 0x696969,
-  dodgerblue: 0x1e90ff,
-  firebrick: 0xb22222,
-  floralwhite: 0xfffaf0,
-  forestgreen: 0x228b22,
-  fuchsia: 0xff00ff,
-  gainsboro: 0xdcdcdc,
-  ghostwhite: 0xf8f8ff,
-  gold: 0xffd700,
-  goldenrod: 0xdaa520,
-  gray: 0x808080,
-  green: 0x008000,
-  greenyellow: 0xadff2f,
-  grey: 0x808080,
-  honeydew: 0xf0fff0,
-  hotpink: 0xff69b4,
-  indianred: 0xcd5c5c,
-  indigo: 0x4b0082,
-  ivory: 0xfffff0,
-  khaki: 0xf0e68c,
-  lavender: 0xe6e6fa,
-  lavenderblush: 0xfff0f5,
-  lawngreen: 0x7cfc00,
-  lemonchiffon: 0xfffacd,
-  lightblue: 0xadd8e6,
-  lightcoral: 0xf08080,
-  lightcyan: 0xe0ffff,
-  lightgoldenrodyellow: 0xfafad2,
-  lightgray: 0xd3d3d3,
-  lightgreen: 0x90ee90,
-  lightgrey: 0xd3d3d3,
-  lightpink: 0xffb6c1,
-  lightsalmon: 0xffa07a,
-  lightseagreen: 0x20b2aa,
-  lightskyblue: 0x87cefa,
-  lightslategray: 0x778899,
-  lightslategrey: 0x778899,
-  lightsteelblue: 0xb0c4de,
-  lightyellow: 0xffffe0,
-  lime: 0x00ff00,
-  limegreen: 0x32cd32,
-  linen: 0xfaf0e6,
-  magenta: 0xff00ff,
-  maroon: 0x800000,
-  mediumaquamarine: 0x66cdaa,
-  mediumblue: 0x0000cd,
-  mediumorchid: 0xba55d3,
-  mediumpurple: 0x9370db,
-  mediumseagreen: 0x3cb371,
-  mediumslateblue: 0x7b68ee,
-  mediumspringgreen: 0x00fa9a,
-  mediumturquoise: 0x48d1cc,
-  mediumvioletred: 0xc71585,
-  midnightblue: 0x191970,
-  mintcream: 0xf5fffa,
-  mistyrose: 0xffe4e1,
-  moccasin: 0xffe4b5,
-  navajowhite: 0xffdead,
-  navy: 0x000080,
-  oldlace: 0xfdf5e6,
-  olive: 0x808000,
-  olivedrab: 0x6b8e23,
-  orange: 0xffa500,
-  orangered: 0xff4500,
-  orchid: 0xda70d6,
-  palegoldenrod: 0xeee8aa,
-  palegreen: 0x98fb98,
-  paleturquoise: 0xafeeee,
-  palevioletred: 0xdb7093,
-  papayawhip: 0xffefd5,
-  peachpuff: 0xffdab9,
-  peru: 0xcd853f,
-  pink: 0xffc0cb,
-  plum: 0xdda0dd,
-  powderblue: 0xb0e0e6,
-  purple: 0x800080,
-  rebeccapurple: 0x663399,
-  red: 0xff0000,
-  rosybrown: 0xbc8f8f,
-  royalblue: 0x4169e1,
-  saddlebrown: 0x8b4513,
-  salmon: 0xfa8072,
-  sandybrown: 0xf4a460,
-  seagreen: 0x2e8b57,
-  seashell: 0xfff5ee,
-  sienna: 0xa0522d,
-  silver: 0xc0c0c0,
-  skyblue: 0x87ceeb,
-  slateblue: 0x6a5acd,
-  slategray: 0x708090,
-  slategrey: 0x708090,
-  snow: 0xfffafa,
-  springgreen: 0x00ff7f,
-  steelblue: 0x4682b4,
-  tan: 0xd2b48c,
-  teal: 0x008080,
-  thistle: 0xd8bfd8,
-  tomato: 0xff6347,
-  turquoise: 0x40e0d0,
-  violet: 0xee82ee,
-  wheat: 0xf5deb3,
-  white: 0xffffff,
-  whitesmoke: 0xf5f5f5,
-  yellow: 0xffff00,
-  yellowgreen: 0x9acd32
-};
-
-define(Color, color, {
-  copy: function(channels) {
-    return Object.assign(new this.constructor, this, channels);
-  },
-  displayable: function() {
-    return this.rgb().displayable();
-  },
-  hex: color_formatHex, // Deprecated! Use color.formatHex.
-  formatHex: color_formatHex,
-  formatHsl: color_formatHsl,
-  formatRgb: color_formatRgb,
-  toString: color_formatRgb
-});
-
-function color_formatHex() {
-  return this.rgb().formatHex();
-}
-
-function color_formatHsl() {
-  return hslConvert(this).formatHsl();
-}
-
-function color_formatRgb() {
-  return this.rgb().formatRgb();
-}
-
-function color(format) {
-  var m, l;
-  format = (format + "").trim().toLowerCase();
-  return (m = reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? rgbn(m) // #ff0000
-      : l === 3 ? new Rgb((m >> 8 & 0xf) | (m >> 4 & 0xf0), (m >> 4 & 0xf) | (m & 0xf0), ((m & 0xf) << 4) | (m & 0xf), 1) // #f00
-      : l === 8 ? rgba(m >> 24 & 0xff, m >> 16 & 0xff, m >> 8 & 0xff, (m & 0xff) / 0xff) // #ff000000
-      : l === 4 ? rgba((m >> 12 & 0xf) | (m >> 8 & 0xf0), (m >> 8 & 0xf) | (m >> 4 & 0xf0), (m >> 4 & 0xf) | (m & 0xf0), (((m & 0xf) << 4) | (m & 0xf)) / 0xff) // #f000
-      : null) // invalid hex
-      : (m = reRgbInteger.exec(format)) ? new Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
-      : (m = reRgbPercent.exec(format)) ? new Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
-      : (m = reRgbaInteger.exec(format)) ? rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
-      : (m = reRgbaPercent.exec(format)) ? rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) // rgb(100%, 0%, 0%, 1)
-      : (m = reHslPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
-      : (m = reHslaPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
-      : named.hasOwnProperty(format) ? rgbn(named[format]) // eslint-disable-line no-prototype-builtins
-      : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0)
-      : null;
-}
-
-function rgbn(n) {
-  return new Rgb(n >> 16 & 0xff, n >> 8 & 0xff, n & 0xff, 1);
-}
-
-function rgba(r, g, b, a) {
-  if (a <= 0) r = g = b = NaN;
-  return new Rgb(r, g, b, a);
-}
-
-function rgbConvert(o) {
-  if (!(o instanceof Color)) o = color(o);
-  if (!o) return new Rgb;
-  o = o.rgb();
-  return new Rgb(o.r, o.g, o.b, o.opacity);
-}
-
-function rgb(r, g, b, opacity) {
-  return arguments.length === 1 ? rgbConvert(r) : new Rgb(r, g, b, opacity == null ? 1 : opacity);
-}
-
-function Rgb(r, g, b, opacity) {
-  this.r = +r;
-  this.g = +g;
-  this.b = +b;
-  this.opacity = +opacity;
-}
-
-define(Rgb, rgb, extend(Color, {
-  brighter: function(k) {
-    k = k == null ? brighter : Math.pow(brighter, k);
-    return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  darker: function(k) {
-    k = k == null ? darker : Math.pow(darker, k);
-    return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  rgb: function() {
-    return this;
-  },
-  displayable: function() {
-    return (-0.5 <= this.r && this.r < 255.5)
-        && (-0.5 <= this.g && this.g < 255.5)
-        && (-0.5 <= this.b && this.b < 255.5)
-        && (0 <= this.opacity && this.opacity <= 1);
-  },
-  hex: rgb_formatHex, // Deprecated! Use color.formatHex.
-  formatHex: rgb_formatHex,
-  formatRgb: rgb_formatRgb,
-  toString: rgb_formatRgb
-}));
-
-function rgb_formatHex() {
-  return "#" + hex(this.r) + hex(this.g) + hex(this.b);
-}
-
-function rgb_formatRgb() {
-  var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
-  return (a === 1 ? "rgb(" : "rgba(")
-      + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", "
-      + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", "
-      + Math.max(0, Math.min(255, Math.round(this.b) || 0))
-      + (a === 1 ? ")" : ", " + a + ")");
-}
-
-function hex(value) {
-  value = Math.max(0, Math.min(255, Math.round(value) || 0));
-  return (value < 16 ? "0" : "") + value.toString(16);
-}
-
-function hsla(h, s, l, a) {
-  if (a <= 0) h = s = l = NaN;
-  else if (l <= 0 || l >= 1) h = s = NaN;
-  else if (s <= 0) h = NaN;
-  return new Hsl(h, s, l, a);
-}
-
-function hslConvert(o) {
-  if (o instanceof Hsl) return new Hsl(o.h, o.s, o.l, o.opacity);
-  if (!(o instanceof Color)) o = color(o);
-  if (!o) return new Hsl;
-  if (o instanceof Hsl) return o;
-  o = o.rgb();
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      min = Math.min(r, g, b),
-      max = Math.max(r, g, b),
-      h = NaN,
-      s = max - min,
-      l = (max + min) / 2;
-  if (s) {
-    if (r === max) h = (g - b) / s + (g < b) * 6;
-    else if (g === max) h = (b - r) / s + 2;
-    else h = (r - g) / s + 4;
-    s /= l < 0.5 ? max + min : 2 - max - min;
-    h *= 60;
-  } else {
-    s = l > 0 && l < 1 ? 0 : h;
-  }
-  return new Hsl(h, s, l, o.opacity);
-}
-
-function hsl(h, s, l, opacity) {
-  return arguments.length === 1 ? hslConvert(h) : new Hsl(h, s, l, opacity == null ? 1 : opacity);
-}
-
-function Hsl(h, s, l, opacity) {
-  this.h = +h;
-  this.s = +s;
-  this.l = +l;
-  this.opacity = +opacity;
-}
-
-define(Hsl, hsl, extend(Color, {
-  brighter: function(k) {
-    k = k == null ? brighter : Math.pow(brighter, k);
-    return new Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker: function(k) {
-    k = k == null ? darker : Math.pow(darker, k);
-    return new Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb: function() {
-    var h = this.h % 360 + (this.h < 0) * 360,
-        s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
-        l = this.l,
-        m2 = l + (l < 0.5 ? l : 1 - l) * s,
-        m1 = 2 * l - m2;
-    return new Rgb(
-      hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2),
-      hsl2rgb(h, m1, m2),
-      hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2),
-      this.opacity
-    );
-  },
-  displayable: function() {
-    return (0 <= this.s && this.s <= 1 || isNaN(this.s))
-        && (0 <= this.l && this.l <= 1)
-        && (0 <= this.opacity && this.opacity <= 1);
-  },
-  formatHsl: function() {
-    var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
-    return (a === 1 ? "hsl(" : "hsla(")
-        + (this.h || 0) + ", "
-        + (this.s || 0) * 100 + "%, "
-        + (this.l || 0) * 100 + "%"
-        + (a === 1 ? ")" : ", " + a + ")");
-  }
-}));
-
-/* From FvD 13.37, CSS Color Module Level 3 */
-function hsl2rgb(h, m1, m2) {
-  return (h < 60 ? m1 + (m2 - m1) * h / 60
-      : h < 180 ? m2
-      : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60
-      : m1) * 255;
-}
-
-var interpolateRgb = (function rgbGamma(y) {
-  var color = gamma(y);
-
-  function rgb$1(start, end) {
-    var r = color((start = rgb(start)).r, (end = rgb(end)).r),
-        g = color(start.g, end.g),
-        b = color(start.b, end.b),
-        opacity = nogamma(start.opacity, end.opacity);
-    return function(t) {
-      start.r = r(t);
-      start.g = g(t);
-      start.b = b(t);
-      start.opacity = opacity(t);
-      return start + "";
-    };
-  }
-
-  rgb$1.gamma = rgbGamma;
-
-  return rgb$1;
-})(1);
-
-/**
- * @param keyframesValue "255,255,0,50" 表示rgba
- * @return rgba(255, 255, 0, 0.5)
- */
-/**
- * @param hex "#fbafff" 表示16进制
- * @return rgba(251,175,255,1)
- */
-function transformHexToRgba(hex) {
-    hex = hex.replace('#', '0x');
-    var colorNum = Number(hex);
-    var r = (colorNum >>> 24);
-    var g = (colorNum >>> 16) & 0x00ff;
-    var b = (colorNum >>> 8) & 0x0000ff;
-    var a = colorNum & 0x000000ff;
-    return "rgba(" + r + "," + g + "," + b + "," + a / 255.0 + ")";
-}
-/**
- * @param hex "#fbafff" 表示16进制
- * @return { r: 251, g: 175, b: 255, a: 100 }
- */
-function transformHexToRgbaObj(hex) {
-    hex = hex.replace('#', '0x');
-    var colorNum = Number(hex);
-    var r = (colorNum >>> 24);
-    var g = (colorNum >>> 16) & 0x00ff;
-    var b = (colorNum >>> 8) & 0x0000ff;
-    var a = (colorNum & 0x000000ff) / 255.0 * 100;
-    return { r: r, g: g, b: b, a: a };
-}
-/** rgba(0, 233, 250, 0.9448125164992826)
- * @param rgba rgba(251, 175, 255, 0.5)
- * @return { r: 251, g: 175, b: 255, a: 100 }
- */
-function transformRgbaToRgbaObj(rgba) {
-    var match = rgba.match(/rgba?\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d\.]+))?\s*\)/);
-    if (!match)
-        return { r: 0, g: 0, b: 0, a: 0 };
-    var _a = [Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4])], r = _a[0], g = _a[1], b = _a[2], a = _a[3];
-    return { r: r, g: g, b: b, a: isNaN(a) ? 100 : a * 100 };
-}
-
-var InterpolateColor = /** @class */ (function () {
-    function InterpolateColor(beginValue, endValue) {
-        this.startColor = transformHexToRgba(beginValue);
-        this.endColor = transformHexToRgba(endValue);
-        this.interpolator = new interpolateRgb(this.startColor, this.endColor);
-    }
-    InterpolateColor.prototype.value = function (time) {
-        var value = this.interpolator(time);
-        return transformRgbaToRgbaObj(value);
-    };
-    return InterpolateColor;
-}());
-
-/**
- * Bezier Curves formulas obtained from
- * http://en.wikipedia.org/wiki/Bézier_curve
- */
-function CubicBezierP0(t, p) {
-    var k = 1 - t;
-    return k * k * k * p;
-}
-function CubicBezierP1(t, p) {
-    var k = 1 - t;
-    return 3 * k * k * t * p;
-}
-function CubicBezierP2(t, p) {
-    return 3 * (1 - t) * t * t * p;
-}
-function CubicBezierP3(t, p) {
-    return t * t * t * p;
-}
-function CubicBezier(t, p0, p1, p2, p3) {
-    return (CubicBezierP0(t, p0)
-        + CubicBezierP1(t, p1)
-        + CubicBezierP2(t, p2)
-        + CubicBezierP3(t, p3));
-}
-var Bezier = /** @class */ (function () {
-    function Bezier(c1, c2, c3, c4) {
-        this.c1 = 0.0;
-        this.c2 = 0.0;
-        this.c3 = 0.0;
-        this.c4 = 0.0;
-        this.c1 = c1;
-        this.c2 = c2;
-        this.c3 = c3;
-        this.c4 = c4;
-    }
-    Bezier.prototype.evaluate = function (t) {
-        return CubicBezier(t, this.c1, this.c2, this.c3, this.c4);
-    };
-    return Bezier;
-}());
-
-var InterpolateBezier = /** @class */ (function () {
-    function InterpolateBezier(startValue, endValue) {
-        this.startValue = startValue;
-        this.endValue = endValue;
-        var inter = endValue - startValue;
-        var c1 = this.startValue;
-        var c2 = this.startValue + (inter) * 0.25;
-        var c3 = this.startValue + (inter) * 0.75;
-        var c4 = this.endValue;
-        this.interpolator = new Bezier(c1, c2, c3, c4);
-    }
-    InterpolateBezier.prototype.value = function (time) {
-        return this.interpolator.evaluate(time);
-    };
-    return InterpolateBezier;
-}());
-
-/**
- * Abstract base class of interpolants over parametric samples.
- *
- * The parameter domain is one dimensional, typically the time or a path
- * along a curve defined by the data.
- *
- * The sample values can have any dimensionality and derived classes may
- * apply special interpretations to the data.
- *
- * This class provides the interval seek in a Template Method, deferring
- * the actual interpolation to derived classes.
- *
- * Time complexity is O(1) for linear access crossing at most two points
- * and O(log N) for random access, where N is the number of positions.
- *
- * References:
- *
- * 		http://www.oodesign.com/template-method-pattern.html
- *
- * @author tschw
- */
-function Interpolant(parameterPositions, sampleValues, sampleSize, resultBuffer) {
-  this.parameterPositions = parameterPositions;
-  this._cachedIndex = 0;
-  this.resultBuffer = resultBuffer !== undefined ? resultBuffer : new sampleValues.constructor(sampleSize);
-  this.sampleValues = sampleValues;
-  this.valueSize = sampleSize;
-}
-
-Object.assign(Interpolant.prototype, {
-  evaluate: function evaluate(t) {
-    var pp = this.parameterPositions;
-    var i1 = this._cachedIndex;
-    var t1 = pp[i1];
-    var t0 = pp[i1 - 1];
-
-    validate_interval: {
-      seek: {
-        var right;
-
-        linear_scan: {
-          // - See http://jsperf.com/comparison-to-undefined/3
-          // - slower code:
-          // -
-          // - 				if ( t >= t1 || t1 === undefined ) {
-          forward_scan: if (!(t < t1)) {
-            for (var giveUpAt = i1 + 2;;) {
-              if (t1 === undefined) {
-                if (t < t0) break forward_scan; // after end
-
-                i1 = pp.length;
-                this._cachedIndex = i1;
-                return this.afterEnd_(i1 - 1, t, t0);
-              }
-
-              if (i1 === giveUpAt) break; // this loop
-
-              t0 = t1;
-              t1 = pp[++i1];
-
-              if (t < t1) {
-                // we have arrived at the sought interval
-                break seek;
-              }
-            } // prepare binary search on the right side of the index
-
-
-            right = pp.length;
-            break linear_scan;
-          } // - slower code:
-          // -					if ( t < t0 || t0 === undefined ) {
-
-
-          if (!(t >= t0)) {
-            // looping?
-            var t1global = pp[1];
-
-            if (t < t1global) {
-              i1 = 2; // + 1, using the scan for the details
-
-              t0 = t1global;
-            } // linear reverse scan
-
-
-            for (var _giveUpAt = i1 - 2;;) {
-              if (t0 === undefined) {
-                // before start
-                this._cachedIndex = 0;
-                return this.beforeStart_(0, t, t1);
-              }
-
-              if (i1 === _giveUpAt) break; // this loop
-
-              t1 = t0;
-              t0 = pp[--i1 - 1];
-
-              if (t >= t0) {
-                // we have arrived at the sought interval
-                break seek;
-              }
-            } // prepare binary search on the left side of the index
-
-
-            right = i1;
-            i1 = 0;
-            break linear_scan;
-          } // the interval is valid
-
-
-          break validate_interval;
-        } // linear scan
-        // binary search
-
-
-        while (i1 < right) {
-          var mid = i1 + right >>> 1;
-
-          if (t < pp[mid]) {
-            right = mid;
-          } else {
-            i1 = mid + 1;
-          }
-        }
-
-        t1 = pp[i1];
-        t0 = pp[i1 - 1]; // check boundary cases, again
-
-        if (t0 === undefined) {
-          this._cachedIndex = 0;
-          return this.beforeStart_(0, t, t1);
-        }
-
-        if (t1 === undefined) {
-          i1 = pp.length;
-          this._cachedIndex = i1;
-          return this.afterEnd_(i1 - 1, t0, t);
-        }
-      } // seek
-
-
-      this._cachedIndex = i1;
-      this.intervalChanged_(i1, t0, t1);
-    } // validate_interval
-
-
-    return this.interpolate_(i1, t0, t, t1);
-  },
-  settings: null,
-  // optional, subclass-specific settings structure
-  // Note: The indirection allows central control of many interpolants.
-  // --- Protected interface
-  DefaultSettings_: {},
-  getSettings_: function getSettings_() {
-    return this.settings || this.DefaultSettings_;
-  },
-  copySampleValue_: function copySampleValue_(index) {
-    // copies a sample value to the result buffer
-    var result = this.resultBuffer;
-    var values = this.sampleValues;
-    var stride = this.valueSize;
-    var offset = index * stride;
-
-    for (var i = 0; i !== stride; ++i) {
-      result[i] = values[offset + i];
-    }
-
-    return result;
-  },
-  // Template methods for derived classes:
-  interpolate_: function interpolate_()
-  /* i1, t0, t, t1 */
-  {
-    throw new Error('call to abstract method'); // implementations shall return this.resultBuffer
-  },
-  intervalChanged_: function intervalChanged_()
-  /* i1, t0, t1 */
-  {// empty
-  }
-}); // DECLARE ALIAS AFTER assign prototype
-
-Object.assign(Interpolant.prototype, {
-  // ( 0, t, t0 ), returns this.resultBuffer
-  beforeStart_: Interpolant.prototype.copySampleValue_,
-  // ( N-1, tN-1, t ), returns this.resultBuffer
-  afterEnd_: Interpolant.prototype.copySampleValue_
-});
-
-/**
- * @author tschw
- */
-
-function LinearInterpolant(parameterPositions, sampleValues, sampleSize, resultBuffer) {
-  Interpolant.call(this, parameterPositions, sampleValues, sampleSize, resultBuffer);
-}
-
-LinearInterpolant.prototype = Object.assign(Object.create(Interpolant.prototype), {
-  constructor: LinearInterpolant,
-  interpolate_: function interpolate_(i1, t0, t, t1) {
-    var result = this.resultBuffer;
-    var values = this.sampleValues;
-    var stride = this.valueSize;
-    var offset1 = i1 * stride;
-    var offset0 = offset1 - stride;
-    var weight1 = (t - t0) / (t1 - t0);
-    var weight0 = 1 - weight1;
-
-    for (var i = 0; i !== stride; ++i) {
-      result[i] = values[offset0 + i] * weight0 + values[offset1 + i] * weight1;
-    }
-
-    return result;
-  }
-});
-
-var InterpolateLinear = /** @class */ (function () {
-    function InterpolateLinear(startValue, endValue) {
-        this.startValue = startValue;
-        this.endValue = endValue;
-        var times = [0, 1];
-        var values = [startValue, endValue];
-        var valueSize = values.length / times.length;
-        this.interpolator = new LinearInterpolant(times, values, valueSize);
-    }
-    InterpolateLinear.prototype.value = function (time) {
-        var value = this.interpolator.evaluate(time);
-        return value[0];
-    };
-    return InterpolateLinear;
-}());
-
-// 插值类型
-var InterpolationType;
-(function (InterpolationType) {
-    InterpolationType[InterpolationType["Linear"] = 0] = "Linear";
-    InterpolationType[InterpolationType["Bezier"] = 1] = "Bezier";
-})(InterpolationType || (InterpolationType = {}));
-// 关键帧动画类型
-var KeyframeMode;
-(function (KeyframeMode) {
-    KeyframeMode[KeyframeMode["Continuous"] = 0] = "Continuous";
-    KeyframeMode[KeyframeMode["Discontinuous"] = 1] = "Discontinuous";
-})(KeyframeMode || (KeyframeMode = {}));
-// 关键帧外插模式 (曲线在第一个关键帧之前和最后一个关键帧之后的延伸方式)
-var ExtrapolationMode;
-(function (ExtrapolationMode) {
-    ExtrapolationMode[ExtrapolationMode["Constant"] = 0] = "Constant";
-    ExtrapolationMode[ExtrapolationMode["Linear"] = 1] = "Linear";
-})(ExtrapolationMode || (ExtrapolationMode = {}));
-// 默认的插值类型
-var DEFAULT_EASING = InterpolationType.Linear;
-// 默认的关键帧
-var DEFAULT_KEYFRAME = [0, 0, InterpolationType.Linear];
-// 默认的外插模式
-var DEFAULT_EXTRAPOLATION_MODE = ExtrapolationMode.Linear;
-var AnimationClipState;
-(function (AnimationClipState) {
-    AnimationClipState[AnimationClipState["Stopped"] = 0] = "Stopped";
-    AnimationClipState[AnimationClipState["Playing"] = 1] = "Playing";
-    AnimationClipState[AnimationClipState["Paused"] = 2] = "Paused";
-})(AnimationClipState || (AnimationClipState = {}));
-var AnimationClipType;
-(function (AnimationClipType) {
-    AnimationClipType[AnimationClipType["Component"] = 0] = "Component";
-    AnimationClipType[AnimationClipType["GlTF"] = 1] = "GlTF";
-})(AnimationClipType || (AnimationClipType = {}));
-var ValueType;
-(function (ValueType) {
-    ValueType[ValueType["Num"] = 0] = "Num";
-    ValueType[ValueType["Hex"] = 1] = "Hex";
-    ValueType[ValueType["Mat3f"] = 2] = "Mat3f";
-    ValueType[ValueType["Quaternion"] = 3] = "Quaternion";
-})(ValueType || (ValueType = {}));
-var PropertyValueType;
-(function (PropertyValueType) {
-    PropertyValueType[PropertyValueType["number"] = 0] = "number";
-    PropertyValueType[PropertyValueType["string"] = 1] = "string";
-    PropertyValueType[PropertyValueType["quaternion"] = 2] = "quaternion";
-})(PropertyValueType || (PropertyValueType = {}));
-
-var InterpolateMat3f = /** @class */ (function () {
-    function InterpolateMat3f(startValue, endValue, interpolationType) {
-        var _this = this;
-        this.startValues = startValue.split(',').map(parseFloat);
-        this.endValues = endValue.split(',').map(parseFloat);
-        this.interpolators = this.startValues.map(function (v1, index) {
-            if (interpolationType === InterpolationType.Bezier) {
-                return new InterpolateLinear(v1, _this.endValues[index]);
-            }
-            return new InterpolateBezier(v1, _this.endValues[index]);
-        });
-    }
-    InterpolateMat3f.prototype.value = function (time) {
-        var values = this.interpolators.map(function (interpolator) { return interpolator.value(time); });
-        return values.join(',');
-    };
-    return InterpolateMat3f;
-}());
-
-var Keyframe = /** @class */ (function () {
-    function Keyframe(keyFrameArray) {
-        var _a = keyFrameArray || DEFAULT_KEYFRAME, time = _a[0], value = _a[1], interpolationType = _a[2];
-        this.time = time;
-        this.value = value;
-        this.interpolationType = interpolationType;
-    }
-    Keyframe.prototype.getTime = function () {
-        return this.time;
-    };
-    Keyframe.prototype.getValue = function () {
-        return this.value;
-    };
-    Keyframe.prototype.getType = function () {
-        return this.interpolationType;
-    };
-    return Keyframe;
-}());
-
-/**
      * 欧拉角旋转 转 四元数
      * @param x
      * @param y
@@ -3758,14 +3236,6 @@ function eulerToQuaternion(x, y, z) {
     };
     return rotation;
 }
-/** 渐变方法 **/
-var GradientType;
-(function (GradientType) {
-    GradientType[GradientType["LINEAR"] = 1] = "LINEAR";
-    GradientType[GradientType["EASE_IN"] = 2] = "EASE_IN";
-    GradientType[GradientType["EASE_OUT"] = 3] = "EASE_OUT";
-    GradientType[GradientType["EASE_IN_OUT"] = 4] = "EASE_IN_OUT";
-})(GradientType || (GradientType = {}));
 
 var KeyframeTrack = /** @class */ (function () {
     function KeyframeTrack(propertyTrack, duration) {
@@ -4006,16 +3476,15 @@ var Animation = /** @class */ (function () {
     return Animation;
 }());
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function patchComponent(component, _propertyPath, _valueType) {
+function patchComponent(component, propertyPath, valueType) {
     Object.defineProperties(component, {
         getComponentInstance: {
             value: function (componentType, propertyPath) {
                 switch (componentType) {
-                    case light.MeshRenderer3DComponent.componentType: {
+                    case light.MeshRenderer3DComponent.componentType:
                         var index = propertyPath.split('.')[0];
-                        return component.getPrimitiveMaterial(Number(index)).asPbrMaterial();
-                    }
+                        var material = component.getPrimitiveMaterial(Number(index)).asPbrMaterial();
+                        return material;
                     default:
                         return component;
                 }
@@ -4024,15 +3493,14 @@ function patchComponent(component, _propertyPath, _valueType) {
         setProperty: {
             value: function (c, _, propertyPath, value, valueType) {
                 switch (valueType) {
-                    case ValueType.Hex: {
+                    case ValueType.Hex:
                         var r = value.r, g = value.g, b = value.b, a = value.a;
                         c.base_color_factor_.set(0, parseFloat(r) / 255);
                         c.base_color_factor_.set(1, parseFloat(g) / 255);
                         c.base_color_factor_.set(2, parseFloat(b) / 255);
                         c.base_color_factor_.set(3, parseFloat(a) / 100);
                         break;
-                    }
-                    case ValueType.Mat3f: {
+                    case ValueType.Mat3f:
                         var _a = value.split(',').map(parseFloat), v1 = _a[0], v2 = _a[1], v3 = _a[2], v4 = _a[3], v5 = _a[4], v6 = _a[5], v7 = _a[6], v8 = _a[7], v9 = _a[8];
                         var m1 = light.float3.create(v1, v2, v3);
                         var m2 = light.float3.create(v4, v5, v6);
@@ -4041,8 +3509,7 @@ function patchComponent(component, _propertyPath, _valueType) {
                         c.base_color_uv_matrix_.set(1, m2);
                         c.base_color_uv_matrix_.set(2, m3);
                         break;
-                    }
-                    default: {
+                    default:
                         var component_1 = c;
                         var keyPath = propertyPath.split('.');
                         var lastKeyIndex = keyPath.length - 1;
@@ -4054,7 +3521,6 @@ function patchComponent(component, _propertyPath, _valueType) {
                             component_1 = component_1[key];
                         }
                         component_1[keyPath[lastKeyIndex]] = value;
-                    }
                 }
             },
         },
@@ -4152,7 +3618,7 @@ var AnimationController = /** @class */ (function (_super) {
         return hasAnim;
     };
     // 每一帧会调用此方法, 单位为微秒microsecond
-    AnimationController.prototype.update = function () {
+    AnimationController.prototype.update = function (_time) {
         var _this = this;
         var animationClips = this.getAnimationControllerClips();
         // 0. 没有组件动画提前return
@@ -4199,12 +3665,12 @@ var AnimationController = /** @class */ (function (_super) {
     AnimationController.prototype.updateTransformComponent = function (componentInstance, componentType, propertyPath, value, valueType, component) {
         var pathArray = propertyPath.split('.');
         var lastPath = pathArray[pathArray.length - 1];
-        if (propertyPath.indexOf('position') === 0) {
+        if (propertyPath.indexOf('position') == 0) {
             var componentPosition = componentInstance.position;
             componentPosition[lastPath] = value;
             componentInstance.SetPosition(componentPosition);
         }
-        else if (propertyPath.indexOf('eEuler') === 0) {
+        else if (propertyPath.indexOf('eEuler') == 0) {
             if (!this.cacheEuler) {
                 this.cacheEuler = {};
             }
@@ -4221,7 +3687,7 @@ var AnimationController = /** @class */ (function (_super) {
                 this.cacheEuler = null;
             }
         }
-        else if (propertyPath.indexOf('scale') === 0) {
+        else if (propertyPath.indexOf('scale') == 0) {
             var componentScale = componentInstance.scale;
             componentScale[lastPath] = value;
             componentInstance.SetScale(componentScale);
@@ -4243,7 +3709,7 @@ light.on('start', function (entityManager, eventManager, scriptSystem) {
     // 1. 从entity里面找到所有包含动画组件的entity
     var entitiesWithAnimation = entityManager.entitiesWithComponents(light.AnimationController.componentType);
     // 2. 对每个entity都注册一个 AnimationController
-    entitiesWithAnimation.forEach(function (entity) {
+    entitiesWithAnimation.forEach(function (entity, i) {
         var idComponent = entity.getComponent(light.EntityIdentifier);
         if (!idComponent)
             return;
@@ -4251,6 +3717,19 @@ light.on('start', function (entityManager, eventManager, scriptSystem) {
         light.runtime.addBehavior(AnimationBehavior);
     });
 });
+
+var Node = /** @class */ (function () {
+    function Node() {
+    }
+    return Node;
+}());
+var EventNode = /** @class */ (function (_super) {
+    __extends(EventNode, _super);
+    function EventNode() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return EventNode;
+}(Node));
 
 var StartNode = /** @class */ (function (_super) {
     __extends(StartNode, _super);
@@ -4263,39 +3742,33 @@ var StartNode = /** @class */ (function (_super) {
 }(EventNode));
 light.NodeContext.registerNode(StartNode);
 
-var LoopType;
-(function (LoopType) {
-    LoopType["FIXED"] = "\u56FA\u5B9A\u6570\u5B57";
-    LoopType["INFINITE"] = "\u65E0\u9650\u5FAA\u73AF";
-})(LoopType || (LoopType = {}));
 var TimerNode = /** @class */ (function (_super) {
     __extends(TimerNode, _super);
     function TimerNode() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.lastTime = 0;
+        _this.currentTimes = 0;
         _this.duration = 1000000;
-        _this.repeatTimes = 1;
+        _this.repeatTimes = -1;
         _this.times = 1;
         _this._times = 1;
         _this.startupTrigger = false; // 刚开始就触发一次
-        _this.lastTime = 0;
-        _this.currentTimes = 0;
         return _this;
     }
     TimerNode.prototype.Update = function () { };
     TimerNode.prototype.Run = function () {
-        if (this.startupTrigger && this.repeatTimes !== 0) {
-            this.currentTimes = this.currentTimes + 1;
+        if (this.startupTrigger) {
             this.Update();
         }
         light.on('update', this.onLightUpdate.bind(this));
     };
     TimerNode.prototype.onLightUpdate = function (time) {
         if ((time - this.lastTime) > this.duration
-            && (this.repeatTimes > this.currentTimes || this.loopType === LoopType.INFINITE)) {
+            && (this.repeatTimes > this.currentTimes || this.repeatTimes < 0)) {
             this.Update();
             this.lastTime = time;
-            this.currentTimes = this.currentTimes + 1;
-            this.times = this.times + 1;
+            this.currentTimes++;
+            this.times++;
         }
     };
     TimerNode.nodeType = 'code/Timer';
@@ -4332,7 +3805,7 @@ var Queue = [
     light.CrazyFace,
     light.Sticker3D,
     light.Snapshot,
-    light.Particle,
+    light.Particle, ,
     light.ExpressionTransfer,
 ];
 var getRelateEntities = function (entityId, entityManager) {
@@ -4342,21 +3815,21 @@ var getRelateEntities = function (entityId, entityManager) {
         var faceTrack = entity.getComponent(light.FaceTracking);
         entities.push(entity);
         if (faceTrack) {
-            if (faceTrack.duplicate_entity_id_) { // 新版
-                for (var i = 0; i < faceTrack.duplicate_entity_id_.size(); i += 1) {
+            if (faceTrack.duplicate_entity_id_) { //新版
+                for (var i = 0; i < faceTrack.duplicate_entity_id_.size(); i++) {
                     var id = faceTrack.duplicate_entity_id_.get(i);
                     var relateEntity = entityManager.getEntityById(id);
-                    if (relateEntity === null || relateEntity === void 0 ? void 0 : relateEntity.transform) {
+                    if (relateEntity && relateEntity.transform) {
                         entities.push(relateEntity);
                     }
                 }
             }
             else {
-                var faceIds = new Array(MAX_FACE_NUMBER - 1).fill(0) // 兼容旧版
+                var faceIds = new Array(MAX_FACE_NUMBER - 1).fill(0) //兼容旧版
                     .map(function (value, i) { return entityId + ((i + 1) * 10000); });
                 faceIds.forEach(function (id) {
                     var relateEntity = entityManager.getEntityById(id);
-                    if (relateEntity === null || relateEntity === void 0 ? void 0 : relateEntity.transform) {
+                    if (relateEntity && relateEntity.transform) {
                         entities.push(relateEntity);
                     }
                 });
@@ -4369,7 +3842,8 @@ var showEntities = function (ids, entityManager) {
     if (ids === void 0) { ids = []; }
     ids.forEach(function (entityId) {
         var entities = getRelateEntities(entityId, entityManager); // 获取人脸跟随的对象集
-        entities.forEach(function (entity) {
+        var _loop_1 = function (i) {
+            var entity = entities[i];
             var timeOffset = entity.getComponent(light.TimeOffset);
             var timeContrl = entity.getComponent(light.TimeControl);
             if (timeOffset) {
@@ -4380,13 +3854,13 @@ var showEntities = function (ids, entityManager) {
                 timeContrl.currentTime = 0;
             }
             var setTransform = true;
-            Queue.forEach(function (queueItem) {
-                var cmp = entity.getComponent(queueItem);
+            for (var i_1 = 0; i_1 < Queue.length; i_1++) {
+                var cmp = entity.getComponent(Queue[i_1]);
                 if (cmp) {
                     cmp.enabled = true;
                     setTransform = false;
                 }
-            });
+            }
             if (setTransform) {
                 [
                     light.BasicTransform,
@@ -4395,25 +3869,27 @@ var showEntities = function (ids, entityManager) {
                     var cmp = entity.getComponent(item);
                     if (cmp) {
                         cmp.objectEnabled = true;
-                        cmp.enabled = true;
                     }
                 });
             }
-        });
+        };
+        for (var i = 0; i < entities.length; i++) {
+            _loop_1(i);
+        }
     });
 };
 var hideEntities = function (ids, entityManager) {
     if (ids === void 0) { ids = []; }
     ids.forEach(function (entityId) {
-        getRelateEntities(entityId, entityManager).forEach(function (entity) {
+        getRelateEntities(entityId, entityManager).forEach(function (entity, i) {
             var setTransform = true;
-            Queue.forEach(function (queueItem) {
-                var cmp = entity.getComponent(queueItem);
+            for (var i_2 = 0; i_2 < Queue.length; i_2++) {
+                var cmp = entity.getComponent(Queue[i_2]);
                 if (cmp) {
                     cmp.enabled = false;
                     setTransform = false;
                 }
-            });
+            }
             if (setTransform) {
                 [
                     light.BasicTransform,
@@ -4422,27 +3898,28 @@ var hideEntities = function (ids, entityManager) {
                     var cmp = entity.getComponent(item);
                     if (cmp) {
                         cmp.objectEnabled = false;
-                        cmp.enabled = false;
                     }
                 });
             }
         });
     });
 };
-// 判断entity的component是否enable 如果为跟脸贴纸 还需要判断transform是否visible
+//判断entity的component是否enable 如果为跟脸贴纸 还需要判断transform是否visible
 var isEntityHide = function (id, entityManager) {
     var cmpEnable = false;
     var entity = entityManager.getEntityById(id);
     if (entity) {
-        Queue.forEach(function (queueItem) {
-            var cmp = entity.getComponent(queueItem);
+        for (var i = 0; i < Queue.length; i++) {
+            var cmp = entity.getComponent(Queue[i]);
             if (cmp) {
                 if (!cmp.enabled) {
                     return true;
                 }
-                cmpEnable = cmp.enabled;
+                else {
+                    cmpEnable = cmp.enabled;
+                }
             }
-        });
+        }
         [light.BasicTransform, light.ScreenTransform].forEach(function (item) {
             var cmp = entity.getComponent(item);
             if (cmp) {
@@ -4452,34 +3929,16 @@ var isEntityHide = function (id, entityManager) {
     }
     return !cmpEnable;
 };
-var eventBus = {};
-var emitEvent = function (eventName) {
-    var args = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        args[_i - 1] = arguments[_i];
-    }
-    if (eventBus[eventName]) {
-        eventBus[eventName].forEach(function (f) {
-            f.apply(void 0, args);
-        });
-    }
-};
-var submitEvent = function (eventName, callback) {
-    if (!eventBus[eventName]) {
-        eventBus[eventName] = [];
-    }
-    eventBus[eventName].push(callback);
-};
 
 var ObjectQueueNode = /** @class */ (function (_super) {
     __extends(ObjectQueueNode, _super);
     function ObjectQueueNode() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.indexToDisplay = 0;
         _this.toShow = [];
         _this.toHide = [];
         _this.init = false;
         _this.random = false;
-        _this.indexToDisplay = 0;
         return _this;
     }
     ObjectQueueNode.prototype.Run = function () {
@@ -4501,7 +3960,7 @@ var ObjectQueueNode = /** @class */ (function (_super) {
                 }
             }
         });
-        this.indexToDisplay = this.indexToDisplay + 1;
+        this.indexToDisplay++;
         showEntities(this.toShow, this.entityManager);
         hideEntities(this.toHide, this.entityManager);
         this.Next();
@@ -4532,6 +3991,90 @@ var SwitchObjectNode = /** @class */ (function (_super) {
 }(Node));
 light.NodeContext.registerNode(SwitchObjectNode);
 
+var FaceAction$1;
+(function (FaceAction) {
+    FaceAction[FaceAction["FaceDetected"] = 0] = "FaceDetected";
+    FaceAction[FaceAction["OpenMouth"] = 1] = "OpenMouth";
+    FaceAction[FaceAction["BlinkEyebrow"] = 2] = "BlinkEyebrow";
+    FaceAction[FaceAction["BlinkEye"] = 3] = "BlinkEye";
+    FaceAction[FaceAction["ShakeHead"] = 4] = "ShakeHead";
+    FaceAction[FaceAction["Kiss"] = 5] = "Kiss";
+    FaceAction[FaceAction["BlinkLeftEye"] = 6] = "BlinkLeftEye";
+    FaceAction[FaceAction["BlinkRightEye"] = 7] = "BlinkRightEye";
+    FaceAction[FaceAction["Nod"] = 8] = "Nod";
+    FaceAction[FaceAction["Smile"] = 9] = "Smile";
+    FaceAction[FaceAction["MouthOccluded"] = 10] = "MouthOccluded";
+    FaceAction[FaceAction["LeftEyeOccluded"] = 11] = "LeftEyeOccluded";
+    FaceAction[FaceAction["RightEyeOccluded"] = 12] = "RightEyeOccluded";
+    FaceAction[FaceAction["DoubleEyeOccluded"] = 13] = "DoubleEyeOccluded";
+})(FaceAction$1 || (FaceAction$1 = {}));
+var GestureAction$1;
+(function (GestureAction) {
+    GestureAction[GestureAction["HEART"] = 0] = "HEART";
+    GestureAction[GestureAction["PAPER"] = 1] = "PAPER";
+    GestureAction[GestureAction["SCISSOR"] = 2] = "SCISSOR";
+    GestureAction[GestureAction["FIST"] = 3] = "FIST";
+    GestureAction[GestureAction["ONE"] = 4] = "ONE";
+    GestureAction[GestureAction["LOVE"] = 5] = "LOVE";
+    GestureAction[GestureAction["LIKE"] = 6] = "LIKE";
+    GestureAction[GestureAction["OK"] = 7] = "OK";
+    GestureAction[GestureAction["ROCK"] = 8] = "ROCK";
+    GestureAction[GestureAction["SIX"] = 9] = "SIX";
+    GestureAction[GestureAction["EIGHT"] = 10] = "EIGHT";
+    GestureAction[GestureAction["LIFT"] = 11] = "LIFT";
+    GestureAction[GestureAction["CONGRATULATE"] = 12] = "CONGRATULATE";
+})(GestureAction$1 || (GestureAction$1 = {}));
+// 记录一次流程生命周期已开启的AI能力
+var enabledAI = [];
+function openAIFeature(features, entityManager, eventManager) {
+    var aiRequire = new light.VectorString();
+    features === null || features === void 0 ? void 0 : features.forEach(function (feature) {
+        if (enabledAI.indexOf(feature) === -1) {
+            aiRequire.add(feature);
+            enabledAI.push(feature);
+        }
+    });
+    if (aiRequire.size() > 0) {
+        var event = new light.ScriptOpenAIEvent(entityManager, aiRequire);
+        eventManager.emit(event);
+    }
+}
+function getAIClassData(features, entityManager) {
+    var aiClassData = {};
+    features === null || features === void 0 ? void 0 : features.forEach(function (feature) {
+        var datas = light.AIDataUtils.GetJsEventListFromAIDataCenter(entityManager, feature);
+        var keys = datas.getKeys();
+        for (var i = 0; i < keys.size(); i++) {
+            var key = keys.get(i);
+            var value = JSON.parse(datas.get(key));
+            aiClassData[key] = value;
+        }
+    });
+    return aiClassData;
+}
+function getAIPointData(feature, entityManager) {
+    var datas = light.AIDataUtils.GetAIPointDataFromAIDataCenter(entityManager, feature);
+    var res = [];
+    for (var i = 0; i < datas.size(); i++) {
+        var data = JSON.parse(JSON.stringify(datas.get(i)));
+        var points = [];
+        var pointsData = datas.get(i)['point_array_'];
+        if (pointsData && pointsData.size()) {
+            for (var j = 0; j < pointsData.size(); j++) {
+                points.push(pointsData.get(j));
+            }
+            data.point_array_ = points;
+        }
+        res.push(data);
+    }
+    return res;
+}
+function actionNameToEvent(name) {
+    var str = name.toLowerCase();
+    str = str.replace(/^\S/, function (s) { return s.toUpperCase(); });
+    return "on" + str;
+}
+
 var GestureNode = /** @class */ (function (_super) {
     __extends(GestureNode, _super);
     function GestureNode() {
@@ -4547,13 +4090,13 @@ var GestureNode = /** @class */ (function (_super) {
     };
     GestureNode.prototype.onUpdate = function () {
         var aiData = getAIClassData(["Hand_Gesture" /* HAND_GESTURE */], this.entityManager);
-        var expressions = aiData === null || aiData === void 0 ? void 0 : aiData[this.actionEventName];
+        var expressions = aiData && aiData[this.actionEventName];
         var hasGesture = expressions && expressions.length > 0;
-        if (this.lastState !== hasGesture) {
+        if (this.lastState != hasGesture) {
             this.lastState = hasGesture;
             if (hasGesture) {
                 this.Detected();
-                this.times = this.times + 1;
+                this.times++;
             }
             else {
                 this.Lost();
@@ -4590,7 +4133,7 @@ var FaceEventNode = /** @class */ (function (_super) {
     FaceEventNode.prototype.onUpdate = function () {
         var aifeature = AIFeature[this.actionEventName] ? AIFeature[this.actionEventName] : DefaultAIFeature;
         var data = getAIClassData([aifeature], this.entityManager);
-        var expressions = data === null || data === void 0 ? void 0 : data[this.actionEventName];
+        var expressions = data && data[this.actionEventName];
         var detected = expressions && expressions.length > 0;
         if (detected) {
             var trackId = expressions[0];
@@ -4599,10 +4142,10 @@ var FaceEventNode = /** @class */ (function (_super) {
                 expression: [this.faceAction],
             };
             this.faceOutput = faceInfo;
-            if (trackId !== this.lastTrackId || detected !== this.lastState) {
+            if (trackId != this.lastTrackId || detected != this.lastState) {
                 console.log("FaceEventNode: onDetected: " + trackId);
                 this.onDetected();
-                this.times = this.times + 1;
+                this.times++;
             }
             this.lastTrackId = trackId;
         }
@@ -4624,12 +4167,12 @@ var MusicNode = /** @class */ (function (_super) {
     __extends(MusicNode, _super);
     function MusicNode() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.curMusicTime = -1;
         _this.highlightOffset = 0;
         _this.slowRhythmOffset = 0;
         _this.drumOffset = 0;
         _this.startValueOffset = 0;
         _this.endValueOffset = 0;
-        _this.curMusicTime = -1;
         return _this;
     }
     MusicNode.prototype.Run = function () {
@@ -4662,7 +4205,7 @@ var MusicNode = /** @class */ (function (_super) {
         }
         if (params.rhythmInfos.StartValueTrail) {
             for (var i = 0, size = params.rhythmInfos.StartValueTrail.length; i < size; i++) {
-                if (params.rhythmInfos.StartValueTrail[i].index === 0) {
+                if (params.rhythmInfos.StartValueTrail[i].index == 0) {
                     if (Math.abs(params.rhythmInfos.StartValueTrail[i].time + this.startValueOffset - params.elapseTime)
                         <= params.elapseTime - this.curMusicTime) {
                         this.onStartValueTrail();
@@ -4693,9 +4236,10 @@ var AnimationNode = /** @class */ (function (_super) {
     function AnimationNode() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.loopCount = 0;
+        _this.setProgress = false;
         _this.progress = 0;
-        _this.isPlayTogether = false;
-        _this.onUpdate = function () {
+        _this.onUpdate = function (time) {
+            console.error('AnimationNode update');
             if (_this.loopCount < 0) {
                 return;
             }
@@ -4740,10 +4284,13 @@ var AnimationNode = /** @class */ (function (_super) {
                     clip.state = 1 /* Playing */;
                     timeCtrls.timeControlArray.get(index).pause = false;
                     timeCtrls.timeControlArray.get(index).loopCount = _this.loopCount;
-                    timeCtrls.timeControlArray.get(index).currentTime = _this.progress;
+                    if (_this.setProgress) {
+                        timeCtrls.timeControlArray.get(index).currentTime = _this.progress;
+                    }
+                    // clip.progress != timeCtrl.currentTime 触发刷新
                     clip.progress = 1;
                 }
-                else if (!_this.isPlayTogether) {
+                else {
                     clip.state = 0 /* Stopped */;
                     timeCtrls.timeControlArray.get(index).pause = true;
                 }
@@ -4753,10 +4300,12 @@ var AnimationNode = /** @class */ (function (_super) {
             controller.clips.forEach(function (clip, index) {
                 if (_this.clipIndex === index) {
                     clip.state = 1 /* Playing */;
-                    clip.progress = _this.progress;
+                    if (_this.setProgress) {
+                        clip.progress = _this.progress;
+                    }
                     clip.startTime = light.getCurrentTime() - clip.progress;
                 }
-                else if (!_this.isPlayTogether) {
+                else {
                     clip.state = 0 /* Stopped */;
                 }
             });
@@ -4810,68 +4359,13 @@ var AnimationNode = /** @class */ (function (_super) {
 }(Node));
 light.NodeContext.registerNode(AnimationNode);
 
-var PreloadNode = /** @class */ (function (_super) {
-    __extends(PreloadNode, _super);
-    function PreloadNode() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.preloadEntity = [];
-        return _this;
-    }
-    PreloadNode.prototype.setup = function () {
-        var _this = this;
-        if (this.preloadEntity && this.preloadEntity.length > 0) {
-            this.preloadEntity.forEach(function (entityId) {
-                entityId !== 0 && light.PreloadUtils.SetPreloadPolicy(_this.entityManager, entityId);
-            });
-        }
-    };
-    PreloadNode.prototype.Run = function () {
-        var _this = this;
-        if (this.preloadEntity && this.preloadEntity.length > 0) {
-            this.preloadEntity.forEach(function (entityId) {
-                entityId !== 0 && light.PreloadUtils.PreloadEntity(_this.entityManager, entityId);
-            });
-        }
-        this.Next();
-    };
-    PreloadNode.prototype.Next = function () { };
-    PreloadNode.nodeType = 'code/Preload';
-    return PreloadNode;
-}(Node));
-light.NodeContext.registerNode(PreloadNode);
-
-var FreeMemoryNode = /** @class */ (function (_super) {
-    __extends(FreeMemoryNode, _super);
-    function FreeMemoryNode() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.freeMemoryEntity = [];
-        return _this;
-    }
-    FreeMemoryNode.prototype.Run = function () {
-        var _this = this;
-        this.freeMemoryEntity.forEach(function (entityId) {
-            light.PreloadUtils.FreeEntityMemory(_this.entityManager, entityId);
-        });
-        this.Next();
-    };
-    FreeMemoryNode.prototype.Next = function () { };
-    FreeMemoryNode.nodeType = 'code/FreeMemory';
-    return FreeMemoryNode;
-}(Node));
-light.NodeContext.registerNode(FreeMemoryNode);
-
-var LoopType$1;
-(function (LoopType) {
-    LoopType["FIXED"] = "\u56FA\u5B9A\u6570\u5B57";
-    LoopType["INFINITE"] = "\u65E0\u9650\u5FAA\u73AF";
-})(LoopType$1 || (LoopType$1 = {}));
 var QueueNode = /** @class */ (function (_super) {
     __extends(QueueNode, _super);
     function QueueNode() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.indexToDisplay = 0;
         _this.indexToHide = 0;
-        _this.repeatTimes = 1;
+        _this.repeatTimes = -1;
         _this.init = false;
         _this.toShow = [];
         _this.toHide = [];
@@ -4882,22 +4376,22 @@ var QueueNode = /** @class */ (function (_super) {
         this.toHide = [];
         var _a = this, entityToDisplay = _a.entityToDisplay, entityToHide = _a.entityToHide, repeatTimes = _a.repeatTimes;
         if (entityToDisplay.length) {
-            if (this.indexToDisplay < entityToDisplay.length * repeatTimes || this.loopType === LoopType$1.INFINITE) {
+            if (this.indexToDisplay < entityToDisplay.length * repeatTimes || repeatTimes < 0) {
                 var entityId = entityToDisplay[this.indexToDisplay % entityToDisplay.length];
                 var entity = this.entityManager.getEntityById(entityId);
                 if (entity) {
                     this.toShow.push(entityId);
-                    this.indexToDisplay += 1;
+                    this.indexToDisplay++;
                 }
             }
         }
         if (entityToHide.length) {
-            if (this.indexToHide < entityToHide.length * repeatTimes || this.loopType === LoopType$1.INFINITE) {
+            if (this.indexToHide < entityToHide.length * repeatTimes || repeatTimes < 0) {
                 var entityId = entityToHide[this.indexToHide % entityToHide.length];
                 var entity = this.entityManager.getEntityById(entityId);
                 if (entity) {
                     this.toHide.push(entityId);
-                    this.indexToHide += 1;
+                    this.indexToHide++;
                 }
             }
         }
@@ -4919,7 +4413,7 @@ var AccumulationNumberNode = /** @class */ (function (_super) {
         return _this;
     }
     AccumulationNumberNode.prototype.Run = function () {
-        if (this.current === undefined) {
+        if (this.current == undefined) {
             this.current = this.from;
             this.Value = this.current;
             this.Next();
@@ -4945,9 +4439,9 @@ var AgeNode = /** @class */ (function (_super) {
     __extends(AgeNode, _super);
     function AgeNode() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.lastAgeInfo = {};
         _this.ageRange = [];
         _this.MAX_AGE = 66;
-        _this.lastAgeInfo = {};
         return _this;
     }
     AgeNode.prototype.Run = function () {
@@ -4956,11 +4450,11 @@ var AgeNode = /** @class */ (function (_super) {
             return;
         }
         // 上次的人脸而且年龄相同，不重复触发
-        if (this.lastAgeInfo[faceInput.trackID] === faceInput.age) {
+        if (this.lastAgeInfo[faceInput.trackID] == faceInput.age) {
             return;
         }
         this.ageOutput = faceInput;
-        if (this.ageRange.length === 0) {
+        if (this.ageRange.length == 0) {
             this.Next();
         }
         else {
@@ -4973,7 +4467,7 @@ var AgeNode = /** @class */ (function (_super) {
                     continue;
                 }
                 if (age < this.ageRange[i]) {
-                    funName = start + "_" + this.ageRange[i];
+                    funName = "[" + start + ", " + this.ageRange[i] + ")";
                     if (!this[funName]) {
                         this[funName] = function () { };
                     }
@@ -4983,7 +4477,7 @@ var AgeNode = /** @class */ (function (_super) {
                 start = this.ageRange[i];
             }
             if (start < MAX_AGE && start <= age && age < MAX_AGE) {
-                funName = start + "_" + MAX_AGE;
+                funName = "[" + start + ", " + MAX_AGE + ")";
                 if (!this[funName]) {
                     this[funName] = function () { };
                 }
@@ -5005,7 +4499,10 @@ var AgeEventNode = /** @class */ (function (_super) {
         _this.customEvents = [];
         _this.MAX_AGE = 66;
         _this.AI_FETURE = [
+            "Expression" /* EXPRESSION */,
             "Age" /* AGE */,
+            "Gender" /* GENDER */,
+            "Smile" /* SMILE */,
         ];
         return _this;
     }
@@ -5016,42 +4513,40 @@ var AgeEventNode = /** @class */ (function (_super) {
     AgeEventNode.prototype.onUpdate = function () {
         var _this = this;
         var data = getAIClassData(this.AI_FETURE, this.entityManager);
-        var ageDatas = data === null || data === void 0 ? void 0 : data.onAge;
-        var detected = ageDatas && ageDatas.length > 0;
+        var expressions = data && data.onAge;
+        var detected = expressions && expressions.length > 0;
         if (detected) {
-            var sortedTraceIDList_1 = ageDatas.map(function (ageRange) { return ageRange[0]; }).sort(function (a, b) { return a - b; });
-            ageDatas.forEach(function (ageRange) {
-                // AI会缓存人脸点位 输出的index会递增 比如[3,4,5] 实质上应该为[0,1,2]
-                var trackID = sortedTraceIDList_1.indexOf(ageRange[0]);
+            expressions.forEach(function (ageRange, index) {
+                var trackID = ageRange[0];
                 var age = ageRange[1];
                 if (!_this.lastAgeInfo[trackID] || _this.lastAgeInfo[trackID] !== age) {
                     _this.ageOutput = {
-                        trackID: trackID,
+                        trackID: ageRange[0],
                         age: age,
                     };
                     _this.ageNumberOutput = age;
-                    _this.trackIndexOutput = trackID;
+                    _this.trackIndexOutput = ageRange[0];
                     var start_1 = 0;
                     var invoke_1 = false;
                     if (_this.ageRange.length > 0) {
-                        _this.ageRange.forEach(function (_age) {
+                        _this.ageRange.forEach(function (_age, i) {
                             if (invoke_1) {
                                 return;
                             }
                             if (age < _age) {
-                                if (!_this[start_1 + "_" + _age]) {
-                                    _this[start_1 + "_" + _age] = function () { };
+                                if (!_this["[" + start_1 + ", " + _age + ")"]) {
+                                    _this["[" + start_1 + ", " + _age + ")"] = function () { };
                                 }
-                                _this[start_1 + "_" + _age]();
+                                _this["[" + start_1 + ", " + _age + ")"]();
                                 invoke_1 = true;
                             }
                             start_1 = _age;
                         });
                         if (!invoke_1 && age <= _this.MAX_AGE) {
-                            if (!_this[start_1 + "_" + _this.MAX_AGE]) {
-                                _this[start_1 + "_" + _this.MAX_AGE] = function () { };
+                            if (!_this["[" + start_1 + ", " + _this.MAX_AGE + ")"]) {
+                                _this["[" + start_1 + ", " + _this.MAX_AGE + ")"] = function () { };
                             }
-                            _this[start_1 + "_" + _this.MAX_AGE]();
+                            _this["[" + start_1 + ", " + _this.MAX_AGE + ")"]();
                         }
                     }
                     else {
@@ -5061,7 +4556,6 @@ var AgeEventNode = /** @class */ (function (_super) {
                         _this['Next']();
                     }
                 }
-                _this.lastAgeInfo[trackID] = age;
             });
         }
     };
@@ -5122,12 +4616,19 @@ var ConstNumberNode = /** @class */ (function (_super) {
     function ConstNumberNode() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    ConstNumberNode.prototype.Process = function () {
-        this.Value = this._value;
-    };
+    Object.defineProperty(ConstNumberNode.prototype, "Value", {
+        get: function () {
+            return this._value;
+        },
+        set: function (v) {
+            this._value = v;
+        },
+        enumerable: false,
+        configurable: true
+    });
     ConstNumberNode.nodeType = 'code/constNumber';
     return ConstNumberNode;
-}(DataProcessNode));
+}(Node));
 light.NodeContext.registerNode(ConstNumberNode);
 
 var CorrelationNode = /** @class */ (function (_super) {
@@ -5193,7 +4694,6 @@ var FaceNode = /** @class */ (function (_super) {
             "Age" /* AGE */,
             "Gender" /* GENDER */,
             "Smile" /* SMILE */,
-            "Pout" /* POUT */,
         ];
         return _this;
     }
@@ -5205,7 +4705,7 @@ var FaceNode = /** @class */ (function (_super) {
     FaceNode.prototype.onUpdate = function () {
         var _this = this;
         var data = getAIClassData(this.AI_FEATURE, this.entityManager);
-        var expressions = data === null || data === void 0 ? void 0 : data[this.actionEventName];
+        var expressions = data && data[this.actionEventName];
         var detected = expressions && expressions.length > 0;
         if (detected) {
             var faces = this.getAllFaceInfo(data);
@@ -5213,24 +4713,20 @@ var FaceNode = /** @class */ (function (_super) {
                 _this.faceOutput = face;
                 _this.onNext();
             });
-            this.times += 1;
+            this.times++;
             var trackId = expressions[0];
-            if (detected !== this.lastState) {
+            if (detected != this.lastState) {
                 console.log("FaceNode: onDetected: " + trackId);
                 this.onDetected();
             }
         }
-        else {
-            this.onNoFace();
-            if (this.lastState) {
-                console.log('FaceNode: Lost');
-                this.Lost();
-            }
+        else if (this.lastState) {
+            console.log('FaceNode: Lost');
+            this.Lost();
         }
         this.lastState = detected;
     };
     FaceNode.prototype.onNext = function () { };
-    FaceNode.prototype.onNoFace = function () { };
     FaceNode.prototype.Lost = function () { };
     FaceNode.prototype.onDetected = function () { };
     FaceNode.prototype.getAllFaceInfo = function (params) {
@@ -5240,8 +4736,8 @@ var FaceNode = /** @class */ (function (_super) {
         var _loop_1 = function (i, size) {
             console.log("expression_Key:::" + keys[i]);
             switch (keys[i]) {
-                case 'onAge': {
-                    var ageInfo_1 = params.onAge; // [[1, 29], [2, 24]]
+                case 'onAge':
+                    var ageInfo_1 = params["onAge"]; // [[1, 29], [2, 24]]
                     if (ageInfo_1) {
                         var _loop_2 = function (j, ageCount) {
                             // 先找trackID，找得到就更新age，找不到就新增一个
@@ -5262,9 +4758,8 @@ var FaceNode = /** @class */ (function (_super) {
                         }
                     }
                     break;
-                }
-                case 'onMale': {
-                    var maleInfo_1 = params.onMale; // [1,2,3]
+                case 'onMale':
+                    var maleInfo_1 = params["onMale"]; // [1,2,3]
                     if (maleInfo_1) {
                         var _loop_3 = function (j, maleCount) {
                             var exist = allFaceInfo.find(function (info) { return info.trackID === maleInfo_1[j]; });
@@ -5285,9 +4780,8 @@ var FaceNode = /** @class */ (function (_super) {
                         }
                     }
                     break;
-                }
-                case 'onFemale': {
-                    var femaleInfo_1 = params.onFemale; // [4,5,6]
+                case 'onFemale':
+                    var femaleInfo_1 = params["onFemale"]; // [4,5,6]
                     if (femaleInfo_1) {
                         var _loop_4 = function (j, femaleCount) {
                             var exist = allFaceInfo.find(function (info) { return info.trackID === femaleInfo_1[j]; });
@@ -5308,7 +4802,6 @@ var FaceNode = /** @class */ (function (_super) {
                         }
                     }
                     break;
-                }
                 case 'onFacedetected':
                 case 'onOpenmouth':
                 case 'onBlinkeyebrow':
@@ -5322,7 +4815,7 @@ var FaceNode = /** @class */ (function (_super) {
                 case 'onMouthoccluded':
                 case 'onLefteyeoccluded':
                 case 'onRighteyeoccluded':
-                case 'onDoubleeyeoccluded': {
+                case 'onDoubleeyeoccluded':
                     var expressionInfo_1 = params[keys[i]];
                     if (expressionInfo_1) {
                         var _loop_5 = function (j, count) {
@@ -5347,7 +4840,6 @@ var FaceNode = /** @class */ (function (_super) {
                         }
                     }
                     break;
-                }
             }
         };
         for (var i = 0, size = keys.length; i < size; i++) {
@@ -5360,12 +4852,6 @@ var FaceNode = /** @class */ (function (_super) {
 }(EventNode));
 light.NodeContext.registerNode(FaceNode);
 
-var AIFeature$1;
-(function (AIFeature) {
-    AIFeature["onSmile"] = "Smile";
-    AIFeature["onKiss"] = "Pout";
-})(AIFeature$1 || (AIFeature$1 = {}));
-var DefaultAIFeature$1 = "Expression" /* EXPRESSION */;
 var FaceActionNode = /** @class */ (function (_super) {
     __extends(FaceActionNode, _super);
     function FaceActionNode() {
@@ -5374,25 +4860,14 @@ var FaceActionNode = /** @class */ (function (_super) {
         return _this;
     }
     FaceActionNode.prototype.onDetected = function () { };
-    FaceActionNode.prototype.Lost = function () { };
     FaceActionNode.prototype.Run = function () {
-        var _a, _b;
-        this.actionEventName = actionNameToEvent(light.FaceAction[this.faceAction]);
-        if (((_a = this.faceInput) === null || _a === void 0 ? void 0 : _a.expression) && ((_b = this.faceInput) === null || _b === void 0 ? void 0 : _b.expression.indexOf(this.actionEventName)) > -1) {
+        var actName = actionNameToEvent(light.FaceAction[this.faceAction]);
+        if (this.faceInput
+            && this.faceInput.expression
+            && this.faceInput.expression.indexOf(actName) > -1) {
             this.faceOutput = this.faceInput;
             this.onDetected();
         }
-        light.on('update', this.onUpdate.bind(this));
-    };
-    FaceActionNode.prototype.onUpdate = function () {
-        var aifeature = AIFeature$1[this.actionEventName] ? AIFeature$1[this.actionEventName] : DefaultAIFeature$1;
-        var data = getAIClassData([aifeature], this.entityManager);
-        var expressions = data === null || data === void 0 ? void 0 : data[this.actionEventName];
-        var detected = expressions && expressions.length > 0;
-        if (!detected && this.lastState) {
-            this.Lost();
-        }
-        this.lastState = detected;
     };
     FaceActionNode.nodeType = 'code/FaceAction';
     return FaceActionNode;
@@ -5411,13 +4886,13 @@ var GenderNode = /** @class */ (function (_super) {
             return;
         }
         this.faceOutput = this.faceInput;
-        if (this.faceInput.gender === 0) {
+        if (this.faceInput.gender == 0) {
             console.log('this.faceInput.gender:male');
             if (!this.lastGenderInfo[this.faceInput.trackID]) {
                 this.onMale();
             }
         }
-        else if (this.faceInput.gender === 1) {
+        else if (this.faceInput.gender == 1) {
             console.log('this.faceInput.gender:Female');
             if (!this.lastGenderInfo[this.faceInput.trackID]) {
                 this.onFemale();
@@ -5456,20 +4931,20 @@ var GenderEventNode = /** @class */ (function (_super) {
                         gender: 0,
                     };
                     _this.onMale();
-                    _this.times += 1;
+                    _this.times++;
                 });
                 this.lastMaleInfo[data['onMale'].join(',')] = true;
             }
         }
         if (data['onFemale']) {
-            if (!this.lastFemaleInfo[data['onFemale'].join(',')]) {
+            if (!this.lastFemaleInfo[['onFemale'].join(',')]) {
                 data['onFemale'].forEach(function (id) {
                     _this.genderOutput = {
                         trackID: id,
                         gender: 1,
                     };
                     _this.onFemale();
-                    _this.times += 1;
+                    _this.times++;
                 });
                 this.lastFemaleInfo[data['onFemale'].join(',')] = true;
             }
@@ -5482,7 +4957,7 @@ var GenderEventNode = /** @class */ (function (_super) {
 }(EventNode));
 light.NodeContext.registerNode(GenderEventNode);
 
-var GradientType$1;
+var GradientType;
 (function (GradientType) {
     GradientType[GradientType["LINEAR"] = 1] = "LINEAR";
     GradientType[GradientType["EASE_IN"] = 2] = "EASE_IN";
@@ -5490,74 +4965,58 @@ var GradientType$1;
     GradientType[GradientType["EASE_IN_OUT"] = 4] = "EASE_IN_OUT";
     GradientType[GradientType["SIN"] = 5] = "SIN";
     GradientType[GradientType["COS"] = 6] = "COS";
-})(GradientType$1 || (GradientType$1 = {}));
+})(GradientType || (GradientType = {}));
 var GradientNode = /** @class */ (function (_super) {
     __extends(GradientNode, _super);
     function GradientNode() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.currentTime = 0;
         _this.timeStart = -1;
-        // 是否 bind update listener
-        _this.isBind = false;
-        /*
-        是否调用过 Finish 接口。设置该标志位，处理预览面板进度条快速拖动的情况
-        比如，该node设置1~3秒中进行渐变，用户将预览进度条从2秒直接拖到5秒
-        2秒时，未调用 Finish 接口，isFinished 为false
-        5秒时，增加 Finish 接口 的调用，确保预览面板显示正确
-        */
-        _this.isFinished = false;
-        /*
-        是否需要重置。设置该标志位，处理多次 run 的情况
-        比如，定时触发 + 渐变。
-        定时周期为1秒，渐变周期为3秒
-        */
-        _this.isNeedReset = false;
+        _this.listened = false;
         return _this;
     }
     GradientNode.prototype.onUpdate = function (time) {
         // currentTime为初始值0时，更新timeStart
-        if (this.currentTime === undefined || this.isNeedReset) {
+        if (this.currentTime == 0) {
             this.timeStart = time;
-            this.isNeedReset = false;
         }
         this.currentTime = time;
-        if (this.isFinished && this.currentTime >= this.timeStart + this.duration) {
+        if (this.timeStart === -1) {
             return;
         }
-        this.isFinished = false;
         if (time / 1000 - this.timeStart / 1000 <= this.duration / 1000) {
             var current = (this.currentTime - this.timeStart) / 1000;
             var start = this.from;
             var range = this.to - this.from;
             var duration = this.duration / 1000;
             var handler = {};
-            handler[GradientType$1.LINEAR] = this.linear;
-            handler[GradientType$1.EASE_IN] = this.easeInQuad;
-            handler[GradientType$1.EASE_OUT] = this.easeOutQuad;
-            handler[GradientType$1.EASE_IN_OUT] = this.easeInOutQuad;
-            handler[GradientType$1.SIN] = this.sin;
-            handler[GradientType$1.COS] = this.cos;
+            handler[GradientType.LINEAR] = this.linear;
+            handler[GradientType.EASE_IN] = this.easeInQuad;
+            handler[GradientType.EASE_OUT] = this.easeOutQuad;
+            handler[GradientType.EASE_IN_OUT] = this.easeInOutQuad;
+            handler[GradientType.SIN] = this.sin;
+            handler[GradientType.COS] = this.cos;
             this.CurrentValue = handler[this.gradientType](current, start, range, duration);
-        }
-        else if (time < this.timeStart) {
-            this.CurrentValue = this.from;
+            this.Next();
         }
         else {
-            this.CurrentValue = this.to;
             this.Finish();
-            this.isFinished = true;
+            this.timeStart = -1;
         }
-        this.Next();
     };
     GradientNode.prototype.Run = function () {
-        if (this.to === this.from || this.duration === 0) { // 校验输入值
+        if (this.to == this.from || this.duration == 0) { // 校验输入值
             return;
         }
-        this.isNeedReset = true;
-        if (this.isBind) {
+        if (this.currentTime === undefined) {
+            this.currentTime = this.from;
+        }
+        // 首次调用Run时，currentTime为初始值0，导致timeStart非准确start时间
+        this.timeStart = this.currentTime;
+        if (this.listened) {
             return;
         }
-        this.isBind = true;
+        this.listened = true;
         light.on('update', this.onUpdate.bind(this));
     };
     GradientNode.prototype.Next = function () { };
@@ -5565,7 +5024,7 @@ var GradientNode = /** @class */ (function (_super) {
         currentTime /= duration / 2;
         if (currentTime < 1)
             return rangeValue / 2 * currentTime * currentTime + startValue;
-        currentTime -= 1;
+        currentTime--;
         return -rangeValue / 2 * (currentTime * (currentTime - 2) - 1) + startValue;
     };
     GradientNode.prototype.easeOutQuad = function (currentTime, startValue, rangeValue, duration) {
@@ -5707,7 +5166,7 @@ var QueueBranchNode = /** @class */ (function (_super) {
         var max = 0;
         for (var i = 0; i < Limit; i++) {
             if (this["Next" + i]) {
-                max = max + 1;
+                max++;
             }
             else {
                 break;
@@ -5715,7 +5174,7 @@ var QueueBranchNode = /** @class */ (function (_super) {
         }
         if (this.branchMode === BranchMode.Queue) {
             this["Next" + this.currentIndex % max]();
-            this.currentIndex = this.currentIndex + 1;
+            this.currentIndex++;
         }
         else {
             this["Next" + Math.floor(Math.random() * max)]();
@@ -5747,6 +5206,7 @@ var RandomNode = /** @class */ (function (_super) {
         }
         if (this.entityToHide.length) {
             var entityId = this.entityToHide[Math.floor(Math.random() * this.entityToHide.length)];
+            var entity = this.entityManager.getEntityById(entityId);
             this.toHide.push(entityId);
         }
         showEntities(this.toShow, this.entityManager);
@@ -5854,10 +5314,8 @@ var TransformNode = /** @class */ (function (_super) {
         cmp.rotation.y = quater.y;
         cmp.rotation.z = quater.z;
         cmp.rotation.w = quater.w;
-        var xSymbol = cmp.scale.x / Math.abs(cmp.scale.x);
-        var ySymbol = cmp.scale.y / Math.abs(cmp.scale.y);
-        cmp.scale.x = xSymbol * this.scalexInput + (this.accumulation ? cmp.scale.x : 0);
-        cmp.scale.y = ySymbol * this.scaleyInput + (this.accumulation ? cmp.scale.y : 0);
+        cmp.scale.x = this.scalexInput + (this.accumulation ? cmp.scale.x : 0);
+        cmp.scale.y = this.scaleyInput + (this.accumulation ? cmp.scale.y : 0);
         this.Next();
     };
     TransformNode.prototype.Next = function () {
@@ -5929,42 +5387,35 @@ var TransformNode$1 = /** @class */ (function (_super) {
 }(Node));
 light.NodeContext.registerNode(TransformNode$1);
 
-var LoopType$2;
-(function (LoopType) {
-    LoopType["FIXED"] = "\u56FA\u5B9A\u6570\u5B57";
-    LoopType["INFINITE"] = "\u65E0\u9650\u5FAA\u73AF";
-})(LoopType$2 || (LoopType$2 = {}));
 var UpdateNode = /** @class */ (function (_super) {
     __extends(UpdateNode, _super);
     function UpdateNode() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.repeatTimes = 1;
+        _this.repeatTimes = -1;
         _this.frame = 1;
         _this.currentFrame = 0;
         _this.startupTrigger = false; // 刚开始就触发一次
-        _this.currentTimes = 0;
         return _this;
     }
     UpdateNode.prototype.Run = function () {
-        if (this.startupTrigger && this.repeatTimes !== 0) {
-            this.Update();
-            this.currentTimes = this.currentTimes + 1;
-        }
         light.on('update', this.onFrameUpdate.bind(this));
     };
-    UpdateNode.prototype.onFrameUpdate = function () {
-        if (this.currentFrame !== 0) {
+    UpdateNode.prototype.onFrameUpdate = function (val) {
+        if (!this.startupTrigger) {
+            this.startupTrigger = true;
+            this.Update();
+        }
+        else if (this.currentFrame !== 0) {
             var trigger = (this.currentFrame % this.frame) === 0;
-            var infinite = this.loopType === LoopType$2.INFINITE;
-            var eligible = this.repeatTimes > this.currentTimes;
+            var infinite = this.repeatTimes < 0;
+            var eligible = this.currentFrame < (this.frame * this.repeatTimes);
             if (infinite || eligible) {
                 if (trigger) {
                     this.Update();
-                    this.currentTimes = this.currentTimes + 1;
                 }
             }
         }
-        this.currentFrame += 1;
+        this.currentFrame++;
     };
     UpdateNode.prototype.Update = function () { };
     UpdateNode.nodeType = 'code/Update';
@@ -5972,11 +5423,6 @@ var UpdateNode = /** @class */ (function (_super) {
 }(EventNode));
 light.NodeContext.registerNode(UpdateNode);
 
-var LoopType$3;
-(function (LoopType) {
-    LoopType["FIXED"] = "\u56FA\u5B9A\u6570\u5B57";
-    LoopType["INFINITE"] = "\u65E0\u9650\u5FAA\u73AF";
-})(LoopType$3 || (LoopType$3 = {}));
 var TimesNode = /** @class */ (function (_super) {
     __extends(TimesNode, _super);
     function TimesNode() {
@@ -5987,7 +5433,7 @@ var TimesNode = /** @class */ (function (_super) {
         return _this;
     }
     TimesNode.prototype.Run = function () {
-        var repeat = this.loopType === LoopType$3.INFINITE ? Infinity : this.repeat;
+        var repeat = this.repeat < 0 ? Infinity : this.repeat;
         if (this.times > this.total * repeat) {
             return;
         }
@@ -5996,18 +5442,12 @@ var TimesNode = /** @class */ (function (_super) {
             this["Next" + (index + 1)] = function () { };
         }
         this["Next" + (index + 1)]();
-        this.times = this.times + 1;
     };
     TimesNode.nodeType = 'code/times';
     return TimesNode;
 }(Node));
 light.NodeContext.registerNode(TimesNode);
 
-var LoopType$4;
-(function (LoopType) {
-    LoopType["FIXED"] = "\u56FA\u5B9A\u6570\u5B57";
-    LoopType["INFINITE"] = "\u65E0\u9650\u5FAA\u73AF";
-})(LoopType$4 || (LoopType$4 = {}));
 var play = /** @class */ (function (_super) {
     __extends(play, _super);
     function play() {
@@ -6022,14 +5462,14 @@ var play = /** @class */ (function (_super) {
         var entity = this.entityManager.getEntityById(this.entityId);
         if (entity) {
             showEntities([this.entityId], this.entityManager);
-            if (this.loopType === LoopType$4.INFINITE) {
+            if (this.playtimes < 0) {
                 return;
             }
             var timeOffset = entity.getComponent(light.TimeOffset);
             var timeContrl = entity.getComponent(light.TimeControl);
             var timeContrlList = entity.getComponent(light.TimeControlList);
             if (timeOffset) {
-                if (timeContrlList === null || timeContrlList === void 0 ? void 0 : timeContrlList.timeControlArray) {
+                if (timeContrlList && timeContrlList.timeControlArray) {
                     for (var i = 0; i < timeContrlList.timeControlArray.size(); i++) {
                         timeContrlList.timeControlArray.get(i).reset();
                         timeContrlList.timeControlArray.get(i).currentTime = 0;
@@ -6045,18 +5485,16 @@ var play = /** @class */ (function (_super) {
                 timeOffset.loopCount = this.playtimes - 1;
                 timeOffset.visibleWhileOverTime = this.keepLastFrame;
                 var currentTime = light.getCurrentTime();
-                var endTime_1 = currentTime + (timeOffset.duration
-                    * (this.loopType === LoopType$4.INFINITE ? Infinity : this.playtimes));
+                var endTime_1 = currentTime + (timeOffset.duration * (this.playtimes < 0 ? Infinity : this.playtimes));
                 var invoked_1 = false;
                 light.on('update', function (time) {
                     if (time > endTime_1 && !invoked_1) {
                         invoked_1 = true;
-                        _this.Finish();
+                        _this.Next();
                     }
                 });
             }
         }
-        this.Next();
     };
     play.prototype.Pause = function () {
         var entity = this.entityManager.getEntityById(this.entityId);
@@ -6075,7 +5513,6 @@ var play = /** @class */ (function (_super) {
         }
     };
     play.prototype.Next = function () { };
-    play.prototype.Finish = function () { };
     play.nodeType = 'code/play';
     return play;
 }(Node));
@@ -6265,39 +5702,39 @@ var LotteryNode$1 = /** @class */ (function (_super) {
     LotteryNode.prototype.Run = function () {
         var _this = this;
         var entity = this.entityManager.getEntityById(this.entityId);
-        if (!entity)
-            return;
-        var face = entity.getComponent(light.CrazyFace);
-        if (!face)
-            return;
-        if (this.progress !== -1) {
-            face.progress = this.progress;
-            showEntities([this.entityId], this.entityManager);
-            this.Next();
-        }
-        else {
-            var timeStart_1 = light.getCurrentTime();
-            var invoked_1 = false;
-            var resetInitialValue_1 = false;
-            light.on('update', function (time) {
-                var currentTime = light.getCurrentTime();
-                if (timeStart_1 === -1 || invoked_1) {
-                    return;
-                }
-                if (!resetInitialValue_1) {
-                    resetInitialValue_1 = true;
-                    face.progress = _this.from;
-                    showEntities([_this.entityId], _this.entityManager);
-                }
-                if (time - timeStart_1 <= _this.duration) {
-                    face.progress = _this.linear((currentTime - timeStart_1) / 1000, _this.from, _this.to - _this.from, _this.duration / 1000);
+        if (entity) {
+            var face_1 = entity.getComponent(light.CrazyFace);
+            if (face_1) {
+                if (this.progress !== -1) {
+                    face_1.progress = this.progress;
+                    showEntities([this.entityId], this.entityManager);
+                    this.Next();
                 }
                 else {
-                    _this.Next();
-                    invoked_1 = true;
-                    timeStart_1 = -1;
+                    var timeStart_1 = light.getCurrentTime();
+                    var invoked_1 = false;
+                    var resetInitialValue_1 = false;
+                    light.on('update', function (time) {
+                        var currentTime = light.getCurrentTime();
+                        if (timeStart_1 === -1 || invoked_1) {
+                            return;
+                        }
+                        if (!resetInitialValue_1) {
+                            resetInitialValue_1 = true;
+                            face_1.progress = _this.from;
+                            showEntities([_this.entityId], _this.entityManager);
+                        }
+                        if (time - timeStart_1 <= _this.duration) {
+                            face_1.progress = _this.linear((currentTime - timeStart_1) / 1000, _this.from, _this.to - _this.from, _this.duration / 1000);
+                        }
+                        else {
+                            _this.Next();
+                            invoked_1 = true;
+                            timeStart_1 = -1;
+                        }
+                    });
                 }
-            });
+            }
         }
     };
     LotteryNode.prototype.linear = function (currentTime, startValue, changeValue, duration) {
@@ -6329,7 +5766,7 @@ var PointNode = /** @class */ (function (_super) {
         _this.x2 = 1;
         _this.y1 = 0;
         _this.y2 = 1;
-        _this.ratio = 1.2; // 丢失的比例
+        _this.ratio = 1.2; //丢失的比例
         _this.status = {};
         _this.init = false;
         _this.minWidth = 0.8;
@@ -6345,7 +5782,7 @@ var PointNode = /** @class */ (function (_super) {
         }
         this.init = true;
         openAIFeature([
-            "Face_Point" /* FACE_POINT */,
+            "Face_Point" /* FACE_POINT */
         ], this.entityManager, this.eventManager);
         light.on('update', this.update.bind(this));
     };
@@ -6353,13 +5790,17 @@ var PointNode = /** @class */ (function (_super) {
         if (value > 0) {
             return value / this.ratio;
         }
-        return value * this.ratio;
+        else {
+            return value * this.ratio;
+        }
     };
     PointNode.prototype.getMaxValue = function (value) {
         if (value > 0) {
             return value * this.ratio;
         }
-        return value / this.ratio;
+        else {
+            return value / this.ratio;
+        }
     };
     PointNode.prototype.update = function () {
         var _this = this;
@@ -6367,13 +5808,9 @@ var PointNode = /** @class */ (function (_super) {
         var _loop_1 = function (i) {
             var data = datas[i];
             var id_ = data.id_, roll_ = data.roll_, pitch_ = data.pitch_, canvas_width_ = data.canvas_width_, canvas_height_ = data.canvas_height_, yaw_ = data.yaw_, point_array_ = data.point_array_;
-            var minX;
-            var maxX;
-            var minY;
-            var maxY;
-            if (point_array_ === null || point_array_ === void 0 ? void 0 : point_array_.length) {
-                var xs = [];
-                var ys = [];
+            var minX, maxX, minY, maxY;
+            if (point_array_ && point_array_.length) {
+                var xs = [], ys = [];
                 for (var i_1 = 0; i_1 < point_array_.length; i_1++) {
                     if (i_1 % 2 === 0) {
                         xs.push(point_array_[i_1]);
@@ -6387,27 +5824,33 @@ var PointNode = /** @class */ (function (_super) {
                 minY = Math.min.apply(Math, ys);
                 maxY = Math.max.apply(Math, ys);
             }
-            if (this_1.status[id_] === undefined) {
+            if (this_1.status[id_] == undefined) {
                 this_1.status[id_] = Status.UNINITIALIZED;
             }
-            var isDetect = function () { return _this.isBetween(roll_, _this.rollMin, _this.rollMax)
-                && _this.isBetween(yaw_, _this.yawMin, _this.yawMax)
-                && _this.isBetween(pitch_, _this.pitchMin, _this.pitchMax)
-                && _this.isBetween(minX, _this.x1 * canvas_width_, _this.x2 * canvas_width_)
-                && _this.isBetween(maxX, _this.x1 * canvas_width_, _this.x2 * canvas_width_)
-                && _this.isBetween(minY, _this.y1 * canvas_height_, _this.y2 * canvas_height_)
-                && _this.isBetween(maxY, _this.y1 * canvas_height_, _this.y2 * canvas_height_)
-                && isVaildFace(); };
-            var isLost = function () { return !_this.isBetween(roll_, _this.getMinValue(_this.rollMin), _this.getMaxValue(_this.rollMax))
-                || !_this.isBetween(yaw_, _this.getMinValue(_this.yawMin), _this.getMaxValue(_this.yawMax))
-                || !_this.isBetween(pitch_, _this.getMinValue(_this.pitchMin), _this.getMaxValue(_this.pitchMax))
-                || !_this.isBetween(minX, _this.getMinValue(_this.x1 * canvas_width_), _this.getMaxValue(_this.x2 * canvas_width_))
-                || !_this.isBetween(maxX, _this.getMinValue(_this.x1 * canvas_width_), _this.getMaxValue(_this.x2 * canvas_width_))
-                || !_this.isBetween(minY, _this.getMinValue(_this.y1 * canvas_height_), _this.getMaxValue(_this.y2 * canvas_height_))
-                || !_this.isBetween(maxY, _this.getMinValue(_this.y1 * canvas_height_), _this.getMaxValue(_this.y2 * canvas_height_))
-                || !isVaildFace(); };
-            var isVaildFace = function () { return (maxX - minX) > (_this.minWidth * canvas_width_)
-                && (maxY - minY) > (_this.minHeight * canvas_height_); };
+            var isDetect = function () {
+                return _this.isBetween(roll_, _this.rollMin, _this.rollMax) &&
+                    _this.isBetween(yaw_, _this.yawMin, _this.yawMax) &&
+                    _this.isBetween(pitch_, _this.pitchMin, _this.pitchMax) &&
+                    _this.isBetween(minX, _this.x1 * canvas_width_, _this.x2 * canvas_width_) &&
+                    _this.isBetween(maxX, _this.x1 * canvas_width_, _this.x2 * canvas_width_) &&
+                    _this.isBetween(minY, _this.y1 * canvas_height_, _this.y2 * canvas_height_) &&
+                    _this.isBetween(maxY, _this.y1 * canvas_height_, _this.y2 * canvas_height_) &&
+                    isVaildFace();
+            };
+            var isLost = function () {
+                return !_this.isBetween(roll_, _this.getMinValue(_this.rollMin), _this.getMaxValue(_this.rollMax)) ||
+                    !_this.isBetween(yaw_, _this.getMinValue(_this.yawMin), _this.getMaxValue(_this.yawMax)) ||
+                    !_this.isBetween(pitch_, _this.getMinValue(_this.pitchMin), _this.getMaxValue(_this.pitchMax)) ||
+                    !_this.isBetween(minX, _this.getMinValue(_this.x1 * canvas_width_), _this.getMaxValue(_this.x2 * canvas_width_)) ||
+                    !_this.isBetween(maxX, _this.getMinValue(_this.x1 * canvas_width_), _this.getMaxValue(_this.x2 * canvas_width_)) ||
+                    !_this.isBetween(minY, _this.getMinValue(_this.y1 * canvas_height_), _this.getMaxValue(_this.y2 * canvas_height_)) ||
+                    !_this.isBetween(maxY, _this.getMinValue(_this.y1 * canvas_height_), _this.getMaxValue(_this.y2 * canvas_height_)) ||
+                    !isVaildFace();
+            };
+            var isVaildFace = function () {
+                return (maxX - minX) > (_this.minWidth * canvas_width_)
+                    && (maxY - minY) > (_this.minHeight * canvas_height_);
+            };
             if (this_1.status[id_] === Status.UNINITIALIZED) {
                 if (isDetect()) {
                     this_1.faceId = id_;
@@ -6422,7 +5865,7 @@ var PointNode = /** @class */ (function (_super) {
                     this_1.Lost();
                 }
             }
-            else if (this_1.status[id_] === Status.Lost) { // 初始化或丢失之后处理
+            else if (this_1.status[id_] === Status.Lost) { //初始化或丢失之后处理
                 if (isDetect()) {
                     this_1.faceId = id_;
                     this_1.faceIndex = i;
@@ -6430,7 +5873,7 @@ var PointNode = /** @class */ (function (_super) {
                     this_1.Detected();
                 }
             }
-            else if (this_1.status[id_] === Status.Detected) { // 检测到时处理
+            else if (this_1.status[id_] === Status.Detected) { //检测到时处理
                 if (isLost()) {
                     this_1.faceId = id_;
                     this_1.faceIndex = i;
@@ -6452,111 +5895,22 @@ var PointNode = /** @class */ (function (_super) {
     };
     PointNode.prototype.Detected = function () { };
     PointNode.prototype.Lost = function () { };
-    PointNode.nodeType = 'code/Point';
+    PointNode.nodeType = "code/Point";
     return PointNode;
 }(Node));
 light.NodeContext.registerNode(PointNode);
 
-/**
- * JSON.Parse safely
- */
-function jsonParse(obj, defaultValue) {
-    try {
-        return JSON.parse(obj);
-    }
-    catch (err) {
-        console.error("json parse error:", err, obj);
-        return defaultValue || null;
-    }
-}
-
 var PostEffectNode = /** @class */ (function (_super) {
     __extends(PostEffectNode, _super);
     function PostEffectNode() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.strengthInput = 0;
-        _this.starMaxScaleInput = 0;
-        _this.starMinScaleInput = 0;
-        _this.starScalePeriodInput = 0;
-        _this.maxCornersInput = 0;
-        _this.minDistanceInput = 0;
-        _this.highLightThresholdInput = 0;
-        _this.minFeatureDistanceInput = 0;
-        _this.maxFeatureDetectNumInput = 0;
-        _this.fastThresholdInput = 10;
-        _this.starScaleRateInput = 0;
-        _this.probabilityLowInput = 0;
-        _this.probabilityHighInput = 1;
-        _this.grayThresholdInput = 0;
-        _this.stabilityFactorInput = 0;
-        _this.maxKiraNumInput = 0;
-        _this.seedNumInput = 0;
-        _this.fastPointNumInput = 0;
-        _this.filePathsInput = [];
-        _this.colorPathInput = '';
-        _this.colorNumInput = 1;
-        _this.brightnessInput = 0;
-        _this.kiraBrightnessInput = 1.0;
-        _this.contrastInput = 0;
-        _this.hueInput = 0;
-        _this.highlightsInput = 0;
-        _this.sharpnessInput = 0;
-        _this.shadowsInput = 0;
-        _this.saturationInput = 0;
-        _this.temperatureInput = 0;
-        _this.scaleFrequencyInput = 10;
-        _this.minAlphaInput = 0;
-        _this.maxAlphaInput = 0;
-        return _this;
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     PostEffectNode.prototype.Run = function () {
         showEntities([this.entityId], this.entityManager);
         var entity = this.entityManager.getEntityById(this.entityId);
         var postEffect = entity.getComponent(light.PostEffect);
         if (postEffect) {
-            if (postEffect.getEffectJson()) {
-                var json = jsonParse(postEffect.getEffectJson());
-                if (!json) {
-                    return;
-                }
-                json.effectStrength = this.strengthInput > 0 ? this.strengthInput : json.effectStrength;
-                json.starMaxScale = this.starMaxScaleInput > 0 ? this.starMaxScaleInput : json.starMaxScale;
-                json.starMinScale = this.starMinScaleInput > 0 ? this.starMinScaleInput : json.starMinScale;
-                json.starScalePeriod = this.starScalePeriodInput > 0 ? this.starScalePeriodInput : json.starScalePeriod;
-                // eslint-disable-next-line max-len
-                json.highLightThreshold = this.highLightThresholdInput > 0 ? this.highLightThresholdInput : json.highLightThreshold;
-                // eslint-disable-next-line max-len
-                json.maxFeatureDetectNum = this.maxFeatureDetectNumInput > 0 ? this.maxFeatureDetectNumInput : json.maxFeatureDetectNum;
-                // eslint-disable-next-line max-len
-                json.minFeatureDistance = this.minFeatureDistanceInput > 0 ? this.minFeatureDistanceInput : json.minFeatureDistance;
-                json.starScaleRate = this.starScaleRateInput > 0 ? this.starScaleRateInput : json.starScaleRate;
-                json.probabilityHigh = this.probabilityHighInput > 1 ? this.probabilityHighInput : json.probabilityHigh;
-                json.probabilityLow = this.probabilityLowInput > 0 ? this.probabilityLowInput : json.probabilityLow;
-                json.kiraBrightness = this.kiraBrightnessInput > 0.1 ? this.kiraBrightnessInput : json.kiraBrightness;
-                json.scaleFrequency = this.scaleFrequencyInput > 10 ? this.scaleFrequencyInput : json.scaleFrequency;
-                json.grayThreshold = this.grayThresholdInput > 0 ? this.grayThresholdInput : json.grayThreshold;
-                json.stabilityFactor = this.stabilityFactorInput > 0 ? this.stabilityFactorInput : json.stabilityFactor;
-                json.minAlpha = this.minAlphaInput > 0 ? this.minAlphaInput : json.minAlpha;
-                json.maxAlpha = this.maxAlphaInput > 0 ? this.maxAlphaInput : json.maxAlpha;
-                json.colorPath = this.colorPathInput;
-                json.colorNum = this.colorNumInput > 1 ? this.colorNumInput : json.colorNum;
-                json.maxCorners = this.maxCornersInput > 0 ? this.maxCornersInput : json.maxCorners;
-                json.maxKiraNum = this.maxKiraNumInput > 0 ? this.maxKiraNumInput : json.maxKiraNum;
-                json.seedNum = this.seedNumInput > 0 ? this.seedNumInput : json.seedNum;
-                json.fastPointNum = this.fastPointNumInput > 0 ? this.fastPointNumInput : json.fastPointNum;
-                json.fastThreshold = this.fastThresholdInput > 10 ? this.fastThresholdInput : json.fastThreshold;
-                json.minDistance = this.minDistanceInput > 0 ? this.minDistanceInput : json.minDistance;
-                json.brightness = this.brightnessInput > 0 ? this.brightnessInput : json.brightness;
-                json.contrast = this.contrastInput > 0 ? this.contrastInput : json.contrast;
-                json.hue = this.hueInput > 0 ? this.hueInput : json.hue;
-                json.highlights = this.highlightsInput > 0 ? this.highlightsInput : json.highlights;
-                json.sharpness = this.sharpnessInput > 0 ? this.sharpnessInput : json.sharpness;
-                json.shadows = this.shadowsInput > 0 ? this.shadowsInput : json.shadows;
-                json.saturation = this.saturationInput > 0 ? this.saturationInput : json.saturation;
-                json.temperature = this.temperatureInput > 0 ? this.temperatureInput : json.temperature;
-                json.filePaths = this.filePathsInput.length > 0 ? this.filePathsInput : json.filePaths;
-                postEffect.setEffectJson(JSON.stringify(json));
-            }
+            this.src = postEffect.src;
         }
         this.Next();
     };
@@ -6573,25 +5927,25 @@ var ParticleNode = /** @class */ (function (_super) {
     }
     ParticleNode.prototype.Run = function () {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z;
-        if (!this.entityId)
-            return;
-        var entity = this.entityManager.getEntityById(this.entityId);
-        showEntities([this.entityId], this.entityManager);
-        if (entity) {
-            var particle = entity.getComponent(light.ParticleEffect);
-            if (particle) {
-                var vec3 = new light.Vec3((_c = (_b = (_a = this.xInput) !== null && _a !== void 0 ? _a : this.x) !== null && _b !== void 0 ? _b : particle.emitterLength.x) !== null && _c !== void 0 ? _c : 0, (_f = (_e = (_d = this.yInput) !== null && _d !== void 0 ? _d : this.y) !== null && _e !== void 0 ? _e : particle.emitterLength.y) !== null && _f !== void 0 ? _f : 0, (_j = (_h = (_g = this.zInput) !== null && _g !== void 0 ? _g : this.z) !== null && _h !== void 0 ? _h : particle.emitterLength.z) !== null && _j !== void 0 ? _j : 0);
-                var dvec3 = new light.Vec3((_m = (_l = (_k = this.directionXInput) !== null && _k !== void 0 ? _k : this.directionX) !== null && _l !== void 0 ? _l : particle.emissionVector.x) !== null && _m !== void 0 ? _m : 0, (_q = (_p = (_o = this.directionYInput) !== null && _o !== void 0 ? _o : this.directionY) !== null && _p !== void 0 ? _p : particle.emissionVector.y) !== null && _q !== void 0 ? _q : 0, (_t = (_s = (_r = this.directionZInput) !== null && _r !== void 0 ? _r : this.directionZ) !== null && _s !== void 0 ? _s : particle.emissionVector.z) !== null && _t !== void 0 ? _t : 0);
-                particle.emitterLength = vec3;
-                particle.emissionVector = dvec3;
-                particle.speed = (_w = (_v = (_u = this.speedInput) !== null && _u !== void 0 ? _u : this.speed) !== null && _v !== void 0 ? _v : particle.speed) !== null && _w !== void 0 ? _w : 0.1;
-                particle.maxParticles = (_z = (_y = (_x = this.maxInput) !== null && _x !== void 0 ? _x : this.max) !== null && _y !== void 0 ? _y : particle.maxParticles) !== null && _z !== void 0 ? _z : 0;
-                particle.speedRandom = false;
-                particle.emissionVectorRandom = false;
-                particle.updateComponentData = true;
+        if (this.entityId) {
+            var entity = this.entityManager.getEntityById(this.entityId);
+            showEntities([this.entityId], this.entityManager);
+            if (entity) {
+                var particle = entity.getComponent(light.ParticleEffect);
+                if (particle) {
+                    var vec3 = new light.Vec3((_c = (_b = (_a = this.xInput) !== null && _a !== void 0 ? _a : this.x) !== null && _b !== void 0 ? _b : particle.emitterLength.x) !== null && _c !== void 0 ? _c : 0, (_f = (_e = (_d = this.yInput) !== null && _d !== void 0 ? _d : this.y) !== null && _e !== void 0 ? _e : particle.emitterLength.y) !== null && _f !== void 0 ? _f : 0, (_j = (_h = (_g = this.zInput) !== null && _g !== void 0 ? _g : this.z) !== null && _h !== void 0 ? _h : particle.emitterLength.z) !== null && _j !== void 0 ? _j : 0);
+                    var dvec3 = new light.Vec3((_m = (_l = (_k = this.directionXInput) !== null && _k !== void 0 ? _k : this.directionX) !== null && _l !== void 0 ? _l : particle.emissionVector.x) !== null && _m !== void 0 ? _m : 0, (_q = (_p = (_o = this.directionYInput) !== null && _o !== void 0 ? _o : this.directionY) !== null && _p !== void 0 ? _p : particle.emissionVector.y) !== null && _q !== void 0 ? _q : 0, (_t = (_s = (_r = this.directionZInput) !== null && _r !== void 0 ? _r : this.directionZ) !== null && _s !== void 0 ? _s : particle.emissionVector.z) !== null && _t !== void 0 ? _t : 0);
+                    particle.emitterLength = vec3;
+                    particle.emissionVector = dvec3;
+                    particle.speed = (_w = (_v = (_u = this.speedInput) !== null && _u !== void 0 ? _u : this.speed) !== null && _v !== void 0 ? _v : particle.speed) !== null && _w !== void 0 ? _w : 0.1;
+                    particle.maxParticles = (_z = (_y = (_x = this.maxInput) !== null && _x !== void 0 ? _x : this.max) !== null && _y !== void 0 ? _y : particle.maxParticles) !== null && _z !== void 0 ? _z : 0;
+                    particle.speedRandom = false;
+                    particle.emissionVectorRandom = false;
+                    particle.updateComponentData = true;
+                }
             }
+            this.Next();
         }
-        this.Next();
     };
     ParticleNode.prototype.Next = function () { };
     ParticleNode.nodeType = 'code/Particle';
@@ -6635,7 +5989,7 @@ var UserMaterialNode = /** @class */ (function (_super) {
                 var cmp = entity.getComponent(light.UserMaterial);
                 if (cmp) {
                     var clipData = cmp.getClipDataPaths();
-                    if ((clipData === null || clipData === void 0 ? void 0 : clipData.size) && clipData.size()) {
+                    if (clipData && clipData.size && clipData.size()) {
                         var paths = [];
                         for (var i = 0; i < clipData.size(); i++) {
                             paths.push(clipData.get(i));
@@ -6683,6 +6037,12 @@ var TouchEventNode = /** @class */ (function (_super) {
 }(EventNode));
 light.NodeContext.registerNode(TouchEventNode);
 
+var Status$1;
+(function (Status) {
+    Status[Status["Detected"] = 1] = "Detected";
+    Status[Status["Lost"] = 2] = "Lost";
+    Status[Status["UNINITIALIZED"] = 3] = "UNINITIALIZED";
+})(Status$1 || (Status$1 = {}));
 var PointNode$1 = /** @class */ (function (_super) {
     __extends(PointNode, _super);
     function PointNode() {
@@ -6699,9 +6059,9 @@ var PointNode$1 = /** @class */ (function (_super) {
     PointNode.prototype.Run = function () {
         var _this = this;
         openAIFeature(["Hand_Gesture" /* HAND_GESTURE */], this.entityManager, this.eventManager);
-        light.on('update', function () {
+        light.on('update', function (time) {
             var handPointdatas = getAIPointData("Hand_Point" /* HAND_POINT */, _this.entityManager);
-            var firstHand = handPointdatas === null || handPointdatas === void 0 ? void 0 : handPointdatas[0];
+            var firstHand = handPointdatas && handPointdatas[0];
             if (firstHand) {
                 _this.detected = true;
                 var canvas_width_ = firstHand.canvas_width_;
@@ -6763,6 +6123,7 @@ var OpenMouthRatioNode = /** @class */ (function (_super) {
         var datas = getAIPointData("Face_Point" /* FACE_POINT */, this.entityManager);
         if (datas.length > 0) {
             var person = datas[0];
+            var id_ = person.id_, roll_ = person.roll_, pitch_ = person.pitch_, canvas_width_ = person.canvas_width_, canvas_height_ = person.canvas_height_, yaw_ = person.yaw_, point_array_ = person.point_array_;
             this.nose_x = person.point_array_[128] / person.canvas_width_ * 2 - 1;
             this.nose_y = -(person.point_array_[129] / person.canvas_height_ * 2 - 1);
             this.mouse_up_x = person.point_array_[170] / person.canvas_width_ * 2 - 1;
@@ -6770,7 +6131,7 @@ var OpenMouthRatioNode = /** @class */ (function (_super) {
             this.mouse_down_x = person.point_array_[138] / person.canvas_width_ * 2 - 1;
             this.mouse_down_y = -(person.point_array_[139] / person.canvas_height_ * 2 - 1);
             this.currentDis = this.calcDis(this.mouse_up_x, this.mouse_up_y, this.mouse_down_x, this.mouse_down_y);
-            if (this.originDis === -1) {
+            if (this.originDis == -1) {
                 this.originDis = this.currentDis;
             }
             this.ratio = this.currentDis / this.originDis;
@@ -6847,11 +6208,11 @@ var StateEventNode = /** @class */ (function (_super) {
         else {
             currentIndex = -1;
         }
-        if (currentIndex === index) {
+        if (currentIndex == index) {
             if (this["Next" + (currentIndex + 1)]) {
                 this["Next" + (currentIndex + 1)]();
             }
-            this.currentIndex = this.currentIndex + 1;
+            this.currentIndex++;
         }
     };
     StateEventNode.nodeType = 'code/stateEvent';
@@ -6911,7 +6272,7 @@ var ScreenEventNode = /** @class */ (function (_super) {
         _this.times = 0;
         _this.longPressedState = {
             longPressedDownTime: undefined,
-            longPressedTriggered: false,
+            longPressedTriggered: false
         };
         _this.lastTwoTimePressedTime = []; // 记录最近两次按下的时间 用来判读是否为双击
         // AI点位
@@ -6941,11 +6302,12 @@ var ScreenEventNode = /** @class */ (function (_super) {
             case Interaction.NOSE:
             case Interaction.LEFTEYE:
             case Interaction.RIGHTEYE:
-                openAIFeature(["Face_Point" /* FACE_POINT */], this.entityManager, this.eventManager);
+                openAIFeature(["Expression" /* EXPRESSION */], // , light.AIClassFeature.HAND_GESTURE],
+                this.entityManager, this.eventManager);
                 break;
             case Interaction.HAND:
             case Interaction.FINGER:
-                openAIFeature(["Hand_Point" /* HAND_POINT */], this.entityManager, this.eventManager);
+                openAIFeature(["Hand_Gesture" /* HAND_GESTURE */, "Hand_Point" /* HAND_POINT */], this.entityManager, this.eventManager);
                 break;
         }
         light.on('RenderWillStartEvent', function (event) {
@@ -6978,8 +6340,8 @@ var ScreenEventNode = /** @class */ (function (_super) {
             this.onLost();
             return;
         }
-        for (var _i = 0, aiData_1 = aiData; _i < aiData_1.length; _i++) {
-            var data = aiData_1[_i];
+        for (var i = 0; i < aiData.length; i++) {
+            var data = aiData[i];
             var AIDataRect = this.getAIDataRect(this.interactionType, data);
             rects.push(AIDataRect);
         }
@@ -6989,12 +6351,12 @@ var ScreenEventNode = /** @class */ (function (_super) {
         }
     };
     ScreenEventNode.prototype.getAIDataRect = function (actionEventName, data) {
-        var canvas_width_ = data.canvas_width_, canvas_height_ = data.canvas_height_, point_array_ = data.point_array_;
+        var id_ = data.id_, canvas_width_ = data.canvas_width_, canvas_height_ = data.canvas_height_, point_array_ = data.point_array_;
         var minX;
         var maxX;
         var minY;
         var maxY;
-        if (point_array_ === null || point_array_ === void 0 ? void 0 : point_array_.length) {
+        if (point_array_ && point_array_.length) {
             var xs = [];
             var ys = [];
             var points = [];
@@ -7050,19 +6412,18 @@ var ScreenEventNode = /** @class */ (function (_super) {
             case 'RenderWillStartEvent':
                 this.entityRect = this.getEntityRect(this.entity);
                 break;
-            case 'TouchEvent': {
+            case 'TouchEvent':
                 var clickState = this.getClickEventType(event);
                 this.touchEventInfo = {
                     point: {
                         x: event.getX(),
-                        y: event.getY(),
+                        y: event.getY()
                     },
                     downTime: event.getDownTime(),
-                    eventTime: event.getEventTime(),
+                    eventTime: event.getEventTime()
                 };
                 this.onTouchEventProcess(clickState, this.touchEventInfo);
                 break;
-            }
         }
     };
     ScreenEventNode.prototype.onTriggered = function (isTriggered, time) {
@@ -7072,7 +6433,7 @@ var ScreenEventNode = /** @class */ (function (_super) {
             }
             this.times = time || 0;
             this.isDetected = true;
-            this.count += 1;
+            this.count++;
             this.onDetected();
         }
         else {
@@ -7104,7 +6465,7 @@ var ScreenEventNode = /** @class */ (function (_super) {
     ScreenEventNode.prototype.getClickEventType = function (event) {
         var clickState = {
             clickType: undefined,
-            triggered: false,
+            triggered: false
         };
         if (event && event.type() === 'TouchEvent') {
             var downTime = event.getDownTime();
@@ -7112,7 +6473,7 @@ var ScreenEventNode = /** @class */ (function (_super) {
             if (event.getAction() === 0) { // press
                 this.currentPressedTime = downTime;
                 this.pushPressedTimeStack(this.currentPressedTime);
-                if (this.lastTwoTimePressedTime.length === 2
+                if (this.lastTwoTimePressedTime.length == 2
                     && downTime - this.lastTwoTimePressedTime[0] < DoubleClickTime) {
                     clickState.clickType = Interaction.DCLICK;
                 }
@@ -7128,7 +6489,7 @@ var ScreenEventNode = /** @class */ (function (_super) {
                 this.currentPressedTime = undefined;
                 this.longPressedState = {
                     longPressedDownTime: undefined,
-                    longPressedTriggered: false,
+                    longPressedTriggered: false
                 };
                 clickState.triggered = false;
             }
@@ -7146,14 +6507,14 @@ var ScreenEventNode = /** @class */ (function (_super) {
                 this.longPressedState.longPressedTriggered = true;
                 var clickState = {
                     clickType: Interaction.LCLICK,
-                    triggered: true,
+                    triggered: true
                 };
                 this.onTouchEventProcess(clickState, this.touchEventInfo);
             }
         }
     };
     ScreenEventNode.prototype.pushPressedTimeStack = function (time) {
-        if (this.lastTwoTimePressedTime.length === 2) {
+        if (this.lastTwoTimePressedTime.length == 2) {
             this.lastTwoTimePressedTime.splice(0, 1);
         }
         this.lastTwoTimePressedTime.push(time);
@@ -7210,7 +6571,7 @@ var ScreenEventNode = /** @class */ (function (_super) {
         }
         var parent = this.entityManager.get(transform.parent);
         var parentTransform = parent.getComponent(light.ScreenTransform);
-        if (parentTransform !== null) {
+        if (parentTransform != null) {
             result = result.concat(this.getParentTransforms(parentTransform));
         }
         else {
@@ -7297,7 +6658,7 @@ var ScreenEventNode = /** @class */ (function (_super) {
         var number = 0;
         rotateRectPoint.forEach(function (point) {
             if (_this.isInConstrainRect(point, biggerRect)) {
-                number += 1;
+                number++;
             }
         });
         return number / rotateRectPoint.length;
@@ -7389,7 +6750,9 @@ function square(x) {
     return x * x;
 }
 var checkInRegionFunctions = (_a = {},
-    _a[RegionType.RECT] = function (x, y, x1, y1, x2, y2) { return x >= x1 && y >= y1 && x <= x2 && y <= y2; },
+    _a[RegionType.RECT] = function (x, y, x1, y1, x2, y2) {
+        return x >= x1 && y >= y1 && x <= x2 && y <= y2;
+    },
     _a[RegionType.CIRCLE] = function (x, y, x1, y1, x2, y2) {
         var xRadius = Math.abs(x1 - x2) / 2;
         var yRadius = Math.abs(y1 - y2) / 2;
@@ -7428,347 +6791,6 @@ var RegionNode = /** @class */ (function (_super) {
     return RegionNode;
 }(Node));
 light.NodeContext.registerNode(RegionNode);
-
-var ValueNode = /** @class */ (function (_super) {
-    __extends(ValueNode, _super);
-    function ValueNode() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.valueType = 'number';
-        _this._numberValue = 2;
-        _this._stringValue = '';
-        _this._colorValue = '#00000000';
-        _this._boolValue = true;
-        _this._fileValue = '';
-        _this._vector2Value = { x: 0, y: 0 };
-        _this._vector3Value = { x: 1, y: 1, z: 0 };
-        _this._vector4Value = { x: 0, y: 0, z: 0, w: 0 };
-        _this._rectValue = { top: 0, right: 0, bottom: 0, left: 0 };
-        _this._areaValue = { x: 0, y: 0, w: 0, h: 0 };
-        return _this;
-    }
-    ValueNode.prototype.Process = function () {
-        this.numberValue = this._numberValue;
-        this.stringValue = this._stringValue;
-        this.colorValue = this._colorValue;
-        this.boolValue = this._boolValue;
-        this.fileValue = this._fileValue;
-        this.vector2Value = this._vector2Value;
-        this.vector3Value = this._vector3Value;
-        this.vector4Value = this._vector4Value;
-        this.rectValue = this._rectValue;
-        this.areaValue = this._areaValue;
-    };
-    ValueNode.nodeType = 'code/value';
-    return ValueNode;
-}(DataProcessNode));
-light.NodeContext.registerNode(ValueNode);
-
-var CommonComponent = /** @class */ (function (_super) {
-    __extends(CommonComponent, _super);
-    function CommonComponent() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.entityId = null;
-        _this.componentProps = []; // 当前对象的组件的全量属性
-        _this.componentType = null;
-        return _this;
-    }
-    CommonComponent.prototype.Run = function () {
-        var _this = this;
-        var _a;
-        if (this.entityId) {
-            var entity = this.entityManager.getEntityById(this.entityId);
-            var comp_1 = entity.getComponent(light[this.componentType]);
-            if (comp_1) {
-                if ((_a = this.componentProps) === null || _a === void 0 ? void 0 : _a.length) {
-                    this.componentProps.forEach(function (prop) {
-                        if (_this[prop] !== null && _this[prop] !== undefined) {
-                            _this.assignProp(comp_1, prop);
-                        }
-                    });
-                }
-            }
-            this.Next();
-        }
-    };
-    CommonComponent.prototype.Next = function () { };
-    CommonComponent.prototype.assignProp = function (target, prop) {
-        if (!target[prop]) {
-            // todo studio上的属性与SDK不是完全一一对应的 有些属性会进行转化 比如ScreenTransform在ls上是eEuler position 但SDK是rotation和anchor/offset
-            return;
-        }
-        var isRectProps = function (props) { return typeof props.top !== 'undefined'
-            && typeof props.left !== 'undefined'
-            && typeof props.right !== 'undefined'
-            && typeof props.bottom !== 'undefined'; };
-        var isV3Props = function (props) { return typeof props.x !== 'undefined'
-            && typeof props.y !== 'undefined'
-            && typeof props.z !== 'undefined'; };
-        var isV2Props = function (props) { return typeof props.x !== 'undefined'
-            && typeof props.y !== 'undefined'; };
-        if (isV3Props(this[prop])) {
-            target[prop].x = this[prop].x;
-            target[prop].y = this[prop].y;
-            target[prop].z = this[prop].z;
-        }
-        else if (isV2Props(this[prop])) {
-            target[prop].x = this[prop].x;
-            target[prop].y = this[prop].y;
-        }
-        else if (isRectProps(this[prop])) {
-            target[prop].right = this[prop].right;
-            target[prop].left = this[prop].left;
-            target[prop].top = this[prop].top;
-            target[prop].bottom = this[prop].bottom;
-        }
-        else {
-            target[prop] = this[prop];
-        }
-    };
-    CommonComponent.nodeType = 'code/commonComponent';
-    return CommonComponent;
-}(Node));
-light.NodeContext.registerNode(CommonComponent);
-
-var Rotation3DAnimation = /** @class */ (function (_super) {
-    __extends(Rotation3DAnimation, _super);
-    function Rotation3DAnimation() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this._entityId = null;
-        _this._stopRotation = false;
-        // 记录时间信息
-        _this.lastTime = -1;
-        _this.startTime = -1;
-        _this.currentTimes = 0;
-        _this.isInit = false;
-        _this.isContinue = false;
-        _this.isFinish = false;
-        _this.onLightUpdate = function (time) {
-            if (_this.isFinish) {
-                return;
-            }
-            var _time = time / 1000000;
-            var onceSpinTime = _this.onceSpinTime ? _this.onceSpinTime : _this._onceSpinTime;
-            if (_this.isContinue) {
-                _this.startTime = _time - (_this.lastTime + _this.currentTimes * onceSpinTime);
-                _this.isContinue = false;
-                return;
-            }
-            if (_this.lastTime < 0) {
-                _this.lastTime = 0;
-                _this.startTime = _time;
-                _this.isInit = true;
-                return;
-            }
-            var durationTime = _time - _this.startTime;
-            if (durationTime <= 0) {
-                return;
-            }
-            _this.currentTimes = Math.floor(durationTime / onceSpinTime);
-            var spinTimes = _this.spinTimes ? _this.spinTimes : _this._spinTimes;
-            if (_this.currentTimes >= spinTimes) {
-                _this.detachEvent();
-                _this.Stop();
-                _this.isFinish = true;
-                return;
-            }
-            var currentTime = durationTime % onceSpinTime;
-            var standardOneStepTime = currentTime - _this.lastTime;
-            if (standardOneStepTime <= 0) {
-                _this.reset();
-            }
-            else {
-                var oneStepTime = _this.getOneStepTime(currentTime / onceSpinTime, _this.lastTime / onceSpinTime);
-                var spinAngle = _this.spinAngle ? _this.spinAngle : _this._spinAngle;
-                var oneStepRadian = spinAngle / 180 * Math.PI;
-                _this.UpdateObject(oneStepTime * oneStepRadian);
-            }
-            _this.lastTime = currentTime;
-        };
-        return _this;
-    }
-    Rotation3DAnimation.prototype.Start = function () {
-        light.on('update', this.onLightUpdate);
-    };
-    Rotation3DAnimation.prototype.Stop = function () {
-        this.detachEvent();
-    };
-    Rotation3DAnimation.prototype.Continue = function () {
-        this.isContinue = true;
-        light.on('update', this.onLightUpdate);
-    };
-    Rotation3DAnimation.prototype.Cancel = function () {
-        this.detachEvent();
-        this.lastTime = -1;
-        this.startTime = -1;
-        this.currentTimes = 0;
-        this.isInit = false;
-        this.isContinue = false;
-        this.isFinish = false;
-        this.reset();
-    };
-    Rotation3DAnimation.prototype.UpdateObject = function (radian) {
-        if (this._entityId) {
-            var entity = this.entityManager.getEntityById(this._entityId);
-            var comp = entity.getComponent(light.BasicTransform);
-            if (comp) {
-                var transform = new Vector3(comp.position.x, comp.position.y, comp.position.z);
-                var scale = new Vector3(comp.scale.x, comp.scale.y, comp.scale.z);
-                var rotation = new Quaternion(comp.rotation.x, comp.rotation.y, comp.rotation.z, comp.rotation.w);
-                var matrix = new Matrix4();
-                matrix.compose(transform, rotation, scale);
-                if (this.isInit) {
-                    this.initMatrix = new Matrix4().copy(matrix);
-                    this.isInit = false;
-                }
-                var spinPoint = this.spinPoint ? this.spinPoint : this._spinPoint;
-                var spinPointTransform = new Matrix4().setPosition(new Vector3(spinPoint.x, spinPoint.y, spinPoint.z));
-                matrix.premultiply(new Matrix4().getInverse(spinPointTransform));
-                var spinAxis = this.spinAxis ? this.spinAxis : this._spinAxis;
-                matrix.premultiply(new Matrix4().makeRotationAxis(new Vector3(spinAxis.x, spinAxis.y, spinAxis.z).normalize(), radian));
-                matrix.premultiply(spinPointTransform);
-                matrix.decompose(transform, rotation, scale);
-                comp.SetPosition(new light.Vec3(transform.x, transform.y, transform.z));
-                if (!this._stopRotation) {
-                    comp.SetRotation(new light.Quat(rotation.w, rotation.x, rotation.y, rotation.z));
-                }
-                comp.SetScale(new light.Vec3(scale.x, scale.y, scale.z));
-            }
-        }
-    };
-    Rotation3DAnimation.prototype.detachEvent = function () {
-        light.removeListener('update', this.onLightUpdate);
-    };
-    Rotation3DAnimation.prototype.reset = function () {
-        if (this._entityId) {
-            var entity = this.entityManager.getEntityById(this._entityId);
-            var comp = entity.getComponent(light.BasicTransform);
-            if (comp && this.initMatrix) {
-                var transform = new Vector3();
-                var scale = new Vector3();
-                var rotation = new Quaternion();
-                this.initMatrix.decompose(transform, rotation, scale);
-                comp.SetPosition(new light.Vec3(transform.x, transform.y, transform.z));
-                comp.SetRotation(new light.Quat(rotation.w, rotation.x, rotation.y, rotation.z));
-                comp.SetScale(new light.Vec3(scale.x, scale.y, scale.z));
-            }
-        }
-    };
-    Rotation3DAnimation.prototype.getOneStepTime = function (currentTimePercent, lastTimePercent) {
-        var oneStepTime = currentTimePercent - lastTimePercent;
-        if (this._smoothType === 1) {
-            oneStepTime = currentTimePercent * (2 - currentTimePercent) - lastTimePercent * (2 - lastTimePercent);
-        }
-        else if (this._smoothType === 2) {
-            oneStepTime = currentTimePercent * currentTimePercent - lastTimePercent * lastTimePercent;
-        }
-        else if (this._smoothType === 3) {
-            if (currentTimePercent < 0.5) {
-                oneStepTime = 2 * currentTimePercent * currentTimePercent - 2 * lastTimePercent * lastTimePercent;
-            }
-            else {
-                oneStepTime = 2 * currentTimePercent * (2 - currentTimePercent) - 2 * lastTimePercent * (2 - lastTimePercent);
-            }
-        }
-        return oneStepTime;
-    };
-    Rotation3DAnimation.nodeType = 'code/rotation3D';
-    return Rotation3DAnimation;
-}(Node));
-light.NodeContext.registerNode(Rotation3DAnimation);
-
-var GlobalValue = /** @class */ (function (_super) {
-    __extends(GlobalValue, _super);
-    function GlobalValue() {
-        var _this = _super.call(this) || this;
-        submitEvent('globalValue', function (propertyName, value) {
-            if (_this._methodType === 1 && _this._propName === propertyName) {
-                _this.outValue = value;
-            }
-        });
-        return _this;
-    }
-    GlobalValue.prototype.Run = function () {
-        this.outValue = this.inValue;
-        emitEvent('globalValue', this._propName, this.inValue);
-        this.Next();
-    };
-    GlobalValue.prototype.Next = function () { };
-    GlobalValue.nodeType = 'code/globalValue';
-    return GlobalValue;
-}(Node));
-light.NodeContext.registerNode(GlobalValue);
-
-var CameraEventNode = /** @class */ (function (_super) {
-    __extends(CameraEventNode, _super);
-    function CameraEventNode() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.init = false;
-        return _this;
-    }
-    CameraEventNode.prototype.StartRecording = function () { };
-    CameraEventNode.prototype.Run = function () {
-        var _this = this;
-        if (!this.init) {
-            this.init = true;
-            var recordingEventKey_1 = 'event.script.lightsdk.CameraStartRecord';
-            light.on('UpdateInputEvent', function (params) {
-                var jsonData = params[recordingEventKey_1];
-                if (jsonData !== undefined && jsonData !== null) {
-                    _this.StartRecording();
-                }
-            });
-        }
-    };
-    CameraEventNode.nodeType = 'code/CameraEvent';
-    return CameraEventNode;
-}(EventNode));
-light.NodeContext.registerNode(CameraEventNode);
-
-var EmotionScoreEventNode = /** @class */ (function (_super) {
-    __extends(EmotionScoreEventNode, _super);
-    function EmotionScoreEventNode() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    EmotionScoreEventNode.prototype.Run = function () {
-        openAIFeature(["Emotion_Score" /* EMOTION_SCORE */], this.entityManager, this.eventManager);
-        light.on('update', this.onUpdate.bind(this));
-    };
-    EmotionScoreEventNode.prototype.Next = function () { };
-    EmotionScoreEventNode.prototype.onUpdate = function () {
-        var _this = this;
-        var _a;
-        var aiDetectData = getAIDataFromAIDataCenter(["Emotion_Score" /* EMOTION_SCORE */], this.entityManager);
-        if ((aiDetectData === null || aiDetectData === void 0 ? void 0 : aiDetectData.length) > 0 && ((_a = aiDetectData[0]) === null || _a === void 0 ? void 0 : _a.length) > 0) {
-            var emotionDatas = aiDetectData[0];
-            var sortedTraceIDList_1 = emotionDatas.map(function (motionData) { return motionData.traceID; }).sort(function (a, b) { return a - b; });
-            emotionDatas.forEach(function (emotionData) {
-                _this.trackID = sortedTraceIDList_1.indexOf(emotionData.traceID);
-                _this.emotionDegreeValue = emotionData.detectParams[_this.emotionType][0];
-                _this.Next();
-            });
-        }
-    };
-    EmotionScoreEventNode.nodeType = 'code/EmotionScoreEvent';
-    return EmotionScoreEventNode;
-}(EventNode));
-light.NodeContext.registerNode(EmotionScoreEventNode);
-
-var ValueNode$1 = /** @class */ (function (_super) {
-    __extends(ValueNode, _super);
-    function ValueNode() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.valueType = 'number';
-        _this.numberValue = 2;
-        _this.outValue = 2;
-        return _this;
-    }
-    ValueNode.prototype.Process = function () {
-        this.outValue = this.numberValue;
-    };
-    ValueNode.nodeType = 'code/valueObserve';
-    return ValueNode;
-}(DataProcessNode));
-light.NodeContext.registerNode(ValueNode$1);
 
 if (typeof (globalThis) === 'undefined') {
     this['globalThis'] = this;

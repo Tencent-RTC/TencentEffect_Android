@@ -27,6 +27,7 @@ public class TEUIProperty {
     public TEUIProperty parentUIProperty;
     public UICategory uiCategory;
     public TEMotionDLModel dlModel = null;
+    public boolean isShowGridLayout = false;
 
 
     private int uiState = 0;
@@ -53,6 +54,7 @@ public class TEUIProperty {
         LUT,
         MOTION,
         MAKEUP,
+        LIGHT_MAKEUP,
         BEAUTY_TEMPLATE,
         SEGMENTATION,
     }
@@ -110,15 +112,15 @@ public class TEUIProperty {
     public boolean isBeautyMakeupNoneItem() {
         if (this.sdkParam != null && TextUtils.isEmpty(this.sdkParam.resourcePath)) {
             switch (this.sdkParam.effectName) {
-                case EffectName.BEAUTY_MOUTH_LIPSTICK:
-                case EffectName.BEAUTY_FACE_SOFTLIGHT:
-                case EffectName.BEAUTY_FACE_RED_CHEEK:
-                case EffectName.BEAUTY_FACE_MAKEUP_EYE_SHADOW:
-                case EffectName.BEAUTY_FACE_MAKEUP_EYE_LINER:
-                case EffectName.BEAUTY_FACE_MAKEUP_EYELASH:
-                case EffectName.BEAUTY_FACE_MAKEUP_EYE_SEQUINS:
-                case EffectName.BEAUTY_FACE_MAKEUP_EYEBROW:
-                case EffectName.BEAUTY_FACE_MAKEUP_EYEBALL:
+                case XmagicConstant.EffectName.BEAUTY_MOUTH_LIPSTICK:
+                case XmagicConstant.EffectName.BEAUTY_FACE_SOFTLIGHT:
+                case XmagicConstant.EffectName.BEAUTY_FACE_RED_CHEEK:
+                case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYE_SHADOW:
+                case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYE_LINER:
+                case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYELASH:
+                case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYE_SEQUINS:
+                case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYEBROW:
+                case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYEBALL:
                     return true;
                 default:
                     return false;
@@ -154,38 +156,39 @@ public class TEUIProperty {
 
 
     static {
-        VALUE_TYPE_MAP.put(EffectName.EFFECT_MOTION, EffectValueType.RANGE_0_0);
-        VALUE_TYPE_MAP.put(EffectName.EFFECT_SEGMENTATION, EffectValueType.RANGE_0_0);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.EFFECT_MOTION, EffectValueType.RANGE_0_0);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.EFFECT_SEGMENTATION, EffectValueType.RANGE_0_0);
 
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_CONTRAST, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_SATURATION, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_IMAGE_WARMTH, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_IMAGE_TINT, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_IMAGE_BRIGHTNESS, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYE_DISTANCE, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYE_ANGLE, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYE_WIDTH, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYE_HEIGHT, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYE_POSITION, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYEBROW_ANGLE, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYEBROW_DISTANCE, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYEBROW_HEIGHT, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYEBROW_LENGTH, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYEBROW_THICKNESS, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_EYEBROW_RIDGE, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_NOSE_WING, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_NOSE_HEIGHT, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_NOSE_BRIDGE_WIDTH, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_NASION, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_MOUTH_SIZE, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_MOUTH_HEIGHT, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_MOUTH_WIDTH, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_MOUTH_POSITION, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_SMILE_FACE, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_FACE_THIN_CHIN, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BEAUTY_FACE_FOREHEAD, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BODY_ENLARGE_CHEST_STRENGTH, EffectValueType.RANGE_NEG100_POS100);
-        VALUE_TYPE_MAP.put(EffectName.BODY_SLIM_ARM_STRENGTH, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_CONTRAST, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_SATURATION, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_IMAGE_WARMTH, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_IMAGE_TINT, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_IMAGE_BRIGHTNESS, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYE_DISTANCE, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYE_ANGLE, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYE_WIDTH, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYE_HEIGHT, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYE_OUT_CORNER, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYE_POSITION, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYEBROW_ANGLE, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYEBROW_DISTANCE, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYEBROW_HEIGHT, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYEBROW_LENGTH, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYEBROW_THICKNESS, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_EYEBROW_RIDGE, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_NOSE_WING, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_NOSE_HEIGHT, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_NOSE_BRIDGE_WIDTH, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_NASION, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_MOUTH_SIZE, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_MOUTH_HEIGHT, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_MOUTH_WIDTH, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_MOUTH_POSITION, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_SMILE_FACE, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_FACE_THIN_CHIN, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_FACE_FOREHEAD, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BODY_ENLARGE_CHEST_STRENGTH, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BODY_SLIM_ARM_STRENGTH, EffectValueType.RANGE_NEG100_POS100);
     }
 
     public static EffectValueType getEffectValueType(TESDKParam teParam) {

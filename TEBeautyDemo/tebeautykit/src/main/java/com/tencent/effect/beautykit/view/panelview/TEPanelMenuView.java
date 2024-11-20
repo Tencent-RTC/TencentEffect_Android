@@ -109,7 +109,7 @@ public class TEPanelMenuView extends FrameLayout implements View.OnClickListener
                 break;
         }
         if (icon != null) {
-            icon.setBackgroundResource(R.drawable.te_beauty_panel_menu_item_bg_enable);
+            icon.setAlpha(1f);
         }
         if (menuNameTxt != null) {
             menuNameTxt.setTextColor(getResources().getColor(R.color.te_beauty_color_FFFFFFFF));

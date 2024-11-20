@@ -11,17 +11,23 @@ import java.util.Collections;
 import java.util.List;
 
 
-
 public class TELutPanelDataProvider extends TEAbstractPanelDataProvider {
+
+    private List<TEPanelDataProvider> dependentProviderList = null;
 
     @Override
     public List<TEUIProperty> onItemClick(TEUIProperty uiProperty) {
         if (uiProperty == null) {
             return null;
         }
-        if ((uiProperty.propertyList == null && uiProperty.sdkParam != null)||uiProperty.isNoneItem()) {
-            ProviderUtils.revertUIState(allData,uiProperty);
+        if ((uiProperty.propertyList == null && uiProperty.sdkParam != null) || uiProperty.isNoneItem()) {
+            ProviderUtils.revertUIState(allData, uiProperty);
             ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
+            if (this.dependentProviderList != null) {
+                for (TEPanelDataProvider dependentProvider : this.dependentProviderList) {
+                    dependentProvider.unCheckAll();
+                }
+            }
         }
         return uiProperty.propertyList;
     }
@@ -37,7 +43,17 @@ public class TELutPanelDataProvider extends TEAbstractPanelDataProvider {
         return Collections.singletonList(ProviderUtils.createNoneItem(XmagicConstant.EffectName.EFFECT_LUT));
     }
 
+    @Override
+    public void putMutuallyExclusiveProvider(List<TEPanelDataProvider> providerList) {
+        super.putMutuallyExclusiveProvider(providerList);
+        this.dependentProviderList = providerList;
+    }
 
+    @Override
+    public void unCheckAll() {
+        super.unCheckAll();
+        ProviderUtils.revertUIState(allData, null);
+    }
 
 
 }

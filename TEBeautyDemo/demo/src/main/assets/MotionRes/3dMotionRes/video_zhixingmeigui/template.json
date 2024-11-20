@@ -1,6 +1,5 @@
 {
-   "isFragment": false,
-   "componentLevel": 275,
+   "componentLevel": 240,
    "madeIn": "LightStudio",
    "root": {
       "name": "3D模板",
@@ -47,25 +46,7 @@
             "type": "ScreenTransform",
             "enabled": true,
             "version": 4,
-            "level": 2,
             "objectEnabled": true
-         },
-         {
-            "componentID": 1002,
-            "entityId": 1,
-            "type": "ExtraSetting",
-            "enabled": true,
-            "version": 1,
-            "enableRotation": true,
-            "resetWhenStartRecord": true,
-            "defaultCameraPosition": 0,
-            "supportCameraPosition": 0,
-            "sync3dRenderEnable": false,
-            "needVoiceDecibel": false,
-            "needAutoBeauty": false,
-            "enableDowngradeAsset": true,
-            "level": 4,
-            "requireAbility": []
          },
          {
             "coverTime": 1000000,
@@ -73,8 +54,7 @@
             "type": "PreferredCoverTime",
             "version": 2,
             "enabled": true,
-            "componentID": 1003,
-            "level": 1
+            "componentID": 1002
          },
          {
             "enabled": true,
@@ -82,14 +62,12 @@
             "renderTargetKey": "RenderTarget",
             "type": "Camera",
             "version": 3,
-            "componentID": 1004,
-            "level": 2
+            "componentID": 1003
          },
          {
             "type": "EntityIdentifier",
             "name": "3D模板",
             "id": 1,
-            "originID": 1,
             "enabled": true
          }
       ],
@@ -127,8 +105,7 @@
                   "objectEnabled": true,
                   "enabled": true,
                   "entityId": 173,
-                  "componentID": 173001,
-                  "level": 1
+                  "componentID": 173001
                },
                {
                   "clearColor": "#00000000",
@@ -144,8 +121,7 @@
                   "targetBufferFlags": "clearColor",
                   "type": "Camera3DComponent",
                   "renderTargetKey": "RenderTarget",
-                  "version": 2,
-                  "level": 230
+                  "version": 2
                },
                {
                   "bloom": {
@@ -228,14 +204,12 @@
                      "feather": 0.5,
                      "midPoint": 0.5,
                      "roundness": 0.5
-                  },
-                  "level": 265
+                  }
                },
                {
                   "type": "EntityIdentifier",
                   "name": "Camera3D",
                   "id": 173,
-                  "originID": 173,
                   "enabled": true
                }
             ]
@@ -278,8 +252,7 @@
                            "z": 1
                         },
                         "type": "BasicTransform",
-                        "version": 25,
-                        "level": 1
+                        "version": 25
                      },
                      {
                         "componentID": 183002,
@@ -303,14 +276,12 @@
                            "skyBoxPath": ""
                         },
                         "type": "Light3DComponent",
-                        "version": 449,
-                        "level": 275
+                        "version": 449
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "Envmap",
                         "id": 183,
-                        "originID": 183,
                         "enabled": true
                      }
                   ]
@@ -349,8 +320,7 @@
                            "z": 1
                         },
                         "type": "BasicTransform",
-                        "version": 12,
-                        "level": 1
+                        "version": 12
                      },
                      {
                         "componentID": 185002,
@@ -374,14 +344,12 @@
                            "skyBoxPath": ""
                         },
                         "type": "Light3DComponent",
-                        "version": 11,
-                        "level": 275
+                        "version": 11
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "Light",
                         "id": 185,
-                        "originID": 185,
                         "enabled": true
                      }
                   ]
@@ -416,14 +384,12 @@
                   "objectEnabled": true,
                   "enabled": true,
                   "entityId": 181,
-                  "componentID": 181001,
-                  "level": 1
+                  "componentID": 181001
                },
                {
                   "type": "EntityIdentifier",
                   "name": "Lighting",
                   "id": 181,
-                  "originID": 181,
                   "enabled": true
                }
             ]
@@ -481,8 +447,7 @@
                                              "x": 0,
                                              "y": 0,
                                              "z": 0
-                                          },
-                                          "level": 1
+                                          }
                                        },
                                        {
                                           "componentID": 240002,
@@ -491,8 +456,7 @@
                                           "layers": 1,
                                           "needReload": true,
                                           "paused": false,
-                                          "type": "LayerSetComponent",
-                                          "level": 4
+                                          "type": "LayerSetComponent"
                                        },
                                        {
                                           "componentID": 240003,
@@ -513,14 +477,12 @@
                                           ],
                                           "skinned": false,
                                           "type": "MeshRenderer3DComponent",
-                                          "version": 2,
-                                          "level": 4
+                                          "version": 2
                                        },
                                        {
                                           "type": "EntityIdentifier",
                                           "name": "XiKuangYanJing.001",
                                           "id": 240,
-                                          "originID": 240,
                                           "enabled": true
                                        }
                                     ]
@@ -562,8 +524,7 @@
                                              "x": 0,
                                              "y": 0,
                                              "z": 0
-                                          },
-                                          "level": 1
+                                          }
                                        },
                                        {
                                           "componentID": 244002,
@@ -572,8 +533,7 @@
                                           "layers": 1,
                                           "needReload": true,
                                           "paused": false,
-                                          "type": "LayerSetComponent",
-                                          "level": 4
+                                          "type": "LayerSetComponent"
                                        },
                                        {
                                           "componentID": 244003,
@@ -593,14 +553,12 @@
                                              }
                                           ],
                                           "skinned": false,
-                                          "type": "MeshRenderer3DComponent",
-                                          "level": 4
+                                          "type": "MeshRenderer3DComponent"
                                        },
                                        {
                                           "type": "EntityIdentifier",
                                           "name": "jk",
                                           "id": 244,
-                                          "originID": 244,
                                           "enabled": true
                                        }
                                     ]
@@ -640,14 +598,12 @@
                                        "y": 0,
                                        "z": 0
                                     },
-                                    "version": 2,
-                                    "level": 1
+                                    "version": 2
                                  },
                                  {
                                     "type": "EntityIdentifier",
                                     "name": "Scene",
                                     "id": 238,
-                                    "originID": 238,
                                     "enabled": true
                                  }
                               ]
@@ -686,14 +642,12 @@
                                  "x": 0,
                                  "y": 0,
                                  "z": 0
-                              },
-                              "level": 1
+                              }
                            },
                            {
                               "type": "EntityIdentifier",
                               "name": "scenes",
                               "id": 236,
-                              "originID": 236,
                               "enabled": true
                            }
                         ]
@@ -732,8 +686,7 @@
                            "x": 0,
                            "y": 0,
                            "z": 0
-                        },
-                        "level": 1
+                        }
                      },
                      {
                         "componentID": 233002,
@@ -742,14 +695,12 @@
                         "gltfResourceKey": "aeb43bf6-6044-4121-92da-a54ae6afb32d",
                         "needReload": true,
                         "paused": false,
-                        "type": "GlbRenderComponent",
-                        "level": 4
+                        "type": "GlbRenderComponent"
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "XiKuangYanJing33(prefab)",
                         "id": 233,
-                        "originID": 233,
                         "enabled": true
                      }
                   ]
@@ -784,8 +735,7 @@
                   "objectEnabled": true,
                   "enabled": true,
                   "entityId": 188,
-                  "componentID": 188001,
-                  "level": 1
+                  "componentID": 188001
                },
                {
                   "use3DMMHead": 0,
@@ -798,14 +748,12 @@
                   "type": "Face3DComponent",
                   "enabled": true,
                   "entityId": 188,
-                  "componentID": 188002,
-                  "level": 230
+                  "componentID": 188002
                },
                {
                   "type": "EntityIdentifier",
                   "name": "3D人头",
                   "id": 188,
-                  "originID": 188,
                   "enabled": true
                }
             ]
@@ -863,8 +811,7 @@
                   "objectEnabled": true,
                   "enabled": true,
                   "entityId": 217,
-                  "componentID": 217001,
-                  "level": 2
+                  "componentID": 217001
                },
                {
                   "audioSourceType": 1,
@@ -876,7 +823,6 @@
                   "version": 10,
                   "volume": 1,
                   "volumeEffects": [],
-                  "level": 2,
                   "src": "c35b28e7-cd8e-4e94-a067-5d5a44e0527c"
                },
                {
@@ -888,14 +834,12 @@
                   "loopCount": 0,
                   "startOffset": 0,
                   "type": "TimeOffset",
-                  "version": 2,
-                  "level": 1
+                  "version": 2
                },
                {
                   "type": "EntityIdentifier",
                   "name": "音乐",
                   "id": 217,
-                  "originID": 217,
                   "enabled": true
                }
             ]
@@ -957,8 +901,7 @@
                         "objectEnabled": true,
                         "enabled": true,
                         "entityId": 4,
-                        "componentID": 4001,
-                        "level": 2
+                        "componentID": 4001
                      },
                      {
                         "componentID": 4002,
@@ -967,8 +910,7 @@
                         "intensity": 0.6900000000000001,
                         "src": "bffa890c-da8a-46a8-8ab1-6dbc25b7c698",
                         "type": "LUTFilter",
-                        "version": 12,
-                        "level": 1
+                        "version": 12
                      },
                      {
                         "startOffset": 0,
@@ -979,14 +921,12 @@
                         "enabled": true,
                         "entityId": 4,
                         "componentID": 4003,
-                        "version": null,
-                        "level": 1
+                        "version": null
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "滤镜",
                         "id": 4,
-                        "originID": 4,
                         "enabled": true
                      }
                   ]
@@ -1044,8 +984,7 @@
                         "objectEnabled": true,
                         "enabled": true,
                         "entityId": 8,
-                        "componentID": 8001,
-                        "level": 2
+                        "componentID": 8001
                      },
                      {
                         "componentID": 8002,
@@ -1058,11 +997,9 @@
                         "facePointsFile": "",
                         "facePointsOption": false,
                         "maskImage": "",
-                        "type": "MakeupFaceV7",
+                        "type": "MakeupFaceV6",
                         "visMethod": 0,
-                        "version": 2,
-                        "level": 2,
-                        "makeupFaceVersion": "v7"
+                        "version": 2
                      },
                      {
                         "alpha": 1,
@@ -1071,8 +1008,7 @@
                         "entityId": 8,
                         "mode": "multiply",
                         "type": "BlendMode",
-                        "version": 2,
-                        "level": 2
+                        "version": 2
                      },
                      {
                         "alignPoints": [
@@ -1101,14 +1037,12 @@
                         "type": "FaceTracking",
                         "enabled": true,
                         "entityId": 8,
-                        "componentID": 8004,
-                        "level": 2
+                        "componentID": 8004
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "脸妆",
                         "id": 8,
-                        "originID": 8,
                         "enabled": true
                      }
                   ]
@@ -1166,8 +1100,7 @@
                         "objectEnabled": true,
                         "enabled": true,
                         "entityId": 6,
-                        "componentID": 6001,
-                        "level": 2
+                        "componentID": 6001
                      },
                      {
                         "componentID": 6002,
@@ -1177,8 +1110,7 @@
                         "minVisibility": 0,
                         "type": "MakeupIrisV6",
                         "visMethod": 0,
-                        "version": 2,
-                        "level": 2
+                        "version": 2
                      },
                      {
                         "alpha": 0.36,
@@ -1187,8 +1119,7 @@
                         "entityId": 6,
                         "mode": "normal",
                         "type": "BlendMode",
-                        "version": 19,
-                        "level": 2
+                        "version": 19
                      },
                      {
                         "alignPoints": [
@@ -1217,14 +1148,12 @@
                         "type": "FaceTracking",
                         "enabled": true,
                         "entityId": 6,
-                        "componentID": 6004,
-                        "level": 2
+                        "componentID": 6004
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "美瞳",
                         "id": 6,
-                        "originID": 6,
                         "enabled": true
                      }
                   ]
@@ -1282,8 +1211,7 @@
                         "objectEnabled": true,
                         "enabled": true,
                         "entityId": 11,
-                        "componentID": 11001,
-                        "level": 2
+                        "componentID": 11001
                      },
                      {
                         "closeMouseMask": "",
@@ -1314,9 +1242,7 @@
                         "openMouseMask": "",
                         "type": "MakeupLipsV6",
                         "visMethod": 0,
-                        "version": 2,
-                        "level": 2,
-                        "lipsDetailType": "Default"
+                        "version": 2
                      },
                      {
                         "alpha": 0.62,
@@ -1325,8 +1251,7 @@
                         "entityId": 11,
                         "mode": "multiply",
                         "type": "BlendMode",
-                        "version": 33,
-                        "level": 2
+                        "version": 33
                      },
                      {
                         "alignPoints": [
@@ -1355,14 +1280,12 @@
                         "type": "FaceTracking",
                         "enabled": true,
                         "entityId": 11,
-                        "componentID": 11004,
-                        "level": 2
+                        "componentID": 11004
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "唇彩",
                         "id": 11,
-                        "originID": 11,
                         "enabled": true
                      }
                   ]
@@ -1420,26 +1343,24 @@
                         "objectEnabled": true,
                         "enabled": true,
                         "entityId": 10,
-                        "componentID": 10001,
-                        "level": 2
+                        "componentID": 10001
                      },
                      {
                         "componentID": 10002,
                         "cropRect": {
-                           "bottom": 2048,
-                           "left": 0,
-                           "right": 1536,
-                           "top": 0
+                           "bottom": 110,
+                           "left": 180,
+                           "right": 200,
+                           "top": 446
                         },
                         "enabled": true,
                         "entityId": 10,
-                        "eyeCropImageName": "0cd03468-511b-4ccf-94b4-456ce868544b",
+                        "eyeCropImageName": "",
                         "eyeImageName": "0cd03468-511b-4ccf-94b4-456ce868544b",
                         "minVisibility": 0,
                         "type": "MakeupEyeV6",
                         "visMethod": 0,
-                        "version": 2,
-                        "level": 2
+                        "version": 2
                      },
                      {
                         "alpha": 0.72,
@@ -1448,8 +1369,7 @@
                         "entityId": 10,
                         "mode": "multiply",
                         "type": "BlendMode",
-                        "version": 4,
-                        "level": 2
+                        "version": 4
                      },
                      {
                         "alignPoints": [
@@ -1478,14 +1398,12 @@
                         "type": "FaceTracking",
                         "enabled": true,
                         "entityId": 10,
-                        "componentID": 10004,
-                        "level": 2
+                        "componentID": 10004
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "眼妆",
                         "id": 10,
-                        "originID": 10,
                         "enabled": true
                      }
                   ]
@@ -1543,26 +1461,24 @@
                         "objectEnabled": true,
                         "enabled": true,
                         "entityId": 12,
-                        "componentID": 12001,
-                        "level": 2
+                        "componentID": 12001
                      },
                      {
                         "componentID": 12002,
                         "cropRect": {
-                           "bottom": 2048,
-                           "left": 0,
-                           "right": 1536,
-                           "top": 0
+                           "bottom": 110,
+                           "left": 180,
+                           "right": 200,
+                           "top": 446
                         },
                         "enabled": true,
                         "entityId": 12,
-                        "eyeCropImageName": "03bb659f-6428-46c6-81b2-23a7b0c52d15",
+                        "eyeCropImageName": "",
                         "eyeImageName": "03bb659f-6428-46c6-81b2-23a7b0c52d15",
                         "minVisibility": 0,
                         "type": "MakeupEyeV6",
                         "visMethod": 0,
-                        "version": 2,
-                        "level": 2
+                        "version": 2
                      },
                      {
                         "alpha": 0.85,
@@ -1571,8 +1487,7 @@
                         "entityId": 12,
                         "mode": "screen",
                         "type": "BlendMode",
-                        "version": 21,
-                        "level": 2
+                        "version": 21
                      },
                      {
                         "alignPoints": [
@@ -1601,14 +1516,12 @@
                         "type": "FaceTracking",
                         "enabled": true,
                         "entityId": 12,
-                        "componentID": 12004,
-                        "level": 2
+                        "componentID": 12004
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "眼妆",
                         "id": 12,
-                        "originID": 12,
                         "enabled": true
                      }
                   ]
@@ -1662,8 +1575,7 @@
                         "componentID": 226001,
                         "type": "ScreenTransform",
                         "enabled": true,
-                        "version": 349,
-                        "level": 2
+                        "version": 349
                      },
                      {
                         "componentID": 226002,
@@ -1672,8 +1584,7 @@
                         "scaleMode": 2,
                         "src": "9f05727d-9cce-4fc1-86c8-3f1eada24a04",
                         "type": "Image",
-                        "version": 5,
-                        "level": 1
+                        "version": 5
                      },
                      {
                         "alpha": 1,
@@ -1681,8 +1592,7 @@
                         "type": "BlendMode",
                         "enabled": true,
                         "entityId": 226,
-                        "componentID": 226003,
-                        "level": 2
+                        "componentID": 226003
                      },
                      {
                         "startOffset": 0,
@@ -1693,14 +1603,12 @@
                         "enabled": true,
                         "entityId": 226,
                         "componentID": 226004,
-                        "version": 1,
-                        "level": 1
+                        "version": 1
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "前景贴纸",
                         "id": 226,
-                        "originID": 226,
                         "enabled": true
                      }
                   ]
@@ -1759,8 +1667,7 @@
                         "enabled": true,
                         "entityId": 7,
                         "componentID": 7001,
-                        "version": 249,
-                        "level": 2
+                        "version": 249
                      },
                      {
                         "componentID": 7002,
@@ -1769,8 +1676,7 @@
                         "scaleMode": 2,
                         "src": "6af9b9fc-1c04-476f-b27b-ef0255876b6e",
                         "type": "Image",
-                        "version": 3,
-                        "level": 1
+                        "version": 3
                      },
                      {
                         "alpha": 1,
@@ -1778,8 +1684,7 @@
                         "type": "BlendMode",
                         "enabled": true,
                         "entityId": 7,
-                        "componentID": 7003,
-                        "level": 2
+                        "componentID": 7003
                      },
                      {
                         "startOffset": 0,
@@ -1790,14 +1695,12 @@
                         "enabled": true,
                         "entityId": 7,
                         "componentID": 7004,
-                        "version": null,
-                        "level": 1
+                        "version": null
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "前景贴纸",
                         "id": 7,
-                        "originID": 7,
                         "enabled": true
                      }
                   ]
@@ -1856,8 +1759,7 @@
                         "enabled": true,
                         "entityId": 9,
                         "componentID": 9001,
-                        "version": 271,
-                        "level": 2
+                        "version": 271
                      },
                      {
                         "componentID": 9002,
@@ -1866,8 +1768,7 @@
                         "scaleMode": 2,
                         "src": "727eabdc-a88c-4646-be64-b9b1b4eeb1bc",
                         "type": "Image",
-                        "version": 3,
-                        "level": 1
+                        "version": 3
                      },
                      {
                         "alpha": 1,
@@ -1876,8 +1777,7 @@
                         "entityId": 9,
                         "mode": "screen",
                         "type": "BlendMode",
-                        "version": 2,
-                        "level": 2
+                        "version": 2
                      },
                      {
                         "startOffset": 0,
@@ -1888,14 +1788,12 @@
                         "enabled": true,
                         "entityId": 9,
                         "componentID": 9004,
-                        "version": null,
-                        "level": 1
+                        "version": null
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "前景贴纸",
                         "id": 9,
-                        "originID": 9,
                         "enabled": true
                      }
                   ]
@@ -1954,8 +1852,7 @@
                         "enabled": true,
                         "entityId": 13,
                         "componentID": 13001,
-                        "version": 318,
-                        "level": 2
+                        "version": 318
                      },
                      {
                         "componentID": 13002,
@@ -1964,8 +1861,7 @@
                         "scaleMode": 2,
                         "src": "911ae251-ab63-42ae-b122-1e1418fb59cf",
                         "type": "Image",
-                        "version": 3,
-                        "level": 1
+                        "version": 3
                      },
                      {
                         "alpha": 1,
@@ -1974,8 +1870,7 @@
                         "entityId": 13,
                         "mode": "screen",
                         "type": "BlendMode",
-                        "version": 2,
-                        "level": 2
+                        "version": 2
                      },
                      {
                         "startOffset": 0,
@@ -1986,14 +1881,12 @@
                         "enabled": true,
                         "entityId": 13,
                         "componentID": 13004,
-                        "version": null,
-                        "level": 1
+                        "version": null
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "前景贴纸",
                         "id": 13,
-                        "originID": 13,
                         "enabled": true
                      }
                   ]
@@ -2051,14 +1944,12 @@
                         "objectEnabled": true,
                         "enabled": true,
                         "entityId": 250,
-                        "componentID": 250001,
-                        "level": 2
+                        "componentID": 250001
                      },
                      {
                         "type": "EntityIdentifier",
                         "name": "流程管理",
-                        "id": 250,
-                        "originID": 250
+                        "id": 250
                      },
                      {
                         "type": "Script",
@@ -2119,22 +2010,19 @@
                   "objectEnabled": true,
                   "enabled": true,
                   "entityId": 5,
-                  "componentID": 5001,
-                  "level": 2
+                  "componentID": 5001
                },
                {
                   "renderTargetKey": "RenderTarget",
                   "type": "Camera",
                   "enabled": true,
                   "entityId": 5,
-                  "componentID": 5002,
-                  "level": 2
+                  "componentID": 5002
                },
                {
                   "type": "EntityIdentifier",
                   "name": "2D画板",
                   "id": 5,
-                  "originID": 5,
                   "enabled": true
                }
             ]
@@ -2149,15 +2037,14 @@
                {
                   "type": "EntityIdentifier",
                   "name": "light.js",
-                  "id": 24,
-                  "originID": 24
+                  "id": 24
                },
                {
                   "type": "Script",
                   "entityId": 24,
                   "scriptPath": "6113cd76-2a37-4e59-b086-062d17f5dbd7",
                   "enabled": true,
-                  "componentID": 24001
+                  "componentID": 99999
                },
                {
                   "type": "ScreenTransform",
@@ -2175,8 +2062,7 @@
                   "scale": {
                      "x": 1,
                      "y": 1,
-                     "z": 1,
-                     "eKeepRatio": true
+                     "z": 1
                   },
                   "eEuler": {
                      "x": 0,
@@ -2204,10 +2090,8 @@
                   "eEditingMode": 0,
                   "eKeepRatio": true,
                   "objectEnabled": true,
-                  "interactive": false,
                   "enabled": true,
-                  "entityId": 24,
-                  "componentID": 24002
+                  "entityId": 24
                }
             ]
          }
@@ -2219,38 +2103,32 @@
          "commandMap": {},
          "key": "3a5d9d58-1984-4d6a-8fbc-5d6b8f730360",
          "path": "Soft_4TubeBank_2BlackFlags_ibl.ktx",
-         "label": "Soft_4TubeBank_2BlackFlags_ibl.ktx",
-         "level": 2
+         "label": "Soft_4TubeBank_2BlackFlags_ibl.ktx"
       },
       "e567e442-bc0d-48d4-ad8f-c0cce5ad6f4e": {
          "type": "EnvMap_SH",
          "commandMap": {},
          "key": "e567e442-bc0d-48d4-ad8f-c0cce5ad6f4e",
          "path": "lebombo_default/lebombo_default_irradiance.sh",
-         "label": "lebombo_default_irradiance.sh",
-         "level": 2
+         "label": "lebombo_default_irradiance.sh"
       },
       "aeb43bf6-6044-4121-92da-a54ae6afb32d": {
          "type": "modelFile_gltf",
          "commandMap": {},
-         "replaceMismatch": false,
          "key": "aeb43bf6-6044-4121-92da-a54ae6afb32d",
          "path": "XiKuangYanJing33-gltf/XiKuangYanJing33.gltf",
-         "label": "XiKuangYanJing33.gltf",
-         "level": 2
+         "label": "XiKuangYanJing33.gltf"
       },
       "3dc27d57-26c4-4086-9ad8-10f1c999b17b": {
          "type": "gltf_bin",
          "commandMap": {},
          "key": "3dc27d57-26c4-4086-9ad8-10f1c999b17b",
          "path": "XiKuangYanJing33-gltf/XiKuangYanJing33_data.bin",
-         "label": "XiKuangYanJing33_data.bin",
-         "level": 2
+         "label": "XiKuangYanJing33_data.bin"
       },
       "99cb25ad-c641-4e16-946c-f646b5f5f780": {
          "type": "ImageData",
          "commandMap": {},
-         "compression": 0,
          "textureOptions": {
             "wrapS": "REPEAT",
             "wrapT": "REPEAT",
@@ -2266,10 +2144,7 @@
          "resolution": {
             "height": 1024,
             "width": 1024
-         },
-         "level": 2,
-         "width": 1024,
-         "height": 1024
+         }
       },
       "2f59df0b-9304-4ec3-b731-f37c3f549944": {
          "type": "MaterialFileData",
@@ -2596,8 +2471,7 @@
          "lastType": "pbr",
          "key": "2f59df0b-9304-4ec3-b731-f37c3f549944",
          "path": "pbr.material",
-         "label": "pbr.material",
-         "level": 2
+         "label": "pbr.material"
       },
       "470b7f69-b871-4c9f-9f8d-f0c1cf162321": {
          "type": "MaterialFileData",
@@ -2924,8 +2798,7 @@
          "lastType": "pbr",
          "key": "470b7f69-b871-4c9f-9f8d-f0c1cf162321",
          "path": "XiKuangYanJing33-gltf/materials/Mat.Route666.material",
-         "label": "Mat.Route666.material",
-         "level": 2
+         "label": "Mat.Route666.material"
       },
       "c35b28e7-cd8e-4e94-a067-5d5a44e0527c": {
          "type": "AudioClipData",
@@ -2944,26 +2817,20 @@
          "commandMap": {},
          "key": "6113cd76-2a37-4e59-b086-062d17f5dbd7",
          "path": "scripts/light.js",
-         "label": "light.js",
-         "level": 2,
-         "requireAbilities": []
+         "label": "light.js"
       },
       "632b0f18-9284-4f54-a0c4-f19fcb376d1a": {
          "type": "js",
          "commandMap": {},
          "key": "632b0f18-9284-4f54-a0c4-f19fcb376d1a",
          "path": "scripts/250.flow.js",
-         "label": "250.flow.js",
-         "level": 2,
-         "requireAbilities": []
+         "label": "250.flow.js"
       },
       "RenderTarget": {
          "type": "RenderTarget",
          "commandMap": {},
-         "inputColor": "#ffffffff",
-         "sizeType": 0,
-         "compatibilityMode": true,
-         "depthType": "DEPTH24",
+         "width": 0,
+         "height": 0,
          "textureOptions": {
             "wrapS": "REPEAT",
             "wrapT": "REPEAT",
@@ -2972,27 +2839,22 @@
             "sRGB": true,
             "samplerType": "SAMPLER_2D"
          },
-         "width": 0,
-         "height": 0,
          "key": "RenderTarget",
          "path": "RenderTarget.rdt",
          "label": "RenderTarget.rdt",
          "inputKey": "DeviceCameraTexture",
-         "input": "DeviceCameraTexture",
-         "level": 2
+         "input": "DeviceCameraTexture"
       },
       "DeviceCameraTexture": {
          "type": "TextureData",
          "commandMap": {},
          "key": "DeviceCameraTexture",
          "path": "DeviceCameraTexture.tex",
-         "label": "DeviceCameraTexture.tex",
-         "level": 2
+         "label": "DeviceCameraTexture.tex"
       },
       "bffa890c-da8a-46a8-8ab1-6dbc25b7c698": {
          "type": "ImageData",
          "commandMap": {},
-         "compression": 0,
          "textureOptions": {
             "wrapS": "REPEAT",
             "wrapT": "REPEAT",
@@ -3002,21 +2864,17 @@
             "samplerType": "SAMPLER_2D"
          },
          "key": "bffa890c-da8a-46a8-8ab1-6dbc25b7c698",
-         "path": "yujinxiang.png",
-         "label": "yujinxiang.png",
+         "path": "郁金香.png",
+         "label": "郁金香.png",
          "actualSize": 219654,
          "resolution": {
             "height": 512,
             "width": 512
-         },
-         "level": 2,
-         "width": 512,
-         "height": 512
+         }
       },
       "aef7f335-36c3-47cd-b0c1-7e264e4c7963": {
          "type": "ImageData",
          "commandMap": {},
-         "compression": 0,
          "textureOptions": {
             "wrapS": "REPEAT",
             "wrapT": "REPEAT",
@@ -3032,15 +2890,11 @@
          "resolution": {
             "height": 2048,
             "width": 1536
-         },
-         "level": 2,
-         "width": 1536,
-         "height": 2048
+         }
       },
       "72afdffe-899d-467d-ba31-8791f5ec919f": {
          "type": "ImageData",
          "commandMap": {},
-         "compression": 0,
          "textureOptions": {
             "wrapS": "REPEAT",
             "wrapT": "REPEAT",
@@ -3056,10 +2910,67 @@
          "resolution": {
             "height": 125,
             "width": 125
+         }
+      },
+      "966124fc-bafa-429c-96a6-72d64200f323": {
+         "type": "ImageData",
+         "commandMap": {},
+         "textureOptions": {
+            "wrapS": "REPEAT",
+            "wrapT": "REPEAT",
+            "magFilter": "LINEAR",
+            "minFilter": "LINEAR_MIPMAP_LINEAR",
+            "sRGB": true,
+            "samplerType": "SAMPLER_2D"
          },
-         "level": 2,
-         "width": 125,
-         "height": 125
+         "key": "966124fc-bafa-429c-96a6-72d64200f323",
+         "path": "zc.png",
+         "label": "zc.png",
+         "actualSize": 12276,
+         "resolution": {
+            "height": 2048,
+            "width": 1536
+         }
+      },
+      "0cd03468-511b-4ccf-94b4-456ce868544b": {
+         "type": "ImageData",
+         "commandMap": {},
+         "textureOptions": {
+            "wrapS": "REPEAT",
+            "wrapT": "REPEAT",
+            "magFilter": "LINEAR",
+            "minFilter": "LINEAR_MIPMAP_LINEAR",
+            "sRGB": true,
+            "samplerType": "SAMPLER_2D"
+         },
+         "key": "0cd03468-511b-4ccf-94b4-456ce868544b",
+         "path": "yj.png",
+         "label": "yj.png",
+         "actualSize": 69176,
+         "resolution": {
+            "height": 2048,
+            "width": 1536
+         }
+      },
+      "03bb659f-6428-46c6-81b2-23a7b0c52d15": {
+         "type": "ImageData",
+         "commandMap": {},
+         "textureOptions": {
+            "wrapS": "REPEAT",
+            "wrapT": "REPEAT",
+            "magFilter": "LINEAR",
+            "minFilter": "LINEAR_MIPMAP_LINEAR",
+            "sRGB": true,
+            "samplerType": "SAMPLER_2D"
+         },
+         "key": "03bb659f-6428-46c6-81b2-23a7b0c52d15",
+         "path": "lp.png",
+         "label": "lp.png",
+         "actualSize": 18211,
+         "resolution": {
+            "height": 2048,
+            "width": 1536
+         }
       },
       "9f05727d-9cce-4fc1-86c8-3f1eada24a04": {
          "type": "PAGFileData",
@@ -3086,11 +2997,7 @@
             "height": 360
          },
          "frameRate": 12,
-         "hasAudio": false,
-         "level": 2,
-         "actualSize": 72880,
-         "timeStretchMode": 2,
-         "videoAmount": 1
+         "hasAudio": false
       },
       "6af9b9fc-1c04-476f-b27b-ef0255876b6e": {
          "type": "PAGFileData",
@@ -3117,11 +3024,7 @@
             "height": 422
          },
          "frameRate": 12,
-         "hasAudio": false,
-         "level": 2,
-         "actualSize": 102627,
-         "timeStretchMode": 2,
-         "videoAmount": 1
+         "hasAudio": false
       },
       "727eabdc-a88c-4646-be64-b9b1b4eeb1bc": {
          "type": "PAGFileData",
@@ -3148,11 +3051,7 @@
             "height": 286
          },
          "frameRate": 12,
-         "hasAudio": false,
-         "level": 2,
-         "actualSize": 76664,
-         "timeStretchMode": 2,
-         "videoAmount": 1
+         "hasAudio": false
       },
       "911ae251-ab63-42ae-b122-1e1418fb59cf": {
          "type": "PAGFileData",
@@ -3179,198 +3078,55 @@
             "height": 286
          },
          "frameRate": 12,
-         "hasAudio": false,
-         "level": 2,
-         "actualSize": 50151,
-         "timeStretchMode": 2,
-         "videoAmount": 1
+         "hasAudio": false
       },
       "d79b8d03-af71-45dc-bdd3-65193915d8aa": {
          "type": "folder",
          "commandMap": {},
          "key": "d79b8d03-af71-45dc-bdd3-65193915d8aa",
          "label": "root",
-         "path": "./",
-         "level": 2
-      },
-      "da7a834a-522e-4ca3-b48f-d08a34cbb978": {
-         "type": "folder",
-         "commandMap": {},
-         "key": "da7a834a-522e-4ca3-b48f-d08a34cbb978",
-         "label": "cropImage",
-         "path": "cropImage",
-         "level": 2
-      },
-      "e438de54-0598-4e51-931f-c242e41111fa": {
-         "type": "ImageData",
-         "commandMap": {},
-         "key": "e438de54-0598-4e51-931f-c242e41111fa",
-         "label": "lp_crop.png",
-         "path": "cropImage/lp_crop.png",
-         "level": 2,
-         "compression": 0,
-         "textureOptions": {
-            "wrapS": "REPEAT",
-            "wrapT": "REPEAT",
-            "magFilter": "LINEAR",
-            "minFilter": "LINEAR_MIPMAP_LINEAR",
-            "sRGB": false,
-            "mipmap": true,
-            "samplerType": "SAMPLER_2D"
-         },
-         "actualSize": 37681,
-         "resolution": {
-            "height": 247,
-            "width": 634
-         },
-         "width": 634,
-         "height": 247
-      },
-      "4fff5871-6c29-4f8b-b66e-37ad3a84148b": {
-         "type": "ImageData",
-         "commandMap": {},
-         "key": "4fff5871-6c29-4f8b-b66e-37ad3a84148b",
-         "label": "yj_crop.png",
-         "path": "cropImage/yj_crop.png",
-         "level": 2,
-         "compression": 0,
-         "textureOptions": {
-            "wrapS": "REPEAT",
-            "wrapT": "REPEAT",
-            "magFilter": "LINEAR",
-            "minFilter": "LINEAR_MIPMAP_LINEAR",
-            "sRGB": false,
-            "mipmap": true,
-            "samplerType": "SAMPLER_2D"
-         },
-         "actualSize": 146612,
-         "resolution": {
-            "height": 401,
-            "width": 892
-         },
-         "width": 892,
-         "height": 401
-      },
-      "69cd2b4b-643e-4987-8e5d-b7ed5445c296": {
-         "type": "ImageData",
-         "commandMap": {},
-         "key": "69cd2b4b-643e-4987-8e5d-b7ed5445c296",
-         "label": "zc_crop.png",
-         "path": "cropImage/zc_crop.png",
-         "level": 2,
-         "compression": 0,
-         "textureOptions": {
-            "wrapS": "REPEAT",
-            "wrapT": "REPEAT",
-            "magFilter": "LINEAR",
-            "minFilter": "LINEAR_MIPMAP_LINEAR",
-            "sRGB": false,
-            "mipmap": true,
-            "samplerType": "SAMPLER_2D"
-         },
-         "actualSize": 16819,
-         "resolution": {
-            "height": 160,
-            "width": 296
-         },
-         "width": 296,
-         "height": 160
-      },
-      "254d41a9-5196-4a49-ac7e-0dfae430e879": {
-         "type": "ImageData",
-         "commandMap": {},
-         "key": "254d41a9-5196-4a49-ac7e-0dfae430e879",
-         "label": "zc_Mask_crop.png",
-         "path": "cropImage/zc_Mask_crop.png",
-         "level": 2,
-         "compression": 0,
-         "textureOptions": {
-            "wrapS": "REPEAT",
-            "wrapT": "REPEAT",
-            "magFilter": "LINEAR",
-            "minFilter": "LINEAR_MIPMAP_LINEAR",
-            "sRGB": false,
-            "mipmap": true,
-            "samplerType": "SAMPLER_2D"
-         },
-         "actualSize": 22865,
-         "resolution": {
-            "height": 2047,
-            "width": 1535
-         },
-         "width": 1535,
-         "height": 2047
+         "path": "./"
       },
       "8e62a1ef-5015-41db-824d-b84d4baca415": {
          "type": "default",
          "commandMap": {},
          "key": "8e62a1ef-5015-41db-824d-b84d4baca415",
          "path": "imgui.ini",
-         "label": "imgui.ini",
-         "level": 2
+         "label": "imgui.ini"
       },
       "da64a8c1-6ce3-49b2-9799-5dc569cf2870": {
          "type": "folder",
          "commandMap": {},
          "key": "da64a8c1-6ce3-49b2-9799-5dc569cf2870",
          "label": "lebombo_default",
-         "path": "lebombo_default",
-         "level": 2
+         "path": "lebombo_default"
       },
       "ba3d4e62-48c9-434c-9d03-2a820c5b2f81": {
          "type": "EnvMap_KTX",
          "commandMap": {},
          "key": "ba3d4e62-48c9-434c-9d03-2a820c5b2f81",
          "path": "lebombo_default/lebombo_default_ibl.ktx",
-         "label": "lebombo_default_ibl.ktx",
-         "level": 2
+         "label": "lebombo_default_ibl.ktx"
       },
       "1774dc2f-2cfb-4cb3-a8df-5c48c7ad0f2f": {
          "type": "EnvMap_KTX",
          "commandMap": {},
          "key": "1774dc2f-2cfb-4cb3-a8df-5c48c7ad0f2f",
          "path": "lebombo_default/lebombo_default_skybox.ktx",
-         "label": "lebombo_default_skybox.ktx",
-         "level": 2
+         "label": "lebombo_default_skybox.ktx"
       },
       "a816ef66-b4c7-4a49-a02f-a1e9fcdde03b": {
          "type": "AudioClipData",
          "commandMap": {},
          "loopCount": 0,
          "key": "a816ef66-b4c7-4a49-a02f-a1e9fcdde03b",
-         "path": "lebombo_default/wuyihuahua.mp3",
-         "label": "wuyihuahua.mp3",
+         "path": "lebombo_default/五一花花.mp3",
+         "label": "五一花花.mp3",
          "timeRange": {
             "startTime": 0,
             "duration": 10344490
          },
-         "duration": 10344490,
-         "level": 2,
-         "actualSize": 333335
-      },
-      "03bb659f-6428-46c6-81b2-23a7b0c52d15": {
-         "type": "ImageData",
-         "commandMap": {},
-         "compression": 0,
-         "textureOptions": {
-            "wrapS": "REPEAT",
-            "wrapT": "REPEAT",
-            "magFilter": "LINEAR",
-            "minFilter": "LINEAR_MIPMAP_LINEAR",
-            "sRGB": true,
-            "samplerType": "SAMPLER_2D"
-         },
-         "key": "03bb659f-6428-46c6-81b2-23a7b0c52d15",
-         "path": "lp.png",
-         "label": "lp.png",
-         "actualSize": 18211,
-         "resolution": {
-            "height": 2048,
-            "width": 1536
-         },
-         "level": 2,
-         "width": 1536,
-         "height": 2048
+         "duration": 10344490
       },
       "9f4e08cc-f0da-4aa5-93c5-fb23a4fdad0a": {
          "type": "MaterialFileData",
@@ -3697,16 +3453,13 @@
          "lastType": "pbr",
          "key": "9f4e08cc-f0da-4aa5-93c5-fb23a4fdad0a",
          "path": "pbr_1.material",
-         "label": "pbr_1.material",
-         "level": 2
+         "label": "pbr_1.material"
       },
       "RenderTarget1": {
          "type": "RenderTarget",
          "commandMap": {},
-         "inputColor": "#ffffffff",
-         "sizeType": 0,
-         "compatibilityMode": true,
-         "depthType": "DEPTH24",
+         "width": 0,
+         "height": 0,
          "textureOptions": {
             "wrapS": "REPEAT",
             "wrapT": "REPEAT",
@@ -3715,47 +3468,39 @@
             "sRGB": true,
             "samplerType": "SAMPLER_2D"
          },
-         "width": 0,
-         "height": 0,
          "key": "RenderTarget1",
          "path": "RenderTarget_camera_1.rdt",
          "label": "RenderTarget_camera_1.rdt",
          "inputKey": "",
-         "input": "",
-         "inputType": "RT_InputType_Texture",
-         "level": 2
+         "input": ""
       },
       "40cb7fb1-9775-467c-abf9-e6c2e8ceb1c4": {
          "type": "folder",
          "commandMap": {},
          "key": "40cb7fb1-9775-467c-abf9-e6c2e8ceb1c4",
          "label": "scripts",
-         "path": "scripts",
-         "level": 2
+         "path": "scripts"
       },
       "b2daeadb-127f-4c5a-940e-85475885294f": {
          "type": "folder",
          "commandMap": {},
          "key": "b2daeadb-127f-4c5a-940e-85475885294f",
          "label": "XiKuangYanJing33-gltf",
-         "path": "XiKuangYanJing33-gltf",
-         "level": 2
+         "path": "XiKuangYanJing33-gltf"
       },
       "e770aa26-2616-44f7-b371-b0b9344f5262": {
          "type": "folder",
          "commandMap": {},
          "key": "e770aa26-2616-44f7-b371-b0b9344f5262",
          "label": "images",
-         "path": "XiKuangYanJing33-gltf/images",
-         "level": 2
+         "path": "XiKuangYanJing33-gltf/images"
       },
       "229869d2-5162-4656-95a9-d4efca5d58da": {
          "type": "folder",
          "commandMap": {},
          "key": "229869d2-5162-4656-95a9-d4efca5d58da",
          "label": "materials",
-         "path": "XiKuangYanJing33-gltf/materials",
-         "level": 2
+         "path": "XiKuangYanJing33-gltf/materials"
       },
       "3e5c82fa-7cf5-42bf-b493-c665de1d0a25": {
          "type": "MaterialFileData",
@@ -4081,16 +3826,14 @@
          "lastType": "pbr",
          "key": "3e5c82fa-7cf5-42bf-b493-c665de1d0a25",
          "path": "XiKuangYanJing33-gltf/materials/Mat.head.material",
-         "label": "Mat.head.material",
-         "level": 2
+         "label": "Mat.head.material"
       },
       "73085e68-38e3-4d1a-954f-3ba5d865899d": {
          "type": "folder",
          "commandMap": {},
          "key": "73085e68-38e3-4d1a-954f-3ba5d865899d",
          "label": "meshes",
-         "path": "XiKuangYanJing33-gltf/meshes",
-         "level": 2
+         "path": "XiKuangYanJing33-gltf/meshes"
       },
       "e4ef00fa-9790-46f4-bf19-0d5ee817f61a": {
          "type": "mesh",
@@ -4101,8 +3844,7 @@
          "triangleCount": 8768,
          "verticesCount": 5719,
          "meshSize": "230.00 KB",
-         "blendShapes": 0,
-         "level": 2
+         "blendShapes": 0
       },
       "824f9a83-5343-4685-8b7c-eb0ffd6715c3": {
          "type": "mesh",
@@ -4113,21 +3855,18 @@
          "triangleCount": 109,
          "verticesCount": 116,
          "meshSize": "4.00 KB",
-         "blendShapes": 0,
-         "level": 2
+         "blendShapes": 0
       },
       "c2fb5c84-27d4-4925-af7c-7d3609eb6900": {
          "type": "prefab",
          "commandMap": {},
          "key": "c2fb5c84-27d4-4925-af7c-7d3609eb6900",
          "path": "XiKuangYanJing33-gltf/XiKuangYanJing33.prefab",
-         "label": "XiKuangYanJing33.prefab",
-         "level": 2
+         "label": "XiKuangYanJing33.prefab"
       },
       "39edb8cb-7eb4-4b6e-a6ea-be96e095b542": {
          "type": "ImageData",
          "commandMap": {},
-         "compression": 0,
          "textureOptions": {
             "wrapS": "REPEAT",
             "wrapT": "REPEAT",
@@ -4137,94 +3876,26 @@
             "samplerType": "SAMPLER_2D"
          },
          "key": "39edb8cb-7eb4-4b6e-a6ea-be96e095b542",
-         "path": "xrbd.png",
-         "label": "xrbd.png",
+         "path": "xr bd.png",
+         "label": "xr bd.png",
          "actualSize": 146291,
          "resolution": {
             "height": 2048,
             "width": 1536
-         },
-         "level": 2,
-         "width": 1536,
-         "height": 2048
+         }
       },
       "8ea45f32-0db3-4f94-8acb-0218ee7ac46c": {
          "type": "default",
          "commandMap": {},
          "key": "8ea45f32-0db3-4f94-8acb-0218ee7ac46c",
          "label": "yanjing.2021-05-31-13-22-43-636Z.bak",
-         "path": "yanjing.2021-05-31-13-22-43-636Z.bak",
-         "level": 2
-      },
-      "8e2fb814-70f0-43d3-a487-bc2e07064a6b": {
-         "type": "default",
-         "commandMap": {},
-         "key": "8e2fb814-70f0-43d3-a487-bc2e07064a6b",
-         "label": "yanjing.2023-04-18-10-45-42-458Z.bak",
-         "path": "yanjing.2023-04-18-10-45-42-458Z.bak",
-         "level": 2
-      },
-      "0cd03468-511b-4ccf-94b4-456ce868544b": {
-         "type": "ImageData",
-         "commandMap": {},
-         "compression": 0,
-         "textureOptions": {
-            "wrapS": "REPEAT",
-            "wrapT": "REPEAT",
-            "magFilter": "LINEAR",
-            "minFilter": "LINEAR_MIPMAP_LINEAR",
-            "sRGB": true,
-            "samplerType": "SAMPLER_2D"
-         },
-         "key": "0cd03468-511b-4ccf-94b4-456ce868544b",
-         "path": "yj.png",
-         "label": "yj.png",
-         "actualSize": 69176,
-         "resolution": {
-            "height": 2048,
-            "width": 1536
-         },
-         "level": 2,
-         "width": 1536,
-         "height": 2048
-      },
-      "966124fc-bafa-429c-96a6-72d64200f323": {
-         "type": "ImageData",
-         "commandMap": {},
-         "compression": 0,
-         "textureOptions": {
-            "wrapS": "REPEAT",
-            "wrapT": "REPEAT",
-            "magFilter": "LINEAR",
-            "minFilter": "LINEAR_MIPMAP_LINEAR",
-            "sRGB": true,
-            "samplerType": "SAMPLER_2D"
-         },
-         "key": "966124fc-bafa-429c-96a6-72d64200f323",
-         "path": "zc.png",
-         "label": "zc.png",
-         "actualSize": 12276,
-         "resolution": {
-            "height": 2048,
-            "width": 1536
-         },
-         "level": 2,
-         "width": 1536,
-         "height": 2048
-      },
-      "b857be09-858e-468c-b1b3-fde724b54eb2": {
-         "type": "js",
-         "commandMap": {},
-         "key": "b857be09-858e-468c-b1b3-fde724b54eb2",
-         "label": "studio-extension.js",
-         "path": "scripts/studio-extension.js",
-         "level": 2
+         "path": "yanjing.2021-05-31-13-22-43-636Z.bak"
       }
    },
    "preset": {},
    "properties": {
       "layout": {
-         "width": 720,
+         "width": 960,
          "height": 1280
       },
       "boundsTrackerPlaceHolders": [],
@@ -4237,17 +3908,12 @@
          "minImageDuration": 1000000,
          "maxImageDuration": 10000000,
          "minVideoDuration": 2000000,
-         "minFreezePointInterval": 0,
          "preferredCoverTime": 1000000,
          "originVolume": 1,
-         "cropEvents": [
-            "SlowRhythmTrail"
-         ],
+         "cropEvents": [],
          "imageCropSpace": 0,
          "videoCropSpace": -1,
-         "disableEventsWhileTransition": true,
-         "useInternalRhythm": true,
-         "headProtectDuration": 0
+         "disableEventsWhileTransition": true
       },
       "materialConfigs": [],
       "resourceIDs": []
