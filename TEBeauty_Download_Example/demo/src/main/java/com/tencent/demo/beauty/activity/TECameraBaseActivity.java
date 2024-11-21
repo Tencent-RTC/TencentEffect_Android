@@ -25,6 +25,7 @@ import com.tencent.demo.utils.LogUtils;
 import com.tencent.demo.utils.UriUtils;
 import com.tencent.xmagic.XmagicApi;
 import com.tencent.xmagic.XmagicApi.XmagicAIDataListener;
+import com.tencent.xmagic.XmagicConstant;
 import com.tencent.xmagic.XmagicConstant.EffectName;
 import com.tencent.xmagic.XmagicConstant.FeatureName;
 import com.tencent.xmagic.bean.TEBodyData;
@@ -78,7 +79,7 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
     }
 
     private void initXMagicAPI() {
-        mXmagicApi = new XmagicApi(this, AppConfig.resPathForSDK);
+        mXmagicApi = new XmagicApi(this, XmagicConstant.EffectMode.PRO, AppConfig.resPathForSDK);
         mXmagicApi.setXmagicLogLevel(Log.ERROR);//the default log level is Log.WARN
         mXmagicApi.setAIDataListener(new XmagicAIDataListener() {
             @Override

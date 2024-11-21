@@ -80,7 +80,9 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
                 continue;
             }
             TEUIProperty uiProperty = new Gson().fromJson(dataStr.trim(), TEUIProperty.class);
-            uiProperty.uiCategory = dataModel.category;
+            if (uiProperty.uiCategory == null) {
+                uiProperty.uiCategory = dataModel.category;
+            }
             this.completionParam(uiProperty.propertyList, dataModel.category, uiProperty);
             this.putDataToMap(uiProperty);
             this.allData.add(uiProperty);
@@ -232,15 +234,20 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
     private void completionParam(List<TEUIProperty> list, TEUIProperty.UICategory category, TEUIProperty parentProperty) {
         for (TEUIProperty property : list) {
             property.parentUIProperty = parentProperty;
-            property.uiCategory = category;
+            if (property.uiCategory == null) {
+                property.uiCategory = category;
+            }
             ProviderUtils.createDlModelAndSDKParam(property, category);
             if (property.sdkParam != null) {
-                switch (category) {
+                switch (property.uiCategory) {
                     case LUT:
                         property.sdkParam.effectName = XmagicConstant.EffectName.EFFECT_LUT;
                         break;
                     case MAKEUP:
                         property.sdkParam.effectName = XmagicConstant.EffectName.EFFECT_MAKEUP;
+                        break;
+                    case LIGHT_MAKEUP:
+                        property.sdkParam.effectName = XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP;
                         break;
                     case MOTION:
                         property.sdkParam.effectName = XmagicConstant.EffectName.EFFECT_MOTION;
@@ -259,4 +266,8 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
     }
 
 
+    @Override
+    public boolean isShowEntryBtn() {
+        return false;
+    }
 }

@@ -2,6 +2,7 @@
     "displayName":"贴纸",
     "displayNameEn":"Motion",
     "uiState":2,
+    "isShowGridLayout":true,
     "propertyList":[
         {
             "displayName":"2D贴纸",
@@ -65,25 +66,36 @@
                 }        
             ]
         },
-        {
-            "displayName":"手势贴纸",
-            "displayNameEn":"Stickerhand",
-            "downloadPath":"MotionRes/handMotionRes/",
-            "icon":"beauty_panel/panel_icon/motions_icon/motion_hand.png",
-             "propertyList":[
-                {
-                    "displayName":"无",
-                    "displayNameEn":"None",
-                    "icon":"beauty_panel/panel_icon/beauty/none.png"
-                },
-                {
-                    "displayName":"樱花女孩",
-                    "displayNameEn":"Sakura",
-                    "id":"motiongesture_sakura",
-                    "resourceUri":"MotionRes/handMotionRes/video_sakuragirl",
-                    "icon":"beauty_panel/panel_icon/motions_icon/video_sakuragirl.png"
+       {
+        "displayName":"风格整妆",
+        "displayNameEn":"Makeup",
+        "downloadPath":"MotionRes/makeupRes/",
+        "icon":"beauty_panel/panel_icon/motions_icon/motion_makeup.png",
+        "uiCategory":"MAKEUP",
+        "propertyList":[
+            {
+                "uiCategory":"MAKEUP",
+                "displayName":"无",
+                "displayNameEn":"None",
+                "id":"makeup_ID_NONE",
+                "parentId":"makeup",
+                "icon":"beauty_panel/panel_icon/beauty/none.png",
+                "uiState":0
+            },
+            {
+                "displayName":"学妹",
+                "displayNameEn":"Young",
+                "icon":"beauty_panel/panel_icon/makeup_icon/video_makeup_xuemei.png",
+                "uiCategory":"MAKEUP",
+                "resourceUri":"MotionRes/makeupRes/video_makeup_xuemei",
+                "sdkParam":{
+                    "effectValue":60,
+                    "extraInfo":{
+                        "makeupLutStrength":"60"
+                    }
                 }
-            ]
-        }
+            }
+        ]
+       }
     ]
 }

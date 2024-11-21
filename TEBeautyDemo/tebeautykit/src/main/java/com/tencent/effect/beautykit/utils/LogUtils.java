@@ -5,7 +5,7 @@ import android.util.Log;
 
 public class LogUtils {
 
-    private static int logLevel = Log.WARN;
+    private static int logLevel = Log.INFO;
 
     public static void setLogLevel(int logLevel) {
         LogUtils.logLevel = logLevel;

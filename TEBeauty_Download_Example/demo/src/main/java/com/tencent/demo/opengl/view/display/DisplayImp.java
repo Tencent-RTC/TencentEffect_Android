@@ -116,7 +116,6 @@ public class DisplayImp implements Display, TextureView.SurfaceTextureListener, 
     @Override
     public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
         LogUtils.d(TAG, "onSurfaceTextureUpdated    ");
-        this.mSurface = new Surface(surface);
     }
 
 

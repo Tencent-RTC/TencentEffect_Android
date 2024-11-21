@@ -4,6 +4,7 @@ import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.EXTRA_I
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -28,6 +30,7 @@ import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -69,12 +72,13 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     private static final String TAG = TEDetailPanel.class.getName();
 
     private ConstraintLayout foldedLayout;
-    private ConstraintLayout expandLayout;
+    private LinearLayout expandLayout;
 
     private IndicatorSeekBar indicatorSeekBar;
     private SwitchLayout switchLayout;
     private ImageView expandViewCompareBtn;
     private RadioGroup expandViewRadioGroup;
+    private HorizontalScrollView expandViewHorizontalScrollView;
 
     private View expandViewTitleDivider;
     private View expandViewTopRightDivider;
@@ -83,7 +87,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     private LinearLayout expandViewTopRightRevertLayout;
     private TextView expandViewTopRightRevertText;
     private ConstraintLayout expandViewBottomLayout;
-    private Button expandViewBackBtn;
+    private ImageView expandViewBackBtn;
     private TextView expandViewTitle;
 
 
@@ -102,7 +106,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     private TextView foldedViewLeftBottomText;
 
     private RecyclerView recyclerView;
-    private FrameLayout titleLayout;
+    private View panelBgView;
     private LinearLayout expandViewRightBottomBtn;
     private ImageView expandViewRightBottomImg;
     private TextView expandViewRightBottomText;
@@ -115,6 +119,20 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     private final Map<String, Integer> typePropertyPositionMap = new ArrayMap<>();
     private TEUIProperty lastCheckedUIProperty = null;
 
+    private LayoutType layoutType = LayoutType.LINEAR;
+    private LinearLayout gridLayoutEntryBtn = null;
+
+    private final int recycleViewPaddingRight = ScreenUtils.dip2px(getContext(), 72);
+    private final int recycleViewPaddingLeft = ScreenUtils.dip2px(getContext(), 12);
+
+    private int checkItemIndex = 0;
+    private final int radioBtnLeftMargin = ScreenUtils.dip2px(getContext(), 20);
+    private final int recycleViewHeightGrid = ScreenUtils.dip2px(getContext(), TEUIConfig.getInstance().panelViewHeight - 95);
+    private final int recycleViewHeightLinear = ScreenUtils.dip2px(getContext(), 110);
+
+    private final GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 5);
+    private final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+
     public TEDetailPanel(@NonNull Context context) {
         this(context, null);
     }
@@ -125,14 +143,27 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
     public TEDetailPanel(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        if (attrs != null) {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.TE_DetailPanel);
+            int type = typedArray.getInt(R.styleable.TE_DetailPanel_layout_type, 1);
+            if (type == 0) {
+                this.layoutType = LayoutType.GRID;
+            } else if (type == 1) {
+                this.layoutType = LayoutType.LINEAR;
+            }
+            typedArray.recycle();
+        }
         initViews(context);
     }
+
+
+
 
     private void initViews(Context context) {
         setClickable(true);
         foldedLayout = (ConstraintLayout) LayoutInflater.from(context)
                 .inflate(R.layout.te_beauty_panel_view_folded_layout, this, false);
-        expandLayout = (ConstraintLayout) LayoutInflater.from(context)
+        expandLayout = (LinearLayout) LayoutInflater.from(context)
                 .inflate(R.layout.te_beauty_panel_view_expand_layout, this, false);
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -153,6 +184,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         this.indicatorSeekBar.setIndicatorColor(uiConfig.seekBarProgressColor);
         switchLayout = findViewById(R.id.te_panel_expand_view_switch);
         expandViewCompareBtn = findViewById(R.id.te_panel_expand_view_compare_btn);
+        expandViewHorizontalScrollView = findViewById(R.id.te_panel_expand_view_radio_group_scroll_view);
         expandViewRadioGroup = findViewById(R.id.te_panel_expand_view_radio_group);
         expandViewRadioGroup.setOnCheckedChangeListener(this);
         expandViewRadioGroupLayout = findViewById(R.id.te_panel_expand_view_radio_group_layout);
@@ -169,15 +201,26 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         expandViewBottomLayout = findViewById(R.id.te_panel_view_bottom_layout);
         expandViewBackBtn = findViewById(R.id.te_panel_expand_view_back_btn);
         expandViewTitle = findViewById(R.id.te_panel_expand_view_title_text);
+        gridLayoutEntryBtn = findViewById(R.id.te_panel_view_gridlayout_entry_btn);
+        gridLayoutEntryBtn.setOnClickListener(v -> {
+            if (panelViewListener != null) {
+                panelViewListener.onMoreItemBtnClick();
+            }
+        });
         recyclerView = findViewById(R.id.te_panel_view_recycle_view);
-        recyclerView.setBackgroundColor(uiConfig.panelBackgroundColor);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(layoutManager);
-        recycleViewAdapter = new TEDetailPanelAdapter(getContext(), layoutManager, this);
+        panelBgView = findViewById(R.id.te_panel_view_bg_view);
+        panelBgView.setBackgroundColor(uiConfig.panelBackgroundColor);
+        if (this.layoutType == LayoutType.GRID) {
+            gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+            recyclerView.setLayoutManager(gridLayoutManager);
+            recycleViewAdapter = new TEDetailPanelAdapter(gridLayoutManager, this);
+        } else {
+            linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+            recyclerView.setPadding(recycleViewPaddingLeft, 0, 0, 0);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recycleViewAdapter = new TEDetailPanelAdapter(linearLayoutManager, this);
+        }
         recyclerView.setAdapter(recycleViewAdapter);
-        titleLayout = findViewById(R.id.te_panel_expand_view_title_content);
-        titleLayout.setBackgroundColor(uiConfig.panelBackgroundColor);
         expandViewLeftBottomBtn = findViewById(R.id.te_panel_expand_view_left_bottom_layout);
         expandViewRightBottomBtn = findViewById(R.id.te_panel_expand_view_right_bottom_layout);
         expandViewLeftBottomBtn.setOnClickListener(this);
@@ -217,19 +260,18 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
         foldedViewRightBottomImg = findViewById(R.id.te_panel_folded_view_right_bottom_img);
         foldedViewRightBottomText = findViewById(R.id.te_panel_folded_view_right_bottom_text);
+        foldedLayout.setBackgroundColor(TEUIConfig.getInstance().panelBackgroundColor);
     }
 
 
     @SuppressLint({"ResourceType", "RtlHardcoded"})
     private void initRadioGroup(List<TEUIProperty> propertyList) {
+        checkItemIndex = 0;
         expandViewRadioGroup.removeAllViews();
-//        if (propertyList.size() > 3) {
-            ((LayoutParams) expandViewRadioGroup.getLayoutParams()).gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
-//        } else {
-//            ((FrameLayout.LayoutParams) expandViewRadioGroup.getLayoutParams()).gravity = Gravity.CENTER;
-//        }
+        ((FrameLayout.LayoutParams) expandViewRadioGroup.getLayoutParams()).gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
         TEUIProperty checkedItem = null;
-        for (TEUIProperty uiProperty : propertyList) {
+        for (int i = 0; i < propertyList.size(); i++) {
+            TEUIProperty uiProperty = propertyList.get(i);
             RadioButton btn = new RadioButton(getContext());
             btn.setTag(R.id.te_beauty_panel_view_radio_button_key, uiProperty);
             int uiID = View.generateViewId();
@@ -241,22 +283,43 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             btn.setText(PanelDisplay.getDisplayName(uiProperty));
             RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.leftMargin = ScreenUtils.dip2px(getContext(), 15);
+            layoutParams.leftMargin = radioBtnLeftMargin;
+
             expandViewRadioGroup.addView(btn, layoutParams);
-            if (uiProperty.getUiState() == TEUIProperty.UIState.CHECKED_AND_IN_USE) {
+            boolean isHiddenThisRadioBtn = (this.layoutType == LayoutType.GRID) && TEUIConfig.getInstance().hiddenCategories.contains(uiProperty.uiCategory);
+            if (isHiddenThisRadioBtn) {  //如果是网格布局，那么隐藏 美颜、美体、滤镜
+                btn.setVisibility(GONE);
+            }
+            if (uiProperty.getUiState() == TEUIProperty.UIState.CHECKED_AND_IN_USE && !isHiddenThisRadioBtn) {
+                checkItemIndex = i;
                 checkedItem = uiProperty;
                 btn.setChecked(true);
                 recycleViewAdapter.setProperties(uiProperty.propertyList);
                 setSeekBarState(getCheckedUIProperty(uiProperty.propertyList));
+                this.showOrHideEntryBtn(uiProperty);
             }
         }
         if (checkedItem == null) {
+            checkItemIndex = 0;
             checkedItem = propertyList.get(0);
             ((RadioButton) expandViewRadioGroup.getChildAt(0)).setChecked(true);
             recycleViewAdapter.setProperties(checkedItem.propertyList);
             setSeekBarState(getCheckedUIProperty(checkedItem.propertyList));
+            this.showOrHideEntryBtn(checkedItem);
+            expandViewHorizontalScrollView.scrollTo(0, 0);
         }
         recycleViewAdapter.scrollToPosition(0);
+        expandViewRadioGroup.post(() -> {
+            RadioButton radioButton = (RadioButton) expandViewRadioGroup.getChildAt(checkItemIndex);
+            scrollToVisible(radioButton, expandViewHorizontalScrollView);
+        });
+    }
+
+
+    private void scrollToVisible(RadioButton radioButton, HorizontalScrollView scrollView) {
+        int left = radioButton.getLeft() + radioButton.getWidth();
+        int width = scrollView.getWidth();
+        scrollView.scrollTo(left - width, 0);
     }
 
 
@@ -347,7 +410,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
                 && !uiProperty.isBeautyMakeupNoneItem()
         ) {
             TEUIProperty.EffectValueType type = TEUIProperty.getEffectValueType(uiProperty.sdkParam);
-            if (uiProperty.uiCategory == TEUIProperty.UICategory.MAKEUP && uiProperty.sdkParam.extraInfo != null
+            if ((uiProperty.uiCategory == TEUIProperty.UICategory.MAKEUP || uiProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP) && uiProperty.sdkParam.extraInfo != null
                     && uiProperty.sdkParam.extraInfo.get(TEUIProperty.TESDKParam.EXTRA_INFO_KEY_LUT_STRENGTH) != null) {
                 switchLayout.setText(getResources().getString(R.string.te_beauty_panel_menu_view_layout_makeup),
                         getResources().getString(R.string.te_beauty_panel_menu_view_layout_lut));
@@ -391,6 +454,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             panelDataProvider.onTabItemClick(index);
         }
         TEUIProperty uiProperty = (TEUIProperty) radioButton.getTag(R.id.te_beauty_panel_view_radio_button_key);
+        this.showOrHideEntryBtn(uiProperty);
         recycleViewAdapter.setProperties(uiProperty.propertyList);
         setSeekBarState(getCheckedUIProperty(uiProperty.propertyList));
         this.lastCheckedUIProperty = uiProperty;
@@ -417,7 +481,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             if (focusProperty == null || focusProperty.sdkParam == null) {
                 return;
             }
-            if (focusProperty.uiCategory == TEUIProperty.UICategory.MAKEUP) {
+            if (focusProperty.uiCategory == TEUIProperty.UICategory.MAKEUP || focusProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP) {
                 onChangeMakeupItem(focusProperty.sdkParam, seekParams.progress);
             } else {
                 focusProperty.sdkParam.effectValue = seekParams.progress;
@@ -736,7 +800,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     public void onSwitchChange(int checkedId) {
         if (indicatorSeekBar.getTag() instanceof TEUIProperty) {
             TEUIProperty uiProperty = (TEUIProperty) indicatorSeekBar.getTag();
-            if (uiProperty.uiCategory != TEUIProperty.UICategory.MAKEUP) {
+            if (uiProperty.uiCategory != TEUIProperty.UICategory.MAKEUP && uiProperty.uiCategory != TEUIProperty.UICategory.LIGHT_MAKEUP) {
                 return;
             }
             TEUIProperty.EffectValueType type = checkedId == SwitchLayout.SWITCH_LEFT_CHECKED ? TEUIProperty.getEffectValueType(uiProperty.sdkParam) : TEUIProperty.EffectValueType.RANGE_0_POS100;
@@ -762,6 +826,77 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     }
 
 
+    public void switchLayout(LayoutType layoutType) {
+        if (this.recyclerView == null) {
+            return;
+        }
+        if (this.layoutType == layoutType) {
+            return;
+        }
+        this.layoutType = layoutType;
+        if (layoutType == LayoutType.LINEAR) {
+            this.recyclerView.setLayoutManager(this.linearLayoutManager);
+        } else if (layoutType == LayoutType.GRID) {
+            this.recyclerView.setLayoutManager(this.gridLayoutManager);
+        }
+        this.clearPositionData();
+        this.showOrHideRadioBtn();
+    }
+
+
+    private void showOrHideRadioBtn() {
+        int count = this.expandViewRadioGroup.getChildCount();
+        for (int i = 0; i < count; i++) {
+            RadioButton radioButton = (RadioButton) expandViewRadioGroup.getChildAt(i);
+            if (radioButton == null) {
+                continue;
+            }
+            TEUIProperty uiProperty = (TEUIProperty) radioButton.getTag(R.id.te_beauty_panel_view_radio_button_key);
+            if (radioButton.isChecked()) {
+                this.showOrHideEntryBtn(uiProperty);
+            }
+            if (this.layoutType == LayoutType.GRID && TEUIConfig.getInstance().hiddenCategories.contains(uiProperty.uiCategory)) {  //如果是网格布局，那么不展示美颜、美体、滤镜
+                radioButton.setVisibility(GONE);
+            } else {
+                radioButton.setVisibility(VISIBLE);
+            }
+        }
+    }
+
+
+    public enum LayoutType {
+        GRID, LINEAR
+    }
+
+    private boolean isShowGridLayoutEntry(TEUIProperty teuiProperty) {
+        if (this.layoutType == LayoutType.GRID) {
+            return false;
+        }
+        return teuiProperty.isShowGridLayout;
+    }
+
+    private void showOrHideEntryBtn(TEUIProperty teuiProperty) {
+        if (this.gridLayoutEntryBtn == null) {
+            return;
+        }
+        boolean isShowEntryBtn = isShowGridLayoutEntry(teuiProperty) && this.panelDataProvider.isShowEntryBtn();
+        boolean currentState = this.gridLayoutEntryBtn.getVisibility() == VISIBLE;
+        if (isShowEntryBtn == currentState) {
+            return;
+        }
+        this.gridLayoutEntryBtn.setVisibility(isShowEntryBtn ? VISIBLE : GONE);
+        if (this.recyclerView == null) {
+            return;
+        }
+        ViewGroup.LayoutParams layoutParams = this.recyclerView.getLayoutParams();
+        this.recyclerView.setPadding(recycleViewPaddingLeft, 0, isShowEntryBtn ? recycleViewPaddingRight : 0, 0);
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.height = (this.layoutType == LayoutType.GRID) ? recycleViewHeightGrid : recycleViewHeightLinear;
+        this.recyclerView.setLayoutParams(layoutParams);
+    }
+
+
+
 
     public void updatePanelUIConfig(TEUIConfig uiConfig) {
         if (this.indicatorSeekBar != null) {
@@ -785,11 +920,11 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         if (this.expandViewTopRightDivider != null) {
             this.expandViewTopRightDivider.setBackgroundColor(uiConfig.panelDividerColor);
         }
-        if (this.recyclerView != null) {
-            this.recyclerView.setBackgroundColor(uiConfig.panelBackgroundColor);
+        if (this.panelBgView != null) {
+            this.panelBgView.setBackgroundColor(uiConfig.panelBackgroundColor);
         }
-        if (this.titleLayout != null) {
-            this.titleLayout.setBackgroundColor(uiConfig.panelBackgroundColor);
+        if (this.foldedLayout != null) {
+            this.foldedLayout.setBackgroundColor(uiConfig.panelBackgroundColor);
         }
         if (this.recycleViewAdapter != null) {
             this.recycleViewAdapter.updateUIConfig(uiConfig);
@@ -805,7 +940,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
 
 
-    private class CompareBtnTouchListener implements OnTouchListener {
+    private class CompareBtnTouchListener implements View.OnTouchListener {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -818,7 +953,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
                 case MotionEvent.ACTION_CANCEL:
                     isDown = false;
                     break;
-                default:  
+                default:
                     return true;
             }
             if (panelViewListener != null) {
@@ -898,6 +1033,8 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
 
         void onCameraClick();
+
+        void onMoreItemBtnClick();
     }
 
     public static class DefaultTEDetailPanelListener implements TEDetailPanelListener {
@@ -945,6 +1082,11 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
         @Override
         public void onCameraClick() {
+
+        }
+
+        @Override
+        public void onMoreItemBtnClick() {
 
         }
     }

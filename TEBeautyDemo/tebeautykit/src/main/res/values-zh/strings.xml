@@ -9,7 +9,7 @@
     <string name="te_beauty_template_panel_edit_back_name">返回</string>
     <string name="te_beauty_activity_base_combo_title">基础套餐</string>
     <string name="te_beauty_activity_advanced_combo_title">高级套餐</string>
-    <string name="te_beauty_combo_list_hot_tip">更多人选</string>
+    <string name="te_beauty_combo_list_hot_tip">热门售卖</string>
 
     <string name="te_beauty_capabilities_panel_view_switch_turn_on">打开</string>
     <string name="te_beauty_capabilities_panel_view_switch_turn_off">关闭</string>
@@ -27,7 +27,7 @@
     <string name="te_beauty_panel_view_revert_tip_dialog_left_btn">取消</string>
     <string name="te_beauty_panel_view_revert_tip_dialog_right_btn">重置</string>
     <string name="te_beauty_panel_view_revert_btn_txt">重置</string>
-
+    <string name="te_beauty_panel_view_more_btn_txt">更多</string>
     <string name="te_beauty_panel_view_download_dialog_tip">下载中</string>
 
 

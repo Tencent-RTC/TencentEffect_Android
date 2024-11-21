@@ -33,7 +33,10 @@ public class DefaultEnhancingStrategy implements TEParamEnhancingStrategy {
             case XmagicConstant.BeautyConstant.BEAUTY_FACE_REMOVE_WRINKLE:
             case XmagicConstant.BeautyConstant.BEAUTY_FACE_REMOVE_LAW_LINE:
             case XmagicConstant.BeautyConstant.BEAUTY_MOUTH_LIPSTICK:
+            case XmagicConstant.BeautyConstant.BEAUTY_WHITEN_0:
             case XmagicConstant.BeautyConstant.BEAUTY_WHITEN:
+            case XmagicConstant.BeautyConstant.BEAUTY_WHITEN_2:
+            case XmagicConstant.BeautyConstant.BEAUTY_WHITEN_3:
             case XmagicConstant.BeautyConstant.BEAUTY_FACE_SOFTLIGHT:
             case XmagicConstant.BeautyConstant.BEAUTY_FACE_SHORT:
             case XmagicConstant.BeautyConstant.BEAUTY_FACE_V:

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="210dp"
+    android:layout_height="wrap_content"
     android:background="@color/te_beauty_color_66000000"
     >
 
@@ -66,7 +66,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginTop="40dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="48dp"
         android:background="@drawable/te_beauty_panel_camera_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -87,8 +87,8 @@
         app:layout_constraintRight_toRightOf="parent">
 
         <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:src="@drawable/te_beauty_panel_view_folded_icon" />
 
         <TextView

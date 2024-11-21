@@ -1,6 +1,7 @@
 package com.tencent.effect.beautykit.model;
 
 import com.tencent.effect.beautykit.provider.TEBeautyPanelDataProvider;
+import com.tencent.effect.beautykit.provider.TEGeneralDataProvider;
 import com.tencent.effect.beautykit.provider.TELutPanelDataProvider;
 import com.tencent.effect.beautykit.provider.TEMakeUpPanelDataProvider;
 import com.tencent.effect.beautykit.provider.TEMotionPanelDataProvider;
@@ -12,7 +13,9 @@ public enum TEPanelMenuCategory {
     BEAUTY(TEBeautyPanelDataProvider.class.getName()),
     MAKEUP(TEMakeUpPanelDataProvider.class.getName()),
     CAMERA(null),
-    LUT(TELutPanelDataProvider.class.getName());
+    LUT(TELutPanelDataProvider.class.getName()),
+    ALL(TEGeneralDataProvider.class.getName());
+
     public String className;
 
     TEPanelMenuCategory(String providerClassName) {

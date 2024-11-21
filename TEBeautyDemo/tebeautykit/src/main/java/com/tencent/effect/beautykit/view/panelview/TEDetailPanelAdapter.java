@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,9 +39,14 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
 
     private TEUIConfig uiConfig = TEUIConfig.getInstance();
 
-    public TEDetailPanelAdapter(Context context, LinearLayoutManager layoutManager, ItemClickListener mListener) {
+    private boolean isGridLayout = false;
+
+    public TEDetailPanelAdapter(LinearLayoutManager layoutManager, ItemClickListener mListener) {
         this.mListener = mListener;
         this.layoutManager = layoutManager;
+        if (layoutManager instanceof GridLayoutManager) {
+            this.isGridLayout = true;
+        }
     }
 
 
@@ -48,6 +54,9 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
     @Override
     public UIPropertyHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.te_beauty_panel_view_recycle_view_item_layout, viewGroup, false);
+        if (this.isGridLayout) {
+            view.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        }
         return new UIPropertyHolder(view);
     }
 
@@ -63,7 +72,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
     @Override
     public void onBindViewHolder(UIPropertyHolder holder, int position) {
         TEUIProperty uiProperty = uiPropertyList.get(position);
-        holder.tePanelItemRightDivider.setVisibility(View.GONE);
+//        holder.tePanelItemRightDivider.setVisibility(View.GONE);
         holder.itemView.setTag(position);
         holder.tePanelItemLabel.setText(PanelDisplay.getDisplayName(uiProperty));
         holder.tePanelItemIcon.setVisibility(View.VISIBLE);
@@ -83,12 +92,12 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
             holder.tePanelItemLabel.setTypeface(null, Typeface.NORMAL);
             holder.bgLayout.setChecked(false);
         }
-        if (uiProperty.isNoneItem()) {
-            holder.tePanelItemRightDivider.setBackgroundColor(this.uiConfig.panelDividerColor);
-            holder.tePanelItemRightDivider.setVisibility(View.VISIBLE);
-        } else {
-            holder.tePanelItemRightDivider.setVisibility(View.GONE);
-        }
+//        if (uiProperty.isNoneItem()) {
+//            holder.tePanelItemRightDivider.setBackgroundColor(this.uiConfig.panelDividerColor);
+//            holder.tePanelItemRightDivider.setVisibility(View.VISIBLE);
+//        } else {
+//            holder.tePanelItemRightDivider.setVisibility(View.GONE);
+//        }
         if (isShowPoint(uiProperty)) {
             holder.tePanelItemPointView.setBackgroundColor(this.uiConfig.panelItemCheckedColor);
             holder.tePanelItemPointView.setVisibility(View.VISIBLE);
@@ -147,12 +156,10 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
     }
 
 
-
     public void updateUIConfig(TEUIConfig uiConfig) {
         this.uiConfig = uiConfig;
         this.notifyDataSetChanged();
     }
-
 
 
     public void scrollToPosition(int position) {
@@ -182,7 +189,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
         ImageView tePanelItemIcon;
         View itemView;
 
-        View tePanelItemRightDivider;
+//        View tePanelItemRightDivider;
 
         PanelItemSelectorLayout bgLayout = null;
 
@@ -194,7 +201,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
             bgLayout = itemView.findViewById(R.id.te_beauty_panel_view_item_left_layout);
             tePanelItemLabel = itemView.findViewById(R.id.te_panel_view_item_layout_name);
             tePanelItemIcon = itemView.findViewById(R.id.te_panel_view_item_layout_icon);
-            tePanelItemRightDivider = itemView.findViewById(R.id.te_panel_view_item_layout_right_divider);
+//            tePanelItemRightDivider = itemView.findViewById(R.id.te_panel_view_item_layout_right_divider);
             tePanelItemPointView = itemView.findViewById(R.id.te_panel_view_item_layout_point_view);
         }
     }

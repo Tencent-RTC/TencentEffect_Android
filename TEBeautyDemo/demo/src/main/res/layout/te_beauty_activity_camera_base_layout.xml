@@ -14,20 +14,23 @@
         app:transparent="true"  />
 
 
+    <ImageView
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/te_camera_layout_save_btn"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="340dp"
+        android:src="@mipmap/te_beauty_ok" />
+
     <LinearLayout
         android:id="@+id/te_camera_layout_beauty_panel_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
-        <ImageView
-            android:id="@+id/te_camera_layout_save_btn"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="right"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="20dp"
-            android:src="@mipmap/te_beauty_ok" />
+
     </LinearLayout>
 
 

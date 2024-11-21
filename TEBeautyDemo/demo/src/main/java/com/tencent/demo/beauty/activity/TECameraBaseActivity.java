@@ -28,11 +28,13 @@ import com.tencent.demo.utils.BitmapUtil;
 import com.tencent.demo.utils.UriUtils;
 import com.tencent.effect.beautykit.TEBeautyKit;
 import com.tencent.effect.beautykit.config.TEUIConfig;
+import com.tencent.effect.beautykit.model.TEPanelViewResModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam;
 import com.tencent.effect.beautykit.utils.LogUtils;
 
 import com.tencent.effect.beautykit.view.panelview.TEPanelView;
+import com.tencent.xmagic.XmagicConstant;
 import com.tencent.xmagic.XmagicConstant.FeatureName;
 import com.tencent.effect.beautykit.view.panelview.TEPanelViewCallback;
 import java.io.File;
@@ -63,7 +65,7 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
         findViewById(R.id.te_camera_layout_save_btn).setOnClickListener(view -> {
             saveCurrentBeautyParams();
         });
-        TEBeautyKit.create(this.getApplicationContext(), beautyKit -> {
+        TEBeautyKit.create(this.getApplicationContext(), XmagicConstant.EffectMode.PRO, beautyKit -> {
             mBeautyKit = beautyKit;
             initBeautyView(beautyKit);
         });
@@ -84,9 +86,16 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
     }
 
     public void initBeautyView(TEBeautyKit beautyKit){
-        TEUIConfig.getInstance().setTEPanelViewRes("beauty_panel/S1_07/beauty.json", "beauty_panel/S1_07/beauty_body.json",
-                "beauty_panel/S1_07/lut.json", "beauty_panel/S1_07/motions.json",
-                "beauty_panel/S1_07/makeup.json", "beauty_panel/S1_07/segmentation.json");
+        TEPanelViewResModel resModel = new TEPanelViewResModel();
+        String combo = "S1_07";
+        resModel.beauty = "beauty_panel/"+combo+"/beauty.json";
+        resModel.lut = "beauty_panel/"+combo+"/lut.json";
+        resModel.beautyBody = "beauty_panel/"+combo+"/beauty_body.json";
+        resModel.motion = "beauty_panel/"+combo+"/motions.json";
+        resModel.lightMakeup = "beauty_panel/"+combo+"/light_makeup.json";
+        resModel.segmentation = "beauty_panel/"+combo+"/segmentation.json";
+        TEUIConfig.getInstance().setTEPanelViewRes(resModel);
+
         mTEPanelView = new TEPanelView(this);
         mTEPanelView.setTEPanelViewCallback(this);
         mTEPanelView.setupWithTEBeautyKit(beautyKit);

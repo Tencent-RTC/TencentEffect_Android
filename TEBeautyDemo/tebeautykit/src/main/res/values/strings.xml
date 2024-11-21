@@ -6,7 +6,7 @@
     <string name="te_beauty_template_panel_edit_back_name">Back</string>
     <string name="te_beauty_activity_base_combo_title">Basic Editions</string>
     <string name="te_beauty_activity_advanced_combo_title">Advanced Editions</string>
-    <string name="te_beauty_combo_list_hot_tip">Most Popular</string>
+    <string name="te_beauty_combo_list_hot_tip">hot selling</string>
 
 
     <!--特效-->
@@ -24,6 +24,7 @@
     <string name="te_beauty_panel_view_revert_tip_dialog_left_btn">Cancel</string>
     <string name="te_beauty_panel_view_revert_tip_dialog_right_btn">Reset</string>
     <string name="te_beauty_panel_view_revert_btn_txt">Reset</string>
+    <string name="te_beauty_panel_view_more_btn_txt">More</string>
 
     <string name="te_beauty_panel_view_download_dialog_tip">downloading</string>
 

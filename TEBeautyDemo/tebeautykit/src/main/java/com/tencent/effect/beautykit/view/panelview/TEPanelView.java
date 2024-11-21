@@ -3,29 +3,36 @@ package com.tencent.effect.beautykit.view.panelview;
 import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.EXTRA_INFO_KEY_SEG_TYPE;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.PopupWindowCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.effect.beautykit.R;
 import com.tencent.effect.beautykit.TEBeautyKit;
 import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.model.TEPanelDataModel;
-import com.tencent.effect.beautykit.provider.TEGeneralDataProvider;
-import com.tencent.effect.beautykit.R;
 import com.tencent.effect.beautykit.model.TEPanelMenuCategory;
 import com.tencent.effect.beautykit.model.TEPanelMenuModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
+import com.tencent.effect.beautykit.provider.TEGeneralDataProvider;
 import com.tencent.effect.beautykit.provider.TEPanelDataProvider;
 import com.tencent.effect.beautykit.utils.LogUtils;
+import com.tencent.effect.beautykit.utils.ScreenUtils;
 import com.tencent.effect.beautykit.view.dialog.TETipDialog;
 
 import java.lang.reflect.Type;
@@ -126,6 +133,8 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
     public void showView(@Nullable List<TEPanelDataModel> dataList, TEPanelViewCallback tePanelViewCallback) {
         this.setTEPanelViewCallback(tePanelViewCallback);
         TEGeneralDataProvider tePanelDataProvider = new TEGeneralDataProvider();
+        this.currentMenuCategory = TEPanelMenuCategory.ALL;
+        this.panelDataProviders.put(this.currentMenuCategory, tePanelDataProvider);
         if (dataList != null) {
             tePanelDataProvider.setPanelDataList(dataList);
         } else {
@@ -270,11 +279,11 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
 
 
     private void setDependencies() {
-        TEPanelDataProvider motionProvider = this.panelDataProviders.get(TEPanelMenuCategory.MOTION);
+        TEPanelDataProvider lutProvider = this.panelDataProviders.get(TEPanelMenuCategory.LUT);
         TEPanelDataProvider makeupProvider = this.panelDataProviders.get(TEPanelMenuCategory.MAKEUP);
-        if (motionProvider != null && makeupProvider != null) {
-            motionProvider.putMutuallyExclusiveProvider(Collections.singletonList(makeupProvider));
-            makeupProvider.putMutuallyExclusiveProvider(Collections.singletonList(motionProvider));
+        if (lutProvider != null && makeupProvider != null) {
+            lutProvider.putMutuallyExclusiveProvider(Collections.singletonList(makeupProvider));
+            makeupProvider.putMutuallyExclusiveProvider(Collections.singletonList(lutProvider));
         }
     }
 
@@ -427,11 +436,42 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
             }
         }
 
+        @Override
+        public void onMoreItemBtnClick() {
+            mPanelView.showGridPanelView();
+        }
+
         private void notificationEffectChange() {
             if (this.mBeautyPanelCallback != null) {
                 this.mBeautyPanelCallback.onUpdateEffected();
             }
         }
+    }
+
+
+    private void showGridPanelView() {
+        final int width = mDetailPanel.getWidth();
+        final int height = mDetailPanel.getHeight();
+        this.mDetailPanel.showBottomLayout(false);
+        ((ViewGroup) this.mDetailPanel.getParent()).removeView(this.mDetailPanel);
+        this.mDetailPanel.switchLayout(TEDetailPanel.LayoutType.GRID);
+        PopupWindow popupWindow = new PopupWindow(getContext());
+        popupWindow.setContentView(this.mDetailPanel);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+        popupWindow.setHeight(ScreenUtils.dip2px(getContext(), TEUIConfig.getInstance().panelViewHeight));
+        popupWindow.setOnDismissListener(() -> {
+            this.mDetailPanel.switchLayout(TEDetailPanel.LayoutType.LINEAR);
+            this.mDetailPanel.showBottomLayout(true);
+            this.addDetailPanel(width, height);
+        });
+        PopupWindowCompat.showAsDropDown(popupWindow, this, 0, -popupWindow.getHeight(), Gravity.BOTTOM | Gravity.LEFT);
+    }
+
+
+    private void addDetailPanel(int width, int height) {
+        this.addView(mDetailPanel, 0, new FrameLayout.LayoutParams(width, height));
     }
 
 }
