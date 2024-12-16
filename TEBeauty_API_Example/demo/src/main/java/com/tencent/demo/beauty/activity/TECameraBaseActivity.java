@@ -42,7 +42,6 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
     protected LinearLayout mPanelLayout = null;
     private GLCameraXView mCameraXView = null;
     private XmagicApi mXmagicApi;
-    private float enhancedModeFactor = 1.0f;
     private TextView textViewFaceCount;
     private int currentFaceCount = 0;
 
@@ -57,8 +56,6 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
         mCameraXView.setCustomTextureProcessor(this);
         textViewFaceCount = findViewById(R.id.textview_face_count);
         ((CheckBox) findViewById(R.id.switch_face_detect)).setOnCheckedChangeListener(this);
-        ((CheckBox) findViewById(R.id.switch_enhance_mode)).setOnCheckedChangeListener(this);
-        ((CheckBox) findViewById(R.id.switch_smart_beauty_for_men_and_baby)).setOnCheckedChangeListener(this);
         ((CheckBox) findViewById(R.id.switch_whiten)).setOnCheckedChangeListener(this);
         ((CheckBox) findViewById(R.id.switch_smooth)).setOnCheckedChangeListener(this);
         ((CheckBox) findViewById(R.id.switch_filter)).setOnCheckedChangeListener(this);
@@ -66,22 +63,22 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
         ((RadioButton) findViewById(R.id.radio_lipstick_0)).setOnCheckedChangeListener(this);
         ((RadioButton) findViewById(R.id.radio_lipstick_1)).setOnCheckedChangeListener(this);
         ((RadioButton) findViewById(R.id.radio_lipstick_none)).setOnCheckedChangeListener(this);
+        ((RadioButton) findViewById(R.id.radio_light_makeup_0)).setOnCheckedChangeListener(this);
+        ((RadioButton) findViewById(R.id.radio_light_makeup_none)).setOnCheckedChangeListener(this);
         ((RadioButton) findViewById(R.id.radio_makeup)).setOnCheckedChangeListener(this);
         ((RadioButton) findViewById(R.id.radio_motion)).setOnCheckedChangeListener(this);
         ((RadioButton) findViewById(R.id.radio_motion_merge)).setOnCheckedChangeListener(this);
         ((RadioButton) findViewById(R.id.radio_segmentation)).setOnCheckedChangeListener(this);
         ((RadioButton) findViewById(R.id.radio_custom_segmentation)).setOnCheckedChangeListener(this);
         ((RadioButton) findViewById(R.id.radio_motion_none)).setOnCheckedChangeListener(this);
+        ((CheckBox) findViewById(R.id.switch_face_occlusion_detect)).setOnCheckedChangeListener(this);
+        ((CheckBox) findViewById(R.id.switch_smart_beauty_for_men_and_baby)).setOnCheckedChangeListener(this);
 
         initXMagicAPI();
     }
 
     private void initXMagicAPI() {
-        if (AppConfig.isEnableDowngradePerformance) {
-            mXmagicApi = new XmagicApi(this, XmagicConstant.EffectMode.NORMAL, AppConfig.resPathForSDK);
-        }else {
-            mXmagicApi = new XmagicApi(this, XmagicConstant.EffectMode.PRO, AppConfig.resPathForSDK);
-        }
+        mXmagicApi = new XmagicApi(this, AppConfig.effectMode, AppConfig.resPathForSDK);
         mXmagicApi.setXmagicLogLevel(Log.ERROR);//the default log level is Log.WARN
         mXmagicApi.setAIDataListener(new XmagicAIDataListener() {
             @Override
@@ -154,8 +151,8 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
         switch (compoundButton.getId()){
-            case R.id.switch_enhance_mode:
-                enhancedModeFactor = checked? 1.2f : 1.0f;
+            case R.id.switch_face_occlusion_detect:
+                mXmagicApi.setFeatureEnableDisable(FeatureName.SEGMENTATION_FACE_BLOCK, checked);
                 break;
             case R.id.switch_smart_beauty_for_men_and_baby:
                 mXmagicApi.setFeatureEnableDisable(FeatureName.SMART_BEAUTY, checked);
@@ -164,30 +161,40 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
                 textViewFaceCount.setVisibility(checked? View.VISIBLE : View.INVISIBLE);
                 break;
             case R.id.switch_whiten:
-                mXmagicApi.setEffect(EffectName.BEAUTY_WHITEN, checked? (int) (80 * enhancedModeFactor) : 0, null, null);
+                mXmagicApi.setEffect(EffectName.BEAUTY_WHITEN, checked? 80 : 0, null, null);
                 break;
             case R.id.switch_smooth:
-                mXmagicApi.setEffect(EffectName.BEAUTY_SMOOTH, checked? (int) (80 * enhancedModeFactor) : 0, null, null);
+                mXmagicApi.setEffect(EffectName.BEAUTY_SMOOTH, checked? 80 : 0, null, null);
                 break;
             case R.id.switch_filter:
-                mXmagicApi.setEffect(EffectName.EFFECT_LUT, checked? (int) (80 * enhancedModeFactor) : 0, checked? (AppConfig.lutFilterPath + "/baixi_lf.png") : null, null);
+                mXmagicApi.setEffect(EffectName.EFFECT_LUT, checked? 80 : 0, checked? (AppConfig.lutFilterPath + "/baixi_lf.png") : null, null);
                 break;
             case R.id.switch_thin_face_nature:
-                mXmagicApi.setEffect(EffectName.BEAUTY_FACE_NATURE, checked? (int) (80 * enhancedModeFactor) : 0, null, null);
+                mXmagicApi.setEffect(EffectName.BEAUTY_FACE_NATURE, checked? 80 : 0, null, null);
                 break;
             case R.id.radio_lipstick_0:
                 if (checked) {
-                    mXmagicApi.setEffect(EffectName.BEAUTY_MOUTH_LIPSTICK, (int) (80 * enhancedModeFactor), "/images/beauty/lips_fuguhong.png", null);
+                    mXmagicApi.setEffect(EffectName.BEAUTY_MOUTH_LIPSTICK, 80, "/images/beauty/lips_fuguhong.png", null);
                 }
                 break;
             case R.id.radio_lipstick_1:
                 if (checked) {
-                    mXmagicApi.setEffect(EffectName.BEAUTY_MOUTH_LIPSTICK, (int) (80 * enhancedModeFactor), "/images/beauty/lips_shanhuju.png", null);
+                    mXmagicApi.setEffect(EffectName.BEAUTY_MOUTH_LIPSTICK, 80, "/images/beauty/lips_shanhuju.png", null);
                 }
                 break;
             case R.id.radio_lipstick_none:
                 if (checked) {
                     mXmagicApi.setEffect(EffectName.BEAUTY_MOUTH_LIPSTICK, 0, null, null);
+                }
+                break;
+            case R.id.radio_light_makeup_0:
+                if (checked) {
+                    mXmagicApi.setEffect(EffectName.EFFECT_LIGHT_MAKEUP, 80, AppConfig.motionResPath + "/light_makeup/light_baixi", null);
+                }
+                break;
+            case R.id.radio_light_makeup_none:
+                if (checked) {
+                    mXmagicApi.setEffect(EffectName.EFFECT_LIGHT_MAKEUP, 0, null, null);
                 }
                 break;
             case R.id.radio_makeup:

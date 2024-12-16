@@ -49,11 +49,7 @@ public class TEImageBaseActivity extends AppCompatActivity implements CompoundBu
     }
 
     private void initXMagicAPI() {
-        if (AppConfig.isEnableDowngradePerformance) {
-            mXmagicApi = new XmagicApi(this, XmagicConstant.EffectMode.NORMAL, AppConfig.resPathForSDK);
-        }else {
-            mXmagicApi = new XmagicApi(this, XmagicConstant.EffectMode.PRO, AppConfig.resPathForSDK);
-        }
+        mXmagicApi = new XmagicApi(this, AppConfig.effectMode, AppConfig.resPathForSDK);
         mXmagicApi.setXmagicLogLevel(Log.ERROR);//the default log level is Log.WARN
     }
 
