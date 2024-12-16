@@ -26,8 +26,8 @@
 
     <string name="beauty_auth_and_start_camera">鉴权并启动相机</string>
     <string name="beauty_auth_and_start_img">鉴权和图片美颜</string>
-    <string name="beauty_normal_mode">普通模式</string>
-    <string name="beauty_enable_downgrade_performance">高性能模式</string>
+    <string name="beauty_effect_mode_pro">Pro模式</string>
+    <string name="beauty_effect_mode_normal">Normal模式</string>
     <string name="beauty_enhance_mode">增强模式</string>
     <string name="beauty_smart_beauty">智能美颜(男性或婴儿效果减弱)</string>
     <string name="beauty_face_detect">人脸检测</string>
@@ -39,11 +39,16 @@
     <string name="beauty_lipstick_0">口红-复古红</string>
     <string name="beauty_lipstick_1">口红-活力橙</string>
     <string name="beauty_lipstick_none">口红-无</string>
-    <string name="beauty_makeup_and_motion">美妆与动效</string>
+    <string name="beauty_motions">动效</string>
     <string name="beauty_makeup">美妆</string>
     <string name="beauty_motion">动效</string>
     <string name="beauty_segmentation">背景分割</string>
     <string name="beauty_custom_segmentation">自定义背景分割</string>
     <string name="beauty_motion_merge">动效叠加</string>
     <string name="beauty_motion_none">无</string>
+    <string name="beauty_other_functions">其他</string>
+    <string name="beauty_light_makeup">轻美妆</string>
+    <string name="beauty_light_makeup_white">轻美妆-白皙</string>
+    <string name="beauty_light_makeup_none">轻美妆-无</string>
+    <string name="beauty_face_occlusion_detect">人脸遮挡检测</string>
 </resources>

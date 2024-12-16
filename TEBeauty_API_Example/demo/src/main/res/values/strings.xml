@@ -25,8 +25,8 @@
 
     <string name="beauty_auth_and_start_camera">Auth and Start Camera</string>
     <string name="beauty_auth_and_start_img">Auth and Img beauty</string>
-    <string name="beauty_normal_mode">Normal Mode</string>
-    <string name="beauty_enable_downgrade_performance">Downgrade Performance</string>
+    <string name="beauty_effect_mode_pro">EffectMode-Pro</string>
+    <string name="beauty_effect_mode_normal">EffectMode-Normal</string>
     <string name="beauty_enhance_mode">Enhanced Mode</string>
     <string name="beauty_smart_beauty">Smart Beauty for Men and Babies</string>
     <string name="beauty_face_detect">Detect Face</string>
@@ -38,11 +38,16 @@
     <string name="beauty_lipstick_0">Lipstick-Red</string>
     <string name="beauty_lipstick_1">Lipstick-Orange</string>
     <string name="beauty_lipstick_none">Lipstick-None</string>
-    <string name="beauty_makeup_and_motion">Makeup and Motion</string>
+    <string name="beauty_motions">Motions</string>
     <string name="beauty_makeup">Makeup</string>
     <string name="beauty_motion">Motion</string>
     <string name="beauty_segmentation">Segmentation</string>
     <string name="beauty_custom_segmentation">Custom Segmentation</string>
     <string name="beauty_motion_merge">Motion Merge</string>
     <string name="beauty_motion_none">None</string>
+    <string name="beauty_other_functions">Others</string>
+    <string name="beauty_light_makeup">Light Makeup</string>
+    <string name="beauty_light_makeup_white">Light Makeup-White</string>
+    <string name="beauty_light_makeup_none">Light Makeup-None</string>
+    <string name="beauty_face_occlusion_detect">Face Occlusion Detect</string>
 </resources>

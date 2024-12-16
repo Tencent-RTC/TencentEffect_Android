@@ -20,6 +20,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginTop="100dp"
+            android:background="#44000000"
+            android:padding="10dp"
             android:visibility="invisible"
             android:textSize="20sp" />
 
@@ -29,6 +31,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:requiresFadingEdge="vertical"
             android:background="#44000000"
+            android:paddingLeft="10dp"
             android:fadingEdgeLength="30dp">
 
         <LinearLayout
@@ -36,18 +39,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-            <CheckBox
-                    android:id="@+id/switch_enhance_mode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/beauty_enhance_mode" />
-
-            <CheckBox
-                    android:id="@+id/switch_smart_beauty_for_men_and_baby"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/beauty_smart_beauty" />
 
             <CheckBox
                     android:id="@+id/switch_face_detect"
@@ -113,7 +104,32 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/beauty_makeup_and_motion" />
+                    android:text="@string/beauty_light_makeup" />
+
+            <RadioGroup
+                    android:id="@+id/radio_group_light_makeup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                <RadioButton
+                        android:id="@+id/radio_light_makeup_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_light_makeup_white" />
+
+                <RadioButton
+                        android:id="@+id/radio_light_makeup_none"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/beauty_light_makeup_none" />
+            </RadioGroup>
+
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/beauty_motions" />
 
             <RadioGroup
                     android:id="@+id/radio_group_makeup_and_motion"
@@ -158,6 +174,23 @@
                         android:text="@string/beauty_motion_none" />
 
             </RadioGroup>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/beauty_other_functions" />
+
+            <CheckBox
+                    android:id="@+id/switch_face_occlusion_detect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/beauty_face_occlusion_detect" />
+
+            <CheckBox
+                    android:id="@+id/switch_smart_beauty_for_men_and_baby"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/beauty_smart_beauty" />
 
         </LinearLayout>
     </ScrollView>

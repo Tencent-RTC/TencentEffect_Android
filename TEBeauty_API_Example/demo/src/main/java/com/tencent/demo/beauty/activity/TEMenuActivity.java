@@ -18,6 +18,8 @@ import com.tencent.demo.constant.LicenseConstant;
 import com.tencent.demo.utils.AppUtils;
 import com.tencent.demo.utils.PermissionHandler;
 import com.tencent.xmagic.XmagicApi;
+import com.tencent.xmagic.XmagicConstant.DeviceLevel;
+import com.tencent.xmagic.XmagicConstant.EffectMode;
 import com.tencent.xmagic.telicense.TELicenseCheck;
 import com.tencent.xmagic.util.FileUtil;
 import java.io.File;
@@ -27,6 +29,7 @@ public class TEMenuActivity extends AppCompatActivity {
     private static final String TAG = TEMenuActivity.class.getName();
     private int authState = LicenseConstant.AUTH_STATE_FAILED;
     private TextView mLoadingView = null;
+    private TextView mDeviceLevel = null;
     private final PermissionHandler mPermissionHandler = new PermissionHandler(this) {
         @Override
         protected void onAllPermissionGranted() {
@@ -38,20 +41,21 @@ public class TEMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.te_beauty_activity_menu_layout);
         mLoadingView = findViewById(R.id.te_menu_loading_view);
+        mDeviceLevel = findViewById(R.id.textview_device_level);
         findViewById(R.id.btn_start_camera).setOnClickListener(view -> {
             authAndStartCamera(TECameraBaseActivity.class);
         });
         findViewById(R.id.btn_start_img).setOnClickListener(view -> {
             authAndStartCamera(TEImageBaseActivity.class);
         });
-        ((RadioButton) findViewById(R.id.radio_normal_mode)).setOnCheckedChangeListener((compoundButton, checked) -> {
+        ((RadioButton) findViewById(R.id.radio_effect_mode_pro)).setOnCheckedChangeListener((compoundButton, checked) -> {
             if (checked) {
-                AppConfig.isEnableDowngradePerformance = false;
+                AppConfig.effectMode = EffectMode.PRO;
             }
         });
-        ((RadioButton) findViewById(R.id.radio_downgrade_mode)).setOnCheckedChangeListener((compoundButton, checked) -> {
+        ((RadioButton) findViewById(R.id.radio_effect_mode_normal)).setOnCheckedChangeListener((compoundButton, checked) -> {
             if (checked) {
-                AppConfig.isEnableDowngradePerformance = true;
+                AppConfig.effectMode = EffectMode.NORMAL;
             }
         });
 
@@ -65,11 +69,17 @@ public class TEMenuActivity extends AppCompatActivity {
         AppConfig.lutFilterPath = resPath + "light_material/lut";
         AppConfig.motionResPath = resPath + "MotionRes";
         copyRes();
+        updateDeviceLevel();
+    }
+
+    private void updateDeviceLevel() {
+        DeviceLevel deviceLevel = XmagicApi.getDeviceLevel(this);
+        mDeviceLevel.setText("Device Level: " + deviceLevel.getValue());
     }
 
     private void authAndStartCamera(Class<?> cls) {
         if (authState == LicenseConstant.AUTH_STATE_SUCCEED) {
-            Intent intent = new Intent(this, TECameraBaseActivity.class);
+            Intent intent = new Intent(this, cls);
             startActivity(intent);
             return;
         }
@@ -125,6 +135,7 @@ public class TEMenuActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 mLoadingView.setVisibility(View.GONE);
                 saveCopyData();
+                updateDeviceLevel();
             });
         }).start();
     }

@@ -1,6 +1,8 @@
 package com.tencent.demo;
 
 
+import com.tencent.xmagic.XmagicConstant.EffectMode;
+
 public class AppConfig {
 
     public static final String SDK_COMBO_TYPE = "ALL";
@@ -19,7 +21,7 @@ public class AppConfig {
     public static String PICK_CONTENT_IMAGE = "image/*";
     public static String PICK_CONTENT_VIDEO = "video/*";
 
-    public static boolean isEnableDowngradePerformance = false;
+    public static EffectMode effectMode = EffectMode.PRO;
 
     private AppConfig() {
     }
