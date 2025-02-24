@@ -76,9 +76,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
         holder.itemView.setTag(position);
         holder.tePanelItemLabel.setText(PanelDisplay.getDisplayName(uiProperty));
         holder.tePanelItemIcon.setVisibility(View.VISIBLE);
-        if (!TextUtils.isEmpty(uiProperty.icon)) {
-            loadImage(uiProperty, holder.tePanelItemIcon);
-        }
+        loadImage(uiProperty, holder.tePanelItemIcon);
         holder.itemView.setOnClickListener(this);
         if (uiProperty.getUiState() == TEUIProperty.UIState.CHECKED_AND_IN_USE) {
             holder.tePanelItemLabel.setTextColor(this.uiConfig.textCheckedColor);
@@ -107,10 +105,13 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
     }
 
     private void loadImage(TEUIProperty uiProperty, ImageView imageView) {
-        if (uiProperty.icon.startsWith(HTTP_NAME) || uiProperty.icon.startsWith("/")) {
-            Glide.with(imageView).load(URLUtil.isNetworkUrl(uiProperty.icon) ? uiProperty.icon : new File(uiProperty.icon)).into(imageView);
-        } else {
-            Glide.with(imageView).load(ASSETS_NAME + uiProperty.icon).into(imageView);
+        imageView.setImageResource(0);
+        if (!TextUtils.isEmpty(uiProperty.icon)) {
+            if (uiProperty.icon.startsWith(HTTP_NAME) || uiProperty.icon.startsWith("/")) {
+                Glide.with(imageView).load(URLUtil.isNetworkUrl(uiProperty.icon) ? uiProperty.icon : new File(uiProperty.icon)).into(imageView);
+            } else {
+                Glide.with(imageView).load(ASSETS_NAME + uiProperty.icon).into(imageView);
+            }
         }
     }
 

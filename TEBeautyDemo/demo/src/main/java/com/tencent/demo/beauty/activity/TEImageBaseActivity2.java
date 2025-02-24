@@ -1,99 +1,83 @@
 package com.tencent.demo.beauty.activity;
 
-import android.annotation.SuppressLint;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.Size;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import android.widget.Toast;
 import androidx.annotation.Nullable;
-
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.tencent.demo.AppConfig;
 import com.tencent.demo.R;
-
-import com.tencent.demo.beauty.view.TETitleBar;
-
-import com.tencent.demo.opengl.view.CameraSize;
 import com.tencent.demo.opengl.view.CustomTextureProcessor;
-import com.tencent.demo.opengl.view.GLCameraXView;
+import com.tencent.demo.opengl.view.GLImageView;
 import com.tencent.demo.utils.BitmapUtil;
 import com.tencent.demo.utils.UriUtils;
 import com.tencent.effect.beautykit.TEBeautyKit;
 import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.model.TEPanelViewResModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
-import com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam;
 import com.tencent.effect.beautykit.utils.LogUtils;
-
 import com.tencent.effect.beautykit.view.panelview.TEPanelView;
-import com.tencent.xmagic.XmagicConstant;
-import com.tencent.xmagic.XmagicConstant.FeatureName;
 import com.tencent.effect.beautykit.view.panelview.TEPanelViewCallback;
+import com.tencent.xmagic.XmagicConstant;
+
 import java.io.File;
 import java.util.List;
 
-public class TECameraBaseActivity extends AppCompatActivity implements TEPanelViewCallback, CustomTextureProcessor,TETitleBar.TETitleBarClickListener {
+/**
+ * 图片美颜页面
+ */
+public class TEImageBaseActivity2 extends AppCompatActivity implements TEPanelViewCallback, CustomTextureProcessor {
 
-    private static final String TAG = TECameraBaseActivity.class.getName();
+    private static final String TAG = TEImageBaseActivity2.class.getName();
+    private GLImageView mImageView = null;
 
-    //Temporary storage of custom segmentation TEUIProperty.
+    protected Bitmap mOriginalBitmap;
     private TEUIProperty mCustomProperty = null;
     private TEPanelView mTEPanelView;
     protected LinearLayout mPanelLayout = null;
-    private GLCameraXView mCameraXView = null;
     protected TEBeautyKit mBeautyKit;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.te_beauty_activity_camera_base_layout);
-        TETitleBar mTitleBar = findViewById(R.id.te_camera_layout_title_bar);
-        mTitleBar.setTeTitleBarClickListener(this);
+        setContentView(R.layout.te_beauty_activity_image_base_layout2);
+        mImageView = findViewById(R.id.te_image_layout_image_view);
         mPanelLayout = findViewById(R.id.te_camera_layout_beauty_panel_layout);
-        mCameraXView = findViewById(R.id.te_camera_layout_camerax_view);
-        mCameraXView.setCameraSize(CameraSize.size1080);
-        mCameraXView.setCustomTextureProcessor(this);
-        findViewById(R.id.te_camera_layout_save_btn).setOnClickListener(view -> {
-            saveCurrentBeautyParams();
-        });
+
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        mOriginalBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.test, options);
+
+        mImageView.setData(mOriginalBitmap);
+        mImageView.setCustomTextureProcessor(this);
+
+
         TEBeautyKit.create(this.getApplicationContext(), XmagicConstant.EffectMode.PRO, beautyKit -> {
             mBeautyKit = beautyKit;
             initBeautyView(beautyKit);
         });
     }
 
-    private void saveCurrentBeautyParams() {
-        if (mBeautyKit != null) {
-            String json = mBeautyKit.exportInUseSDKParam();
-            if (json != null) {
-                getSharedPreferences("demo_settings", Context.MODE_PRIVATE).edit()
-                        .putString("current_beauty_params", json).commit();
-                Toast.makeText(this, "Current beauty params saved.", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "Current beauty params save failed.", Toast.LENGTH_LONG).show();
-            }
-            Log.d(TAG, "saveCurrentBeautyParams: json="+json);
-        }
-    }
-
-    public void initBeautyView(TEBeautyKit beautyKit){
+    public void initBeautyView(TEBeautyKit beautyKit) {
         TEPanelViewResModel resModel = new TEPanelViewResModel();
         String combo = "S1_07";
-        resModel.beauty = "beauty_panel/"+combo+"/beauty.json";
-        resModel.lut = "beauty_panel/"+combo+"/lut.json";
-        resModel.beautyBody = "beauty_panel/"+combo+"/beauty_body.json";
-        resModel.motion = "beauty_panel/"+combo+"/motions.json";
-        resModel.lightMakeup = "beauty_panel/"+combo+"/light_makeup.json";
-        resModel.segmentation = "beauty_panel/"+combo+"/segmentation.json";
+        resModel.beauty = "beauty_panel/" + combo + "/beauty.json";
+        resModel.lut = "beauty_panel/" + combo + "/lut.json";
+        resModel.beautyBody = "beauty_panel/" + combo + "/beauty_body.json";
+        resModel.motion = "beauty_panel/" + combo + "/motions.json";
+        resModel.lightMakeup = "beauty_panel/" + combo + "/light_makeup.json";
+        resModel.segmentation = "beauty_panel/" + combo + "/segmentation.json";
         TEUIConfig.getInstance().setTEPanelViewRes(resModel);
 
         mTEPanelView = new TEPanelView(this);
@@ -110,33 +94,6 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
         this.mPanelLayout.addView(mTEPanelView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
-    @Override
-    public void onClickCustomSeg(TEUIProperty uiProperty) {
-        mCustomProperty = uiProperty;
-        Intent intentToPickPic = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        intentToPickPic.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, AppConfig.PICK_CONTENT_ALL);
-        startActivityForResult(intentToPickPic, AppConfig.TE_CHOOSE_PHOTO_SEG_CUSTOM);
-    }
-
-    @Override
-    public void onCameraClick() {
-    }
-
-    @Override
-    public void onUpdateEffected(List<TESDKParam> sdkParams) {
-
-    }
-
-    @Override
-    public void onEffectStateChange(TEBeautyKit.EffectState effectState) {
-
-    }
-
-    @Override
-    public void onTitleClick(TEUIProperty uiProperty) {
-
-    }
-
 
     @Override
     public void onGLContextCreated() {
@@ -144,6 +101,9 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
 
     @Override
     public int onCustomProcessTexture(int textureId, int textureWidth, int textureHeight) {
+        if (mBeautyKit == null) {
+            return textureId;
+        }
         return mBeautyKit.process(textureId, textureWidth, textureHeight);
     }
 
@@ -158,8 +118,8 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
     @Override
     protected void onResume() {
         super.onResume();
-        if (mCameraXView != null) {
-            mCameraXView.startPreview();
+        if (mImageView != null) {
+            mImageView.start();
         }
         if (mBeautyKit != null) {
             mBeautyKit.onResume();
@@ -169,8 +129,8 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
     @Override
     protected void onPause() {
         super.onPause();
-        if (mCameraXView != null) {
-            mCameraXView.stopPreview();
+        if (mImageView != null) {
+            mImageView.pause();
         }
         if (mBeautyKit != null) {
             mBeautyKit.onPause();
@@ -181,82 +141,42 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mCameraXView != null) {
-            mCameraXView.release();
+        if (mImageView != null) {
+            mImageView.release();
         }
     }
 
+
     @Override
-    public void onCameraSwitch() {
-        if (mCameraXView != null) {
-            mCameraXView.switchCamera();
-        }
+    public void onClickCustomSeg(TEUIProperty uiProperty) {
+        mCustomProperty = uiProperty;
+        Intent intentToPickPic = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        intentToPickPic.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, AppConfig.PICK_CONTENT_ALL);
+        startActivityForResult(intentToPickPic, AppConfig.TE_CHOOSE_PHOTO_SEG_CUSTOM);
     }
 
     @Override
-    public void onPerformanceSwitchTurnOn(boolean isTurnOn) {
-    }
-
-    @Override
-    public void onSwitchResolution(TETitleBar.RESOLUTION resolution) {
-        LogUtils.i(TAG, "onSwitchResolution: " + resolution.name());
-        Size size = null;
-        switch (resolution) {
-            case R540P:
-                size = CameraSize.size540;
-                break;
-            case R720P:
-                size = CameraSize.size720;
-                break;
-            case R1080P:
-                size = CameraSize.size1080;
-                break;
-        }
-        if (mCameraXView != null && size != null) {
-            mCameraXView.setCameraSize(size);
-            mCameraXView.previewAgain();
-        }
+    public void onCameraClick() {
 
     }
 
     @Override
-    public void onClickPickBtn() {
+    public void onUpdateEffected(List<TEUIProperty.TESDKParam> sdkParams) {
+
     }
 
     @Override
-    public void onOnlyBeautyWhiteOnSkin(boolean isTurnOn) {
-        LogUtils.d(TAG, "onOnlyBeautyWhiteOnSkin" + isTurnOn);
-        mBeautyKit.setFeatureEnableDisable(FeatureName.WHITEN_ONLY_SKIN_AREA, isTurnOn);
+    public void onEffectStateChange(TEBeautyKit.EffectState effectState) {
+
     }
 
     @Override
-    public void onSmartBeautyTurnOn(boolean isTurnOn) {
-        LogUtils.d(TAG, "onSmartBeautyTurnOn" + isTurnOn);
-        mBeautyKit.setFeatureEnableDisable(FeatureName.SMART_BEAUTY, isTurnOn);
+    public void onTitleClick(TEUIProperty uiProperty) {
+
     }
 
-    @Override
-    public void onCropTextureSwitchTurnOn(boolean isCrop) {
-        if (mCameraXView != null) {
-            mCameraXView.setCropRatio(isCrop ? AppConfig.getInstance().cropRatio : 1f);
-        }
-    }
 
-    @Override
-    public void onFaceBlockSwitchTurnOn(boolean isTurnOn) {
-        mBeautyKit.setFeatureEnableDisable(FeatureName.SEGMENTATION_FACE_BLOCK, isTurnOn);
-    }
 
-    @Override
-    public void onEnhancedModeSwitchTurnOn(boolean isEnable) {
-        if (mBeautyKit.enableEnhancedMode(isEnable)) {
-            List<TESDKParam> usedProperties = mBeautyKit.getInUseSDKParamList();
-            if (usedProperties == null) {
-                return;
-            }
-            mBeautyKit.setEffectList(usedProperties);
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

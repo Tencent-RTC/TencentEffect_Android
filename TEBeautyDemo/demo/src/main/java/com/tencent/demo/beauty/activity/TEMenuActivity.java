@@ -39,7 +39,10 @@ public class TEMenuActivity extends AppCompatActivity {
         setContentView(R.layout.te_beauty_activity_menu_layout);
         mLoadingView = findViewById(R.id.te_menu_loading_view);
         findViewById(R.id.btn_start_camera).setOnClickListener(view -> {
-            authAndStartCamera();
+            authAndStartCamera(TECameraBaseActivity.class);
+        });
+        findViewById(R.id.btn_start_img).setOnClickListener(view -> {
+            authAndStartCamera(TEImageBaseActivity2.class);
         });
         mPermissionHandler.start();
 
@@ -48,9 +51,9 @@ public class TEMenuActivity extends AppCompatActivity {
         copyRes();
     }
 
-    private void authAndStartCamera() {
+    private void authAndStartCamera(Class<?> cls) {
         if (authState == LicenseConstant.AUTH_STATE_SUCCEED) {
-            Intent intent = new Intent(this, TECameraBaseActivity.class);
+            Intent intent = new Intent(this, cls);
             startActivity(intent);
             return;
         }
@@ -62,7 +65,7 @@ public class TEMenuActivity extends AppCompatActivity {
         TEBeautyKit.setTELicense(this.getApplicationContext(),LicenseConstant.mXMagicLicenceUrl,LicenseConstant.mXMagicKey, (errorCode, msg) -> {
             if (errorCode == TELicenseCheck.ERROR_OK) {
                 authState = LicenseConstant.AUTH_STATE_SUCCEED;
-                Intent intent = new Intent(this, TECameraBaseActivity.class);
+                Intent intent = new Intent(this, cls);
                 startActivity(intent);
             } else {
                 authState = LicenseConstant.AUTH_STATE_FAILED;
