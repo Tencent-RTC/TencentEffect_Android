@@ -100,17 +100,20 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
             return;
         }
         for (TEUIProperty.TESDKParam param : this.originalParamList) {
+            if (param == null) {
+                continue;
+            }
             // Assuming this data is for beauty or body enhancement, we can query it using the effectName.
             TEUIProperty teuiProperty = uiPropertyIndexByNameMap.get(this.getNameMapKey(param));
             if (teuiProperty != null) {
-                teuiProperty.sdkParam.effectValue = param.effectValue;
+                if (teuiProperty.sdkParam != null) {
+                    teuiProperty.sdkParam.effectValue = param.effectValue;
+                    teuiProperty.sdkParam.extraInfo = param.extraInfo;
+                }
                 if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY || teuiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY) {
                     teuiProperty.setUiState(TEUIProperty.UIState.IN_USE);
                     ProviderUtils.changeParentUIState(teuiProperty, TEUIProperty.UIState.IN_USE);
                 } else {
-                    if (teuiProperty.uiCategory == TEUIProperty.UICategory.SEGMENTATION && param.extraInfo != null) {
-                        teuiProperty.sdkParam.extraInfo = param.extraInfo;
-                    }
                     teuiProperty.setUiState(TEUIProperty.UIState.CHECKED_AND_IN_USE);
                     ProviderUtils.changeParentUIState(teuiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
                 }

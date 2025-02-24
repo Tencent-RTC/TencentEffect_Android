@@ -118,6 +118,9 @@ public class TEBeautyKit implements SensorEventListener {
         this.mXMagicApi = this.initXMagicApi(mApplicationContext, effectMode);
     }
 
+    public TEBeautyKit(XmagicApi xmagicApi) {
+        this.mXMagicApi = xmagicApi;
+    }
 
     private XmagicApi initXMagicApi(Context context, EffectMode effectMode) {
         XmagicApi api = new XmagicApi(context, effectMode, mResPath, (errorMsg, code) -> {
@@ -536,7 +539,7 @@ public class TEBeautyKit implements SensorEventListener {
      * @param callback     SetupSDKCallback interface
      */
     public static void setupSDK(Context context, String licenseUrl, String licenseKey, @NonNull SetupSDKCallback callback) {
-        mResPath = new File(context.getFilesDir(), "xmagic").getAbsolutePath();
+        mResPath = new File(context.getFilesDir(), "xmagic").getAbsolutePath() + File.separator;
         if (isNeedCopy(context)) {
             LogUtils.i(TAG, "need to copy resource");
             new Thread(() -> {

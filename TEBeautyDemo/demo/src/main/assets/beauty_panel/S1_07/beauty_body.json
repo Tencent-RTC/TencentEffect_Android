@@ -35,6 +35,15 @@
             }
         },
         {
+            "displayName":"瘦胳膊",
+            "displayNameEn":"Slim Arms",
+            "icon":"beauty_panel/panel_icon/beauty_body/body_slim_arm_strength.png",
+            "sdkParam":{
+                "effectName":"body.slimArmStrength",
+                "effectValue":0
+            }
+        },
+        {
             "displayName":"瘦腰",
             "displayNameEn":"Slimwaist",
             "icon":"beauty_panel/panel_icon/beauty_body/body_waish_strength.png",
