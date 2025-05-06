@@ -1,0 +1,56 @@
+<resources>
+    <string name="te_beauty_app_name">Tencent Effect</string>
+    <string name="te_beauty_not_support">This device does not support this property</string>
+    <string name="te_beauty_not_support_beauty">This device does not support effects</string>
+
+    <string name="te_beauty_check_no_auth_tip">Insufficient permission or missing resources. If you have questions, please contact your sales rep.</string>
+    <string name="te_beauty_use_rear_camera">use rear camera</string>
+    <string name="te_beauty_launch_page_title">Tencent Effects Engine</string>
+    <string name="te_beauty_copying_tip">resource copying...</string>
+    <string name="te_beauty_auth_and_start_camera">Auth And Start Camera</string>
+    <string name="te_beauty_save_success_tip">Save the album successfully</string>
+    <string name="te_beauty_property_invalid">Beauty parameters are illegal, please check the parameter settings</string>
+    <string name="te_beauty_function_not_available_tip">The function is not available, please download the full version package demo</string>
+    <string name="te_beauty_menu_layout_menu_features">Features</string>
+    <string name="te_beauty_menu_layout_menu_editions">Editions</string>
+    <string name="te_beauty_check_feature_tips">The current package does not include this feature.</string>
+    <string name="te_beauty_check_combo_type_tips">The current project\'s package type is %s, Please use %s</string>
+
+    <string name="te_beauty_settings_page_title">Setting</string>
+    <string name="te_beauty_settings_page_item1">High Performance Mode</string>
+    <string name="te_beauty_settings_page_item1_des">After enabling the high-performance mode, the beauty filter uses less system CPU/GPU resources, which can reduce the heating and lagging of the phone, making it more suitable for long-term use on low-end devices.\n However, please note that after enabling the high-performance mode, the following beauty filter options will not be available:\n 1.Eye: Eye width, Eye height, Eye bags\n 2.Eyebrow: Eyebrow angle, Eyebrow distance, Eyebrow Height, Eyebrow Length, Eyebrow Thickness, Eyebrow ridge\n 3.Mouth: Smile face\n 4.Facial: Thin face (Natural, Woman, Man), Slim jaw, Wrinkles, Smile lines. It is recommended to use Face shape to achieve a comprehensive effect of big eyes and thin face</string>
+    <string name="te_beauty_settings_page_item2">Scan QR Code</string>
+    <string name="setting_scan_unsupported">The demo does not support scanning qrcode</string>
+    <string name="te_beauty_check_license_info_error_tip">The filters and animated stickers that need to be downloaded in this demo app are only intended for use in Tencent Effect Demo. Please replace them with your own resources before experiencing the app.</string>
+
+
+    <string name="feature_go_to_effect">Start Tencent Effect</string>
+    <string name="beauty_auth_and_start_camera">Auth and Start Camera</string>
+    <string name="beauty_auth_and_start_img">Auth and Img beauty</string>
+    <string name="beauty_effect_mode_pro">EffectMode-Pro</string>
+    <string name="beauty_effect_mode_normal">EffectMode-Normal</string>
+    <string name="beauty_enhance_mode">Enhanced Mode</string>
+    <string name="beauty_smart_beauty">Smart Beauty for Men and Babies</string>
+    <string name="beauty_face_detect">Detect Face</string>
+    <string name="beauty_phone_level">Phone Level</string>
+    <string name="beauty_whiten">Whiten</string>
+    <string name="beauty_smooth">Smooth</string>
+    <string name="beauty_filter">Filter</string>
+    <string name="beauty_thin_face_nature">Thin Face-Nature</string>
+    <string name="beauty_lipstick_0">Lipstick-Red</string>
+    <string name="beauty_lipstick_1">Lipstick-Orange</string>
+    <string name="beauty_lipstick_none">Lipstick-None</string>
+    <string name="beauty_motions">Motions</string>
+    <string name="beauty_makeup">Makeup</string>
+    <string name="beauty_motion">Motion</string>
+    <string name="beauty_segmentation">Segmentation</string>
+    <string name="beauty_custom_segmentation">Custom Segmentation</string>
+    <string name="beauty_motion_merge">Motion Merge</string>
+    <string name="beauty_motion_none">None</string>
+    <string name="beauty_other_functions">Others</string>
+    <string name="beauty_light_makeup">Light Makeup</string>
+    <string name="beauty_light_makeup_white">Light Makeup-White</string>
+    <string name="beauty_light_makeup_none">Light Makeup-None</string>
+    <string name="beauty_face_occlusion_detect">Face Occlusion Detect</string>
+    <string name="title_tencenteffectdynamicfeature">BeautyModule</string>
+</resources>
