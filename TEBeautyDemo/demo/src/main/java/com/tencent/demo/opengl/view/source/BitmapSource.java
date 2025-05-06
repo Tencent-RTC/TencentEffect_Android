@@ -111,6 +111,8 @@ public class BitmapSource implements Source, GLThread.GLThreadEventListener, Tim
                 //当显示宽高改变的时候重新创建纹理
                 GlUtil.deleteTextureId(surfaceTextureId);
                 surfaceTextureId = GlUtil.createTexture(width, height, GLES20.GL_RGBA);
+                isTextureSizeChange = false;
+                this.needBindBitmap = true;
             }
             bindBitmap(surfaceTextureId, this.bitmap, width, height);
             FrameTexture frameTexture = new FrameTexture();

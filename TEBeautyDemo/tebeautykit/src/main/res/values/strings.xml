@@ -4,8 +4,8 @@
     <string name="te_beauty_template_dialog_sub_title">Experience the beautifying effect with just one click</string>
     <string name="te_beauty_template_panel_edit_btn_name">Param</string>
     <string name="te_beauty_template_panel_edit_back_name">Back</string>
-    <string name="te_beauty_activity_base_combo_title">Basic Editions</string>
-    <string name="te_beauty_activity_advanced_combo_title">Advanced Editions</string>
+    <string name="te_beauty_activity_base_combo_title">Basic </string>
+    <string name="te_beauty_activity_advanced_combo_title">Advanced </string>
     <string name="te_beauty_combo_list_hot_tip">hot selling</string>
 
 

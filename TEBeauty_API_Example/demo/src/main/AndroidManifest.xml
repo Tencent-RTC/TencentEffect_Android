@@ -26,6 +26,11 @@
             android:name=".beauty.activity.TEImageBaseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <activity
+            android:name=".beauty.activity.TEImageBaseActivity2"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".beauty.activity.TEMenuActivity"
             android:exported="true"

@@ -37,18 +37,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tencent.effect.beautykit.R;
 import com.tencent.effect.beautykit.config.TEUIConfig;
+import com.tencent.effect.beautykit.download.TEDownloadListener;
 import com.tencent.effect.beautykit.manager.TEDownloadManager;
+import com.tencent.effect.beautykit.model.TEMotionDLModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.provider.TEPanelDataProvider;
-import com.tencent.effect.beautykit.model.TEMotionDLModel;
 import com.tencent.effect.beautykit.utils.CustomDrawableUtils;
 import com.tencent.effect.beautykit.utils.LogUtils;
-import com.tencent.effect.beautykit.download.TEDownloadListener;
 import com.tencent.effect.beautykit.utils.PanelDisplay;
 import com.tencent.effect.beautykit.utils.ScreenUtils;
 import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
-import com.tencent.effect.beautykit.view.widget.SwitchLayout;
 import com.tencent.effect.beautykit.view.dialog.TEProgressDialog;
+import com.tencent.effect.beautykit.view.widget.SwitchLayout;
 import com.tencent.effect.beautykit.view.widget.indicatorseekbar.IndicatorSeekBar;
 import com.tencent.effect.beautykit.view.widget.indicatorseekbar.OnSeekChangeListener;
 import com.tencent.effect.beautykit.view.widget.indicatorseekbar.SeekParams;
@@ -74,6 +74,8 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     private ConstraintLayout foldedLayout;
     private LinearLayout expandLayout;
 
+    private LinearLayout expandViewCustomViewLayout;
+    private ConstraintLayout expandViewCustomViewLayoutSeekbarLayout;
     private IndicatorSeekBar indicatorSeekBar;
     private SwitchLayout switchLayout;
     private ImageView expandViewCompareBtn;
@@ -127,9 +129,9 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
     private int checkItemIndex = 0;
     private final int radioBtnLeftMargin = ScreenUtils.dip2px(getContext(), 20);
-    private final int recycleViewHeightGrid = ScreenUtils.dip2px(getContext(), TEUIConfig.getInstance().panelViewHeight - 95);
-    private final int recycleViewHeightLinear = ScreenUtils.dip2px(getContext(), 110);
+    private final int recycleViewHeightLinear = ScreenUtils.dip2px(getContext(), 120);
 
+    private int customViewHeight = ScreenUtils.dip2px(getContext(), 75);
     private final GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 5);
     private final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
@@ -176,6 +178,8 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
     @SuppressLint({"ClickableViewAccessibility", "ResourceAsColor"})
     private void initExpandViews() {
+        expandViewCustomViewLayout = findViewById(R.id.te_panel_expand_view_custom_view_layout);
+        expandViewCustomViewLayoutSeekbarLayout = findViewById(R.id.te_panel_expand_view_custom_view_seekbar_layout);
         indicatorSeekBar = findViewById(R.id.te_panel_expand_view_seekBar);
         indicatorSeekBar.setVisibility(GONE);
         TEUIConfig uiConfig = TEUIConfig.getInstance();
@@ -334,6 +338,21 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     }
 
 
+
+    public void setCustomView(View view, ViewGroup.LayoutParams layoutParams) {
+        this.expandViewCustomViewLayout.removeAllViews();
+        if (view == null) {
+            // 75 = 滑竿区域高度35 + 标题区域高度 40
+            customViewHeight = ScreenUtils.dip2px(getContext(), 75);
+            this.expandViewCustomViewLayout.addView(this.expandViewCustomViewLayoutSeekbarLayout);
+        } else {
+            // customViewHeight = view height + 标题区域高度 40
+            customViewHeight = layoutParams.height + ScreenUtils.dip2px(getContext(),40);
+            this.expandViewCustomViewLayout.addView(view, layoutParams);
+        }
+    }
+
+
     @Override
     public void onItemClick(TEUIProperty uiProperty) {
         if (uiProperty == null) {
@@ -426,7 +445,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             indicatorSeekBar.setVisibility(View.VISIBLE);
             indicatorSeekBar.setTag(uiProperty);
         } else {
-            indicatorSeekBar.setVisibility(View.INVISIBLE);
+            indicatorSeekBar.setVisibility(View.GONE);
             switchLayout.setVisibility(GONE);
             indicatorSeekBar.setTag(null);
         }
@@ -455,6 +474,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         }
         TEUIProperty uiProperty = (TEUIProperty) radioButton.getTag(R.id.te_beauty_panel_view_radio_button_key);
         this.showOrHideEntryBtn(uiProperty);
+        this.onClickTitle(uiProperty);
         recycleViewAdapter.setProperties(uiProperty.propertyList);
         setSeekBarState(getCheckedUIProperty(uiProperty.propertyList));
         this.lastCheckedUIProperty = uiProperty;
@@ -601,7 +621,6 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     }
 
 
-
     public void showTopRightLayout(boolean isVisibility) {
         this.expandViewTopRightRevertLayout.setVisibility(isVisibility ? VISIBLE : GONE);
     }
@@ -611,6 +630,9 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         this.expandViewBottomLayout.setVisibility(isVisibility ? VISIBLE : GONE);
     }
 
+    public boolean isVisibilityBottomLayout() {
+        return this.expandViewBottomLayout.getVisibility() == VISIBLE;
+    }
 
 
     public void showExpandLayout() {
@@ -891,7 +913,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         ViewGroup.LayoutParams layoutParams = this.recyclerView.getLayoutParams();
         this.recyclerView.setPadding(recycleViewPaddingLeft, 0, isShowEntryBtn ? recycleViewPaddingRight : 0, 0);
         layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        layoutParams.height = (this.layoutType == LayoutType.GRID) ? recycleViewHeightGrid : recycleViewHeightLinear;
+        layoutParams.height = (this.layoutType == LayoutType.GRID) ? ScreenUtils.dip2px(getContext(), TEUIConfig.getInstance().panelViewHeight) - customViewHeight : recycleViewHeightLinear;
         this.recyclerView.setLayoutParams(layoutParams);
     }
 
@@ -960,6 +982,13 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
                 panelViewListener.onCloseEffect(isDown);
             }
             return true;
+        }
+    }
+
+
+    private void onClickTitle(TEUIProperty teuiProperty) {
+        if (panelViewListener != null) {
+            panelViewListener.onTitleClick(teuiProperty);
         }
     }
 
@@ -1035,6 +1064,8 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         void onCameraClick();
 
         void onMoreItemBtnClick();
+
+        void onTitleClick(TEUIProperty uiProperty);
     }
 
     public static class DefaultTEDetailPanelListener implements TEDetailPanelListener {
@@ -1087,6 +1118,11 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
         @Override
         public void onMoreItemBtnClick() {
+
+        }
+
+        @Override
+        public void onTitleClick(TEUIProperty uiProperty) {
 
         }
     }

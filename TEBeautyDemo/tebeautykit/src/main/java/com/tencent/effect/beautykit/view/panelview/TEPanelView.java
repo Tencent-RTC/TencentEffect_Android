@@ -9,7 +9,7 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -76,8 +76,11 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
 
 
     private void initView() {
-        LayoutInflater.from(getContext()).inflate(R.layout.te_beauty_panel_view_layout, this, true);
-        this.mPanelMenuView = findViewById(R.id.te_panel_view_beauty_menu_view);
+        this.mPanelMenuView = new TEPanelMenuView(getContext());
+        this.mPanelMenuView.setVisibility(GONE);
+        FrameLayout.LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.BOTTOM;
+        this.addView(mPanelMenuView, layoutParams);
         this.mDetailPanelListener = new InternalDetailPanelListenerImpl(this);
         this.mPanelMenuView.setListener(new TEPanelMenuView.TEPanelMenuViewListener() {
             @Override
@@ -97,7 +100,11 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
                 }
             }
         });
-        this.mDetailPanel = findViewById(R.id.te_panel_view_detail_panel);
+        this.mDetailPanel = new TEDetailPanel(getContext());
+        LayoutParams layoutParams1 = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams1.gravity = Gravity.BOTTOM;
+
+        this.addView(mDetailPanel,layoutParams1);
     }
 
 
@@ -313,7 +320,7 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
             this.beautyKit = beautyKit;
             if (defaultParamList != null && defaultParamList.size() > 0 && this.beautyKit != null) {
                 this.beautyKit.setEffectList(this.defaultParamList);
-                this.notificationEffectChange();
+                this.notificationEffectChange(this.defaultParamList);
             }
         }
 
@@ -352,17 +359,18 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
             this.menuEffectState = effectState;
             if (this.beautyKit != null) {
                 this.beautyKit.setEffectState(this.menuEffectState);
-                this.notificationEffectChange();
+                this.notificationEffectStateChange(this.menuEffectState);
             }
         }
 
         @Override
         public void onCloseEffect(boolean isClose) {
             if (this.beautyKit != null && this.menuEffectState == TEBeautyKit.EffectState.ENABLED) {
-                this.beautyKit.setEffectState(isClose
+                TEBeautyKit.EffectState effectState = isClose
                         ? TEBeautyKit.EffectState.DISABLED
-                        : TEBeautyKit.EffectState.ENABLED);
-                this.notificationEffectChange();
+                        : TEBeautyKit.EffectState.ENABLED;
+                this.beautyKit.setEffectState(effectState);
+                this.notificationEffectStateChange(effectState);
             }
         }
 
@@ -370,7 +378,7 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
         public void onRevertTE(List<TEUIProperty.TESDKParam> sdkParams) {
             if (this.beautyKit != null) {
                 this.beautyKit.setEffectList(sdkParams);
-                this.notificationEffectChange();
+                this.notificationEffectChange(sdkParams);
             }
         }
 
@@ -379,7 +387,7 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
         public void onUpdateEffect(TEUIProperty.TESDKParam sdkParam) {
             if (this.beautyKit != null) {
                 this.beautyKit.setEffect(sdkParam);
-                this.notificationEffectChange();
+                this.notificationEffectChange(Collections.singletonList(sdkParam));
             }
         }
 
@@ -387,7 +395,7 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
         public void onUpdateEffectList(List<TEUIProperty.TESDKParam> sdkParams) {
             if (this.beautyKit != null) {
                 this.beautyKit.setEffectList(sdkParams);
-                this.notificationEffectChange();
+                this.notificationEffectChange(sdkParams);
             }
         }
 
@@ -396,7 +404,7 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
             this.defaultParamList = paramList;
             if (this.beautyKit != null && this.defaultParamList != null && this.defaultParamList.size() > 0) {
                 this.beautyKit.setEffectList(this.defaultParamList);
-                this.notificationEffectChange();
+                this.notificationEffectChange(paramList);
             }
         }
 
@@ -441,19 +449,44 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
             mPanelView.showGridPanelView();
         }
 
-        private void notificationEffectChange() {
+        @Override
+        public void onTitleClick(TEUIProperty uiProperty) {
+            if (mBeautyPanelCallback != null) {
+                mBeautyPanelCallback.onTitleClick(uiProperty);
+            }
+        }
+
+        private void notificationEffectChange(List<TEUIProperty.TESDKParam> sdkParams) {
             if (this.mBeautyPanelCallback != null) {
-                this.mBeautyPanelCallback.onUpdateEffected();
+                this.mBeautyPanelCallback.onUpdateEffected(sdkParams);
+            }
+        }
+
+        private void notificationEffectStateChange(TEBeautyKit.EffectState effectState) {
+            if (this.mBeautyPanelCallback != null) {
+                this.mBeautyPanelCallback.onEffectStateChange(effectState);
             }
         }
     }
 
+    public void setCustomView(View view, ViewGroup.LayoutParams layoutParams) {
+        if (mDetailPanel != null) {
+            mDetailPanel.setCustomView(view, layoutParams);
+        }
+    }
 
     private void showGridPanelView() {
-        final int width = mDetailPanel.getWidth();
         final int height = mDetailPanel.getHeight();
-        this.mDetailPanel.showBottomLayout(false);
-        ((ViewGroup) this.mDetailPanel.getParent()).removeView(this.mDetailPanel);
+        boolean isVisibility = this.mDetailPanel.isVisibilityBottomLayout();
+        if (isVisibility) {  //只有在底部已经展示的时候才隐藏
+            this.mDetailPanel.showBottomLayout(false);
+        }
+        this.removeView(this.mDetailPanel);
+        ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.height = height;
+        this.setLayoutParams(layoutParams);
+
         this.mDetailPanel.switchLayout(TEDetailPanel.LayoutType.GRID);
         PopupWindow popupWindow = new PopupWindow(getContext());
         popupWindow.setContentView(this.mDetailPanel);
@@ -461,17 +494,24 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
         popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         popupWindow.setHeight(ScreenUtils.dip2px(getContext(), TEUIConfig.getInstance().panelViewHeight));
+
         popupWindow.setOnDismissListener(() -> {
             this.mDetailPanel.switchLayout(TEDetailPanel.LayoutType.LINEAR);
-            this.mDetailPanel.showBottomLayout(true);
-            this.addDetailPanel(width, height);
+            if (isVisibility) {
+                this.mDetailPanel.showBottomLayout(isVisibility);
+            }
+            this.addDetailPanel();
         });
         PopupWindowCompat.showAsDropDown(popupWindow, this, 0, -popupWindow.getHeight(), Gravity.BOTTOM | Gravity.LEFT);
     }
 
 
-    private void addDetailPanel(int width, int height) {
-        this.addView(mDetailPanel, 0, new FrameLayout.LayoutParams(width, height));
+    private void addDetailPanel() {
+        ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        this.setLayoutParams(layoutParams);
+        this.addView(mDetailPanel, 0);
     }
 
 }

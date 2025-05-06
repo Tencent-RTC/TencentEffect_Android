@@ -187,6 +187,7 @@ public class TEUIProperty {
         VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_SMILE_FACE, EffectValueType.RANGE_NEG100_POS100);
         VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_FACE_THIN_CHIN, EffectValueType.RANGE_NEG100_POS100);
         VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_FACE_FOREHEAD, EffectValueType.RANGE_NEG100_POS100);
+        VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_FACE_FOREHEAD2, EffectValueType.RANGE_NEG100_POS100);
         VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BODY_ENLARGE_CHEST_STRENGTH, EffectValueType.RANGE_NEG100_POS100);
         VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BODY_SLIM_ARM_STRENGTH, EffectValueType.RANGE_NEG100_POS100);
     }

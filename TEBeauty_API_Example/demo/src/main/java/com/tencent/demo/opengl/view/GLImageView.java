@@ -6,8 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 import android.util.Size;
+import android.view.Gravity;
 import android.view.SurfaceView;
 import android.view.TextureView;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -125,7 +128,9 @@ public class GLImageView extends FrameLayout {
         if (this.bitmap != null) {
             this.bitmapSource.setData(bitmap);
         }
-        this.addView(this.display.getDisplayView());
+        FrameLayout.LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.gravity = Gravity.CENTER;
+        this.addView(this.display.getDisplayView(), layoutParams);
     }
 
     public void setData(Bitmap bitmap) {
@@ -133,7 +138,31 @@ public class GLImageView extends FrameLayout {
         if (this.bitmapSource != null) {
             this.bitmapSource.setData(bitmap);
         }
+        this.display.getDisplayView().post(() -> adjustViewSizeToMatchBitmap());
     }
+
+    private void adjustViewSizeToMatchBitmap() {
+        View displayView = this.display.getDisplayView();
+        if (bitmap == null || displayView == null) {
+            return;
+        }
+        int bitmapWidth = bitmap.getWidth();
+        int bitmapHeight = bitmap.getHeight();
+        int displayWidth = displayView.getWidth();
+        if (displayWidth <= 0) {
+            postDelayed(this::adjustViewSizeToMatchBitmap, 1000);
+            return;
+        }
+        // 根据bitmap的宽高比计算displayView应该设置的高度
+        int displayHeight = (int) (displayWidth * (bitmapHeight / (float) bitmapWidth));
+        // 设置displayView的新尺寸
+        ViewGroup.LayoutParams params = displayView.getLayoutParams();
+        params.width = displayWidth;
+        params.height = displayHeight;
+        displayView.setLayoutParams(params);
+    }
+
+
 
     public void clearBitmap() {
         this.bitmap = null;

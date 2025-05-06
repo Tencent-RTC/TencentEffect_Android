@@ -59,14 +59,24 @@
         android:visibility="gone" />
 
     <Button
-            android:id="@+id/btn_start_camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="100dp"
-            android:text="Auth and Start Camera"
-            />
+        android:id="@+id/btn_start_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        android:text="Auth and Start Camera"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_start_img"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="Auth and Img beauty"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toLeftOf="@+id/btn_start_camera"
+        app:layout_constraintRight_toRightOf="@+id/btn_start_camera"
+        app:layout_constraintTop_toBottomOf="@+id/btn_start_camera" />
 </androidx.constraintlayout.widget.ConstraintLayout>

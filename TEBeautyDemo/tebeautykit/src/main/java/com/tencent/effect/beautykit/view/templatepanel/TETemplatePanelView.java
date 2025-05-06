@@ -19,6 +19,7 @@ import com.tencent.effect.beautykit.view.dialog.TETipDialog;
 import com.tencent.effect.beautykit.view.panelview.TEPanelViewCallback;
 import com.tencent.effect.beautykit.view.panelview.TEDetailPanel;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -93,7 +94,7 @@ public class TETemplatePanelView extends FrameLayout {
             public void onCloseEffect(boolean isClose) {
                 if (beautyKit != null) {
                     beautyKit.setEffectState(isClose ? TEBeautyKit.EffectState.DISABLED : TEBeautyKit.EffectState.ENABLED);
-                    notificationEffectChange();
+//                    notificationEffectChange();
                 }
             }
 
@@ -102,7 +103,7 @@ public class TETemplatePanelView extends FrameLayout {
             public void onUpdateEffect(TEUIProperty.TESDKParam param) {
                 if (beautyKit != null) {
                     beautyKit.setEffect(param);
-                    notificationEffectChange();
+                    notificationEffectChange(Collections.singletonList(param));
                 }
             }
 
@@ -110,7 +111,7 @@ public class TETemplatePanelView extends FrameLayout {
             public void onUpdateEffectList(List<TEUIProperty.TESDKParam> sdkParams) {
                 if (beautyKit != null) {
                     beautyKit.setEffectList(sdkParams);
-                    notificationEffectChange();
+                    notificationEffectChange(sdkParams);
                 }
             }
 
@@ -137,7 +138,6 @@ public class TETemplatePanelView extends FrameLayout {
                 public void onCloseEffect(boolean isClose) {
                     if (beautyKit != null) {
                         beautyKit.setEffectState(isClose ? TEBeautyKit.EffectState.DISABLED : TEBeautyKit.EffectState.ENABLED);
-                        notificationEffectChange();
                     }
                 }
 
@@ -145,7 +145,6 @@ public class TETemplatePanelView extends FrameLayout {
                 public void onUpdateEffect(TEUIProperty.TESDKParam param) {
                     if (beautyKit != null) {
                         beautyKit.setEffect(param);
-                        notificationEffectChange();
                     }
                 }
 
@@ -154,7 +153,7 @@ public class TETemplatePanelView extends FrameLayout {
                     super.onRevertTE(sdkParams);
                     if (beautyKit != null) {
                         beautyKit.setEffectList(sdkParams);
-                        notificationEffectChange();
+                        notificationEffectChange(sdkParams);
                     }
                 }
 
@@ -162,7 +161,7 @@ public class TETemplatePanelView extends FrameLayout {
                 public void onUpdateEffectList(List<TEUIProperty.TESDKParam> sdkParams) {
                     if (beautyKit != null) {
                         beautyKit.setEffectList(sdkParams);
-                        notificationEffectChange();
+                        notificationEffectChange(sdkParams);
                     }
                 }
 
@@ -214,7 +213,7 @@ public class TETemplatePanelView extends FrameLayout {
         this.beautyKit = beautyKit;
         if (this.beautyKit != null && this.defaultEffectList != null && this.defaultEffectList.size() > 0) {
             this.beautyKit.setEffectList(this.defaultEffectList);
-            this.notificationEffectChange();
+            this.notificationEffectChange(this.defaultEffectList);
         }
     }
 
@@ -223,14 +222,14 @@ public class TETemplatePanelView extends FrameLayout {
         this.defaultEffectList = this.templateProvider.getUsedProperties();
         if (this.beautyKit != null && this.defaultEffectList != null && this.defaultEffectList.size() > 0) {
             this.beautyKit.setEffectList(this.defaultEffectList);
-            this.notificationEffectChange();
+            this.notificationEffectChange(this.defaultEffectList);
         }
     }
 
 
-    private void notificationEffectChange() {
+    private void notificationEffectChange(List<TEUIProperty.TESDKParam> tesdkParams) {
         if (this.mListener != null) {
-            this.mListener.onUpdateEffected();
+            this.mListener.onUpdateEffected(tesdkParams);
         }
     }
 }
