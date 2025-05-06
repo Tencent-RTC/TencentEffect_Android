@@ -1,0 +1,55 @@
+<resources>
+    <string name="te_beauty_app_name">Tencent Effect</string>
+    <string name="te_beauty_not_support">当前设备不支持此属性</string>
+    <string name="te_beauty_not_support_beauty">当前设备不支持美颜</string>
+    <string name="te_beauty_check_no_auth_tip">没有权限或资源缺失，若有疑问请请联系接口人咨询</string>
+    <string name="te_beauty_launch_page_title">腾讯特效引擎</string>
+    <string name="te_beauty_use_rear_camera">使用后置摄像头</string>
+    <string name="te_beauty_copying_tip">资源拷贝中...</string>
+    <string name="te_beauty_auth_and_start_camera">鉴权并启动相机</string>
+    <string name="te_beauty_save_success_tip">保存相册成功</string>
+    <string name="te_beauty_property_invalid">美颜参数不合法，请检查参数设置</string>
+    <string name="te_beauty_function_not_available_tip">功能不可用，请下载完整版套餐demo</string>
+    <string name="te_beauty_menu_layout_menu_features">单点能力</string>
+    <string name="te_beauty_menu_layout_menu_editions">组合套餐</string>
+    <string name="te_beauty_check_feature_tips">当前套餐工程不包含此功能。</string>
+    <string name="te_beauty_check_combo_type_tips">当前工程的套餐类型是%s,请使用%s</string>
+
+
+
+    <string name="te_beauty_settings_page_title">设置</string>
+    <string name="te_beauty_settings_page_item1">高性能模式</string>
+    <string name="te_beauty_settings_page_item1_des">高性能模式开启后，美颜占用的系统CPU/GPU资源更少，可减少手机的发热和卡顿现象，更适合低端机长时间使用。\n但请注意：开启高性能模式后，以下美颜项将不可用：\n 1.眼部：眼宽、眼高、祛眼袋 \n 2.眉毛：角度、距离、高度、长度、粗细、眉峰\n 3.嘴部：微笑唇\n 4.面部：瘦脸（自然，女神，英俊），收下颌，祛皱、祛法令纹。建议用“脸型”实现综合大眼瘦脸效果</string>
+    <string name="te_beauty_settings_page_item2">扫一扫</string>
+    <string name="setting_scan_unsupported">外部demo版本不支持扫码</string>
+    <string name="te_beauty_check_license_info_error_tip">本Demo App中需要下载的滤镜和动效贴纸仅限腾讯特效Demo使用，请将其替换为您自己的资源再体验。</string>
+
+    <string name="feature_go_to_effect">启动美颜特效</string>
+    <string name="beauty_auth_and_start_camera">鉴权并启动相机</string>
+    <string name="beauty_auth_and_start_img">鉴权和图片美颜</string>
+    <string name="beauty_effect_mode_pro">Pro模式</string>
+    <string name="beauty_effect_mode_normal">Normal模式</string>
+    <string name="beauty_enhance_mode">增强模式</string>
+    <string name="beauty_smart_beauty">智能美颜(男性或婴儿效果减弱)</string>
+    <string name="beauty_face_detect">人脸检测</string>
+    <string name="beauty_phone_level">手机等级</string>
+    <string name="beauty_whiten">美白</string>
+    <string name="beauty_smooth">磨皮</string>
+    <string name="beauty_filter">滤镜</string>
+    <string name="beauty_thin_face_nature">瘦脸-自然</string>
+    <string name="beauty_lipstick_0">口红-复古红</string>
+    <string name="beauty_lipstick_1">口红-活力橙</string>
+    <string name="beauty_lipstick_none">口红-无</string>
+    <string name="beauty_motions">动效</string>
+    <string name="beauty_makeup">美妆</string>
+    <string name="beauty_motion">动效</string>
+    <string name="beauty_segmentation">背景分割</string>
+    <string name="beauty_custom_segmentation">自定义背景分割</string>
+    <string name="beauty_motion_merge">动效叠加</string>
+    <string name="beauty_motion_none">无</string>
+    <string name="beauty_other_functions">其他</string>
+    <string name="beauty_light_makeup">轻美妆</string>
+    <string name="beauty_light_makeup_white">轻美妆-白皙</string>
+    <string name="beauty_light_makeup_none">轻美妆-无</string>
+    <string name="beauty_face_occlusion_detect">人脸遮挡检测</string>
+</resources>

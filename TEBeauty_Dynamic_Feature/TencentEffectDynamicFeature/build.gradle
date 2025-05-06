@@ -1,0 +1,26 @@
+plugins {
+    id 'com.android.dynamic-feature'
+}
+android {
+    namespace 'com.example.tencenteffectdynamicfeature'
+    compileSdk 34
+
+    defaultConfig {
+        minSdk 24
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    implementation project(":demo")
+    implementation fileTree(dir: "libs", include: ['*.aar'])
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+}
