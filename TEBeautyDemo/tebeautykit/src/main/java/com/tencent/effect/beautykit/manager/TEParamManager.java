@@ -67,6 +67,11 @@ public class TEParamManager {
 
     private String getKey(TEUIProperty.TESDKParam param) {
         switch (param.effectName) {
+            case XmagicConstant.EffectName.BEAUTY_SMOOTH:
+            case XmagicConstant.EffectName.BEAUTY_SMOOTH2:
+            case XmagicConstant.EffectName.BEAUTY_SMOOTH3:
+            case XmagicConstant.EffectName.BEAUTY_SMOOTH4:
+                return XmagicConstant.EffectName.BEAUTY_SMOOTH;
             case XmagicConstant.EffectName.BEAUTY_WHITEN_0:
             case XmagicConstant.EffectName.BEAUTY_WHITEN:
             case XmagicConstant.EffectName.BEAUTY_WHITEN_2:

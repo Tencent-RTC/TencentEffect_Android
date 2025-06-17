@@ -1,5 +1,11 @@
 package com.tencent.effect.beautykit.utils.provider;
 
+import static com.tencent.effect.beautykit.model.TEUIProperty.GreenBackgroundItemName.BACKGROUND_V2_CORROSION;
+import static com.tencent.effect.beautykit.model.TEUIProperty.GreenBackgroundItemName.BACKGROUND_V2_DE_SHADOW;
+import static com.tencent.effect.beautykit.model.TEUIProperty.GreenBackgroundItemName.BACKGROUND_V2_DE_SPILL;
+import static com.tencent.effect.beautykit.model.TEUIProperty.GreenBackgroundItemName.BACKGROUND_V2_SIMILARITY;
+import static com.tencent.effect.beautykit.model.TEUIProperty.GreenBackgroundItemName.BACKGROUND_V2_SMOOTH;
+
 import android.text.TextUtils;
 
 import com.tencent.effect.beautykit.TEBeautyKit;
@@ -32,6 +38,14 @@ public class ProviderUtils {
               XmagicConstant.EffectName.BEAUTY_FACE_NATURE,
               XmagicConstant.EffectName.BEAUTY_FACE_GODNESS,
               XmagicConstant.EffectName.BEAUTY_FACE_MALE_GOD,
+
+    };
+
+    private static final String[] BEAUTY_SMOOTH_NAMES = {
+            XmagicConstant.EffectName.BEAUTY_SMOOTH,
+            XmagicConstant.EffectName.BEAUTY_SMOOTH2,
+            XmagicConstant.EffectName.BEAUTY_SMOOTH3,
+            XmagicConstant.EffectName.BEAUTY_SMOOTH4,
 
     };
 
@@ -143,6 +157,9 @@ public class ProviderUtils {
         if (ProviderUtils.contains(BEAUTY_FACE_EFFECT_NAMES, property.sdkParam.effectName) && ProviderUtils.contains(BEAUTY_FACE_EFFECT_NAMES, property2.sdkParam.effectName)) {
             return true;
         }
+        if (ProviderUtils.contains(BEAUTY_SMOOTH_NAMES, property.sdkParam.effectName) && ProviderUtils.contains(BEAUTY_SMOOTH_NAMES, property2.sdkParam.effectName)) {
+            return true;
+        }
         return false;
     }
 
@@ -191,12 +208,12 @@ public class ProviderUtils {
 
 
     private static void getUsedProperties(List<TEUIProperty> uiProperties, List<TEUIProperty.TESDKParam> properties) {
-        if (uiProperties != null && uiProperties.size() > 0) {
+        if (uiProperties != null && !uiProperties.isEmpty()) {
             for (TEUIProperty uiProperty : uiProperties) {
                 if (uiProperty == null) {
                     continue;
                 }
-                if (uiProperty.getUiState() != TEUIProperty.UIState.INIT && uiProperty.sdkParam != null) {
+                if (uiProperty.getUiState() != TEUIProperty.UIState.INIT && uiProperty.sdkParam != null && uiProperty.uiCategory != TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM) {
                     properties.add(uiProperty.sdkParam);
                 }
                 if (uiProperty.propertyList != null) {
@@ -326,4 +343,59 @@ public class ProviderUtils {
             XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYEWOCAN,
             XmagicConstant.EffectName.EFFECT_LUT
     );
+
+
+    public static String getGreenParamsV2(TEUIProperty teuiProperty) {
+        int[] result = new int[]{40, 8, 1, 10, 1};
+        if (teuiProperty.propertyList == null || teuiProperty.propertyList.isEmpty()) {
+        } else {
+            for (TEUIProperty item : teuiProperty.propertyList) {
+                if (item.sdkParam == null) {
+                    continue;
+                }
+                if (BACKGROUND_V2_SIMILARITY.equals(item.sdkParam.effectName)) {
+                    result[0] = item.sdkParam.effectValue;
+                } else if (BACKGROUND_V2_SMOOTH.equals(item.sdkParam.effectName)) {
+                    result[1] = item.sdkParam.effectValue;
+                } else if (BACKGROUND_V2_CORROSION.equals(item.sdkParam.effectName)) {
+                    result[2] = item.sdkParam.effectValue;
+                } else if (BACKGROUND_V2_DE_SPILL.equals(item.sdkParam.effectName)) {
+                    result[3] = item.sdkParam.effectValue;
+                } else if (BACKGROUND_V2_DE_SHADOW.equals(item.sdkParam.effectName)) {
+                    result[4] = item.sdkParam.effectValue;
+                }
+            }
+        }
+        return valueGSParamsV2(result);
+    }
+
+
+    private static String valueGSParamsV2(int[] params) {
+        // 使用StringBuilder构建结果字符串
+        StringBuilder result = new StringBuilder("[");
+        for (float item : params) {
+            result.append(item).append(",");
+        }
+        // 删除最后一个逗号
+        if (result.length() > 1) { // 确保 StringBuilder 不为空
+            result.deleteCharAt(result.length() - 1);
+        }
+        result.append("]");
+        return result.toString();
+    }
+
+
+    public static TEUIProperty getImportTEUIPropertyItem(TEUIProperty teuiProperty) {
+        List<TEUIProperty> teuiPropertyList = teuiProperty.propertyList;
+        if (teuiPropertyList == null || teuiPropertyList.isEmpty()) {
+            return null;
+        }
+        for (TEUIProperty property : teuiPropertyList) {
+            if (property.uiCategory == TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE) {
+                return property;
+            }
+        }
+        return null;
+    }
+
 }

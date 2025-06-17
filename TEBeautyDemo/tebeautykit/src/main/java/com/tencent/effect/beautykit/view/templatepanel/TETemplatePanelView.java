@@ -145,6 +145,7 @@ public class TETemplatePanelView extends FrameLayout {
                 public void onUpdateEffect(TEUIProperty.TESDKParam param) {
                     if (beautyKit != null) {
                         beautyKit.setEffect(param);
+                        notificationEffectChange(Collections.singletonList(param));
                     }
                 }
 

@@ -168,6 +168,12 @@ public class TEBeautyKit implements SensorEventListener {
         }
     }
 
+    public void setSyncMode(boolean isSync, int syncFrameCount){
+        if (this.mXMagicApi != null) {
+            this.mXMagicApi.setSyncMode(isSync, syncFrameCount);
+        }
+    }
+
     public static DeviceLevel getDeviceLevel(Context context){
         return XmagicApi.getDeviceLevel(context);
     }
@@ -502,7 +508,7 @@ public class TEBeautyKit implements SensorEventListener {
         boolean result = FileUtil.copyAssets(context, lutDirName, mResPath + "light_material" + File.separator + lutDirName);
         String motionResDirName = "MotionRes";
         boolean result2 = FileUtil.copyAssets(context, motionResDirName, mResPath + motionResDirName);
-        return result && result2;
+        return result && result2 && (addResult == 0);
     }
 
     /**

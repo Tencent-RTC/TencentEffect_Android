@@ -79,13 +79,57 @@
         },
         {
             "displayName":"磨皮",
-            "displayNameEn":"Smoothskin",
+            "displayNameEn":"Smooth Skin",
             "icon":"beauty_panel/panel_icon/beauty/beauty_smooth.png",
+            "uiState":1,
+            "propertyList":[
+                {
+                    "displayName":"磨皮1",
+                    "displayNameEn":"Smooth Skin1",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_smooth.png",
+                    "uiState":1,
+                    "sdkParam":{
+                        "effectName":"smooth.smooth",
+                        "effectValue":40
+                    }
+                },
+                {
+                    "displayName":"磨皮2",
+                    "displayNameEn":"Smooth Skin2",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_smooth.png",
+                    "sdkParam":{
+                        "effectName":"smooth.smooth2",
+                        "effectValue":40
+                    }
+                },
+                {
+                    "displayName":"磨皮3",
+                    "displayNameEn":"Smooth Skin3",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_smooth.png",
+                    "sdkParam":{
+                        "effectName":"smooth.smooth3",
+                        "effectValue":40
+                    }
+                },
+                {
+                    "displayName":"磨皮4",
+                    "displayNameEn":"Smooth Skin4",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_smooth.png",
+                    "sdkParam":{
+                        "effectName":"smooth.smooth4",
+                        "effectValue":40
+                    }
+                }
+            ]
+        },
+        {
+            "displayName":"GAN 美肌",
+            "displayNameEn":"GAN Beauty Skin",
+            "icon":"beauty_panel/panel_icon/beauty/beauty_smooth_gan.png",
             "sdkParam":{
-                "effectName":"smooth.smooth",
+                "effectName":"beauty.skinRetouch",
                 "effectValue":40
-            },
-            "uiState":1
+            }
         },
         {
             "displayName":"红润",

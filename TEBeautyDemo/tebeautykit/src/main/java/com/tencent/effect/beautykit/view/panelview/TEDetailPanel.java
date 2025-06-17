@@ -1,5 +1,6 @@
 package com.tencent.effect.beautykit.view.panelview;
 
+import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.EXTRA_INFO_KEY_BG_PATH;
 import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.EXTRA_INFO_KEY_SEG_TYPE;
 
 import android.annotation.SuppressLint;
@@ -56,6 +57,7 @@ import com.tencent.effect.beautykit.view.widget.indicatorseekbar.SeekParams;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -272,6 +274,9 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     private void initRadioGroup(List<TEUIProperty> propertyList) {
         checkItemIndex = 0;
         expandViewRadioGroup.removeAllViews();
+        if (propertyList == null || propertyList.isEmpty()) {
+            return;
+        }
         ((FrameLayout.LayoutParams) expandViewRadioGroup.getLayoutParams()).gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
         TEUIProperty checkedItem = null;
         for (int i = 0; i < propertyList.size(); i++) {
@@ -328,13 +333,29 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
 
     public void checkPanelViewItem(TEUIProperty uiProperty) {
+        if (TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_GREEN[1].equals(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_SEG_TYPE))) {
+            this.checkGSV2Item(uiProperty);
+            return;
+        }
         if (panelDataProvider != null) {
-            panelDataProvider.onItemClick(uiProperty);
+            panelDataProvider.selectPropertyItem(uiProperty);
         }
         if (recycleViewAdapter != null) {
             recycleViewAdapter.notifyDataSetChanged();
         }
         setSeekBarState(uiProperty);
+    }
+
+    private void checkGSV2Item(TEUIProperty uiProperty){
+        this.onClickItem(uiProperty);
+        TEUIProperty teuiProperty = ProviderUtils.getImportTEUIPropertyItem(uiProperty);
+        if (panelDataProvider != null) {
+            panelDataProvider.selectPropertyItem(teuiProperty);
+        }
+        if (recycleViewAdapter != null) {
+            recycleViewAdapter.notifyDataSetChanged();
+        }
+        setSeekBarState(teuiProperty);
     }
 
 
@@ -358,10 +379,25 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         if (uiProperty == null) {
             return;
         }
+        if (uiProperty.uiCategory == TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE) {  //所以这里判断是不是绿幕2中的导入图片项
+            TEUIProperty parentProperty = uiProperty.parentUIProperty;
+            parentProperty.sdkParam.extraInfo.put("green_params_v2", ProviderUtils.getGreenParamsV2(parentProperty));
+            uiProperty.sdkParam = parentProperty.sdkParam;
+            panelViewListener.onClickCustomSeg(uiProperty);
+            return;
+        }
         if (uiProperty.sdkParam != null && uiProperty.sdkParam.extraInfo != null &&
-                (TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_GREEN.equals(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_SEG_TYPE))
+                (Arrays.asList(TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_GREEN).contains(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_SEG_TYPE))
                         || TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_CUSTOM.equals(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_SEG_TYPE)))
         ) {
+            if (TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_GREEN[1].equals(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_SEG_TYPE))) {  //这个是绿幕2的情况 需要特殊处理，判断是否有背景图，如果有的话直接进入子目录
+                // 将子项的值填写进去
+                uiProperty.sdkParam.extraInfo.put("green_params_v2", ProviderUtils.getGreenParamsV2(uiProperty));
+                if (!TextUtils.isEmpty(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_BG_PATH))) {
+                    this.onClickItem(uiProperty);
+                    return;
+                }
+            }
             if (panelViewListener != null) {
                 panelViewListener.onClickCustomSeg(uiProperty);
             }
@@ -393,11 +429,11 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
                     panelViewListener.onUpdateEffectList(panelDataProvider.getBeautyTemplateData(uiProperty));
                 } else if (uiProperty.isNoneItem()) {
                     List<TEUIProperty.TESDKParam> closeList = panelDataProvider.getCloseEffectItems(uiProperty);
-                    if (closeList != null && closeList.size() > 0) {
+                    if (closeList != null && !closeList.isEmpty()) {
                         panelViewListener.onUpdateEffectList(closeList);
                     }
                 } else {
-                    panelViewListener.onUpdateEffect(uiProperty.sdkParam);
+                    panelViewListener.onUpdateEffect(this.getSDKParam(uiProperty));
                 }
                 recycleViewAdapter.notifyDataSetChanged();
                 setSeekBarState(uiProperty);
@@ -423,6 +459,10 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
 
     private void setSeekBarState(TEUIProperty uiProperty) {
+        if (uiProperty == null || uiProperty.uiCategory == TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE) {
+            hideSeekBar();
+            return;
+        }
         if (uiProperty != null && uiProperty.sdkParam != null && uiProperty.propertyList == null
                 && uiProperty.uiCategory != TEUIProperty.UICategory.MOTION
                 && uiProperty.uiCategory != TEUIProperty.UICategory.SEGMENTATION
@@ -441,14 +481,24 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             }
             indicatorSeekBar.setMin(type.getMin());
             indicatorSeekBar.setMax(type.getMax());
+            if (type.getMax() - type.getMin() <= 10) {
+                indicatorSeekBar.setTickCount(type.getMax() - type.getMin() + 1);
+            }else {
+                indicatorSeekBar.setTickCount(0);
+            }
             indicatorSeekBar.setProgress(uiProperty.sdkParam.effectValue);
             indicatorSeekBar.setVisibility(View.VISIBLE);
             indicatorSeekBar.setTag(uiProperty);
         } else {
-            indicatorSeekBar.setVisibility(View.GONE);
-            switchLayout.setVisibility(GONE);
-            indicatorSeekBar.setTag(null);
+           this.hideSeekBar();
         }
+    }
+
+
+    private void hideSeekBar(){
+        indicatorSeekBar.setVisibility(View.GONE);
+        switchLayout.setVisibility(GONE);
+        indicatorSeekBar.setTag(null);
     }
 
     @Override
@@ -501,15 +551,36 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             if (focusProperty == null || focusProperty.sdkParam == null) {
                 return;
             }
-            if (focusProperty.uiCategory == TEUIProperty.UICategory.MAKEUP || focusProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP) {
+            if ((focusProperty.uiCategory == TEUIProperty.UICategory.MAKEUP || focusProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP) && switchLayout.getVisibility() == VISIBLE) {
                 onChangeMakeupItem(focusProperty.sdkParam, seekParams.progress);
             } else {
                 focusProperty.sdkParam.effectValue = seekParams.progress;
             }
             if (panelViewListener != null) {
-                panelViewListener.onUpdateEffect(focusProperty.sdkParam);
+                panelViewListener.onUpdateEffect(this.getSDKParam(focusProperty));
             }
         }
+    }
+
+
+    /**
+     * 从TEUIProperty 中获取 TESDKParam，主要用于处理 绿幕2 子项目的情况
+     * @param teuiProperty
+     * @return
+     */
+    private TEUIProperty.TESDKParam getSDKParam(TEUIProperty teuiProperty) {
+        if (teuiProperty == null) {
+            return null;
+        }
+        if (teuiProperty.uiCategory == TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM) {
+            TEUIProperty parentProperty = teuiProperty.parentUIProperty;
+            if (TextUtils.isEmpty(parentProperty.sdkParam.extraInfo.get("bgPath")) && TextUtils.isEmpty(parentProperty.sdkParam.extraInfo.get("keyColor"))) {
+                return null;
+            }
+            parentProperty.sdkParam.extraInfo.put("green_params_v2", ProviderUtils.getGreenParamsV2(parentProperty));
+            return parentProperty.sdkParam;
+        }
+        return teuiProperty.sdkParam;
     }
 
 

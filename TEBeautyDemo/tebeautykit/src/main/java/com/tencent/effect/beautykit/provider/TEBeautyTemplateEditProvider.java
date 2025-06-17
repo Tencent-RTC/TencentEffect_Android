@@ -45,6 +45,20 @@ public class TEBeautyTemplateEditProvider extends TEAbstractPanelDataProvider {
         }
     }
 
+    @Override
+    public void selectPropertyItem(TEUIProperty uiProperty) {
+        if (uiProperty != null) {
+            List<TEUIProperty> processData = new ArrayList<>();
+            for (TEUIProperty property : allData) {
+                if (property.uiCategory == uiProperty.uiCategory) {
+                    processData.add(property);
+                }
+            }
+            ProviderUtils.revertUIState(processData, uiProperty);
+            ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
+        }
+    }
+
 
     /**
      * The restoration logic here is as follows:

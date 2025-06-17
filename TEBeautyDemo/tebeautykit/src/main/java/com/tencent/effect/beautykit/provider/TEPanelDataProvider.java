@@ -42,6 +42,8 @@ public interface TEPanelDataProvider {
     List<TEUIProperty> onItemClick(TEUIProperty uiProperty);
 
 
+    void selectPropertyItem(TEUIProperty uiProperty);
+
 
 
 

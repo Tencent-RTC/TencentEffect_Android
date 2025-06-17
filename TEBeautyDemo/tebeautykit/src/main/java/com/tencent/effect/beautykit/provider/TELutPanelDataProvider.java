@@ -33,6 +33,19 @@ public class TELutPanelDataProvider extends TEAbstractPanelDataProvider {
     }
 
     @Override
+    public void selectPropertyItem(TEUIProperty uiProperty) {
+        if (uiProperty != null) {
+            ProviderUtils.revertUIState(allData, uiProperty);
+            ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
+            if (this.dependentProviderList != null) {
+                for (TEPanelDataProvider dependentProvider : this.dependentProviderList) {
+                    dependentProvider.unCheckAll();
+                }
+            }
+        }
+    }
+
+    @Override
     public List<TEUIProperty.TESDKParam> getRevertData(Context context) {
         this.forceRefreshPanelData(context);
         return Collections.singletonList(ProviderUtils.createNoneItem(XmagicConstant.EffectName.EFFECT_LUT));

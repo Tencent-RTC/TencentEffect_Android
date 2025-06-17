@@ -51,6 +51,11 @@ public class TEBeautyTemplateProvider extends TEAbstractPanelDataProvider {
         return uiProperty.propertyList;
     }
 
+    @Override
+    public void selectPropertyItem(TEUIProperty uiProperty) {
+        onItemClick(uiProperty);
+    }
+
 
     @Override
     public List<TEUIProperty.TESDKParam> getRevertData(Context context) {

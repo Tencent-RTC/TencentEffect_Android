@@ -12,13 +12,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.PrimitiveIterator;
 
 
 public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
 
     private static final String TAG = TEGeneralDataProvider.class.getName();
 
-    private Map<TEUIProperty.UICategory, TEUIProperty> dataCategory = new ArrayMap<>();
+    protected Map<TEUIProperty.UICategory, TEUIProperty> dataCategory = new ArrayMap<>();
 
 
     private List<TEUIProperty> pointMakeup = new ArrayList<>();
@@ -71,41 +72,67 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
 
     @Override
     public List<TEUIProperty> onItemClick(TEUIProperty uiProperty) {
+       return this.onItemClickInternal(uiProperty,true);
+    }
+
+    private List<TEUIProperty> onItemClickInternal(TEUIProperty uiProperty, boolean isFromUI) {
         switch (uiProperty.uiCategory) {
             case BEAUTY:
             case BODY_BEAUTY:
             case LUT:
-                this.onClickPointMakeup(uiProperty);
+                this.onClickPointMakeup(uiProperty,isFromUI);
                 break;
             case LIGHT_MAKEUP:  //此处需要将 单点美妆和滤镜全部设置为 未选中
-                this.onClickLightMakeup(uiProperty);
+                this.onClickLightMakeup(uiProperty,isFromUI);
                 break;
             case MAKEUP:
             case MOTION:
             case SEGMENTATION:
-                TEUIProperty makeUpProperty = dataCategory.get(TEUIProperty.UICategory.MAKEUP);
-                TEUIProperty motionProperty = dataCategory.get(TEUIProperty.UICategory.MOTION);
-                TEUIProperty segProperty = dataCategory.get(TEUIProperty.UICategory.SEGMENTATION);
-                if ((uiProperty.propertyList == null && uiProperty.sdkParam != null) || uiProperty.isNoneItem()) {
-                    if (makeUpProperty != null) {
-                        ProviderUtils.revertUIState(makeUpProperty.propertyList, uiProperty);
-                    }
-                    if (motionProperty != null) {
-                        ProviderUtils.revertUIState(motionProperty.propertyList, uiProperty);
-                    }
-                    if (segProperty != null) {
-                        ProviderUtils.revertUIState(segProperty.propertyList, uiProperty);
-                    }
-                    ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
-                }
+                 this.handleMakeupMotionSegmentation(uiProperty,isFromUI);
                 break;
         }
         return uiProperty.propertyList;
     }
 
+    private void handleMakeupMotionSegmentation(TEUIProperty uiProperty, boolean isFromUI) {
+        TEUIProperty makeUpProperty = dataCategory.get(TEUIProperty.UICategory.MAKEUP);
+        TEUIProperty motionProperty = dataCategory.get(TEUIProperty.UICategory.MOTION);
+        TEUIProperty segProperty = dataCategory.get(TEUIProperty.UICategory.SEGMENTATION);
 
-    private void checkItem(TEUIProperty uiProperty) {
+        boolean shouldProcess = !isFromUI ||
+                ((uiProperty.propertyList == null && uiProperty.sdkParam != null) ||
+                        uiProperty.isNoneItem());
+
+        if (shouldProcess) {
+            if (makeUpProperty != null) {
+                ProviderUtils.revertUIState(makeUpProperty.propertyList, uiProperty);
+            }
+            if (motionProperty != null) {
+                ProviderUtils.revertUIState(motionProperty.propertyList, uiProperty);
+            }
+            if (segProperty != null) {
+                ProviderUtils.revertUIState(segProperty.propertyList, uiProperty);
+            }
+            ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
+        }
+    }
+
+    @Override
+    public void selectPropertyItem(TEUIProperty uiProperty) {
+        this.onItemClickInternal(uiProperty,false);
+    }
+
+
+    private void checkItem(TEUIProperty uiProperty , boolean isFromUI) {
         TEUIProperty currentProperty = dataCategory.get(uiProperty.uiCategory);
+        if (!isFromUI) {
+            if (currentProperty == null) {
+                return;
+            }
+            ProviderUtils.revertUIState(currentProperty.propertyList, uiProperty);
+            ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
+            return;
+        }
         if ((uiProperty.propertyList == null && uiProperty.sdkParam != null) || uiProperty.isNoneItem()) {
             if (currentProperty == null) {
                 return;
@@ -180,37 +207,42 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
                 return Collections.singletonList(ProviderUtils.createNoneItem(XmagicConstant.EffectName.EFFECT_MOTION));
             case LIGHT_MAKEUP:
                 return Collections.singletonList(ProviderUtils.createNoneItem(XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP));
+            case GREEN_BACKGROUND_V2_ITEM:
+                //绿幕2 的关闭项按钮
+                TEUIProperty gsv2uiProperty = uiProperty.parentUIProperty;
+                gsv2uiProperty.sdkParam.extraInfo.remove(TEUIProperty.TESDKParam.EXTRA_INFO_KEY_BG_PATH);
+                return Collections.singletonList(ProviderUtils.createNoneItem(XmagicConstant.EffectName.EFFECT_MOTION));
         }
         return null;
     }
 
 
-    private void onClickPointMakeup(TEUIProperty property) {
+    private void onClickPointMakeup(TEUIProperty property, boolean isFromUI) {
         if (property == null) {
             return;
         }
-        this.checkItem(property);
+        this.checkItem(property, isFromUI);
         if (hasLightMakeup && ProviderUtils.isPointMakeup(property.sdkParam)) {  //只有在有轻美妆的情况下才会继续判断点击的是否是 单点妆容
             this.pointMakeupChecked = true;
             if (!this.lightMakeupChecked) {
                 return;
             }
-            LogUtils.i(TAG,"revertUIState on lightMakeup item");
+            LogUtils.i(TAG, "revertUIState on lightMakeup item");
             this.lightMakeupChecked = false;
             this.uncheckLightMakeup();
         }
     }
 
-    private void onClickLightMakeup(TEUIProperty property) {
+    private void onClickLightMakeup(TEUIProperty property, boolean isFromUI) {
         if (property == null) {
             return;
         }
         this.lightMakeupChecked = true;
-        this.checkItem(property);
+        this.checkItem(property, isFromUI);
         if (!this.pointMakeupChecked) {
             return;
         }
-        LogUtils.i(TAG,"revertUIState on pointMakeup item");
+        LogUtils.i(TAG, "revertUIState on pointMakeup item");
         this.pointMakeupChecked = false;
         this.uncheckPointMakeup();
     }
