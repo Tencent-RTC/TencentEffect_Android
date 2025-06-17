@@ -50,6 +50,20 @@ public class TEBeautyPanelDataProvider extends TEAbstractPanelDataProvider {
         }
     }
 
+    @Override
+    public void selectPropertyItem(TEUIProperty uiProperty) {
+        if (uiProperty != null) {
+            List<TEUIProperty> processData = new ArrayList<>();
+            for (TEUIProperty property : allData) {
+                if (property.uiCategory == uiProperty.uiCategory) {
+                    processData.add(property);
+                }
+            }
+            ProviderUtils.revertUIState(processData, uiProperty);
+            ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
+        }
+    }
+
 
     @Override
     public List<TEUIProperty.TESDKParam> getCloseEffectItems(TEUIProperty uiProperty) {

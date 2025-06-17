@@ -90,12 +90,12 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
             holder.tePanelItemLabel.setTypeface(null, Typeface.NORMAL);
             holder.bgLayout.setChecked(false);
         }
-//        if (uiProperty.isNoneItem()) {
-//            holder.tePanelItemRightDivider.setBackgroundColor(this.uiConfig.panelDividerColor);
-//            holder.tePanelItemRightDivider.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.tePanelItemRightDivider.setVisibility(View.GONE);
-//        }
+        if (uiProperty.isGSV2ImportImageItem()) {
+            holder.tePanelItemRightDivider.setBackgroundColor(this.uiConfig.panelDividerColor);
+            holder.tePanelItemRightDivider.setVisibility(View.VISIBLE);
+        } else {
+            holder.tePanelItemRightDivider.setVisibility(View.GONE);
+        }
         if (isShowPoint(uiProperty)) {
             holder.tePanelItemPointView.setBackgroundColor(this.uiConfig.panelItemCheckedColor);
             holder.tePanelItemPointView.setVisibility(View.VISIBLE);
@@ -190,7 +190,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
         ImageView tePanelItemIcon;
         View itemView;
 
-//        View tePanelItemRightDivider;
+        View tePanelItemRightDivider;
 
         PanelItemSelectorLayout bgLayout = null;
 
@@ -202,7 +202,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
             bgLayout = itemView.findViewById(R.id.te_beauty_panel_view_item_left_layout);
             tePanelItemLabel = itemView.findViewById(R.id.te_panel_view_item_layout_name);
             tePanelItemIcon = itemView.findViewById(R.id.te_panel_view_item_layout_icon);
-//            tePanelItemRightDivider = itemView.findViewById(R.id.te_panel_view_item_layout_right_divider);
+            tePanelItemRightDivider = itemView.findViewById(R.id.te_panel_view_item_layout_right_divider);
             tePanelItemPointView = itemView.findViewById(R.id.te_panel_view_item_layout_point_view);
         }
     }

@@ -48,5 +48,14 @@
     </com.tencent.effect.beautykit.view.widget.PanelItemSelectorLayout>
 
 
+    <View
+        android:id="@+id/te_panel_view_item_layout_right_divider"
+        android:layout_width="1dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/te_beauty_color_19FFFFFF"
+        android:visibility="gone"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/te_beauty_panel_view_item_left_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -41,8 +41,12 @@ public class TEMakeUpPanelDataProvider extends TEAbstractPanelDataProvider {
 
     @Override
     public List<TEUIProperty> onItemClick(TEUIProperty uiProperty) {
+        return this.onItemClickInternal(uiProperty,true);
+    }
+
+    public List<TEUIProperty> onItemClickInternal(TEUIProperty uiProperty, boolean isFromUI) {
         this.onclickItem(uiProperty);
-        if ((uiProperty.propertyList == null && uiProperty.sdkParam != null) || uiProperty.isNoneItem()) {
+        if ((!isFromUI) || ((uiProperty.propertyList == null && uiProperty.sdkParam != null) || uiProperty.isNoneItem())) {
             List<TEUIProperty> processData = Collections.singletonList(dataCategory.get(uiProperty.uiCategory));
             ProviderUtils.revertUIState(processData, uiProperty);
             ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
@@ -53,6 +57,11 @@ public class TEMakeUpPanelDataProvider extends TEAbstractPanelDataProvider {
             }
         }
         return uiProperty.propertyList;
+    }
+
+    @Override
+    public void selectPropertyItem(TEUIProperty uiProperty) {
+        this.onItemClickInternal(uiProperty,false);
     }
 
 

@@ -1,11 +1,14 @@
 package com.tencent.effect.beautykit.view.panelview;
 
+import androidx.annotation.NonNull;
+
 import com.tencent.effect.beautykit.TEBeautyKit;
 import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.model.TEPanelDataModel;
 import com.tencent.effect.beautykit.model.TEPanelMenuCategory;
 import com.tencent.effect.beautykit.model.TEPanelMenuModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
+import com.tencent.effect.beautykit.provider.TEPanelDataProvider;
 
 import java.util.List;
 
@@ -33,6 +36,7 @@ public interface ITEPanelView {
 
     void showView(List<TEPanelDataModel> dataModelList, TEPanelViewCallback tePanelViewCallback);
 
+    void showViewWithProvider(TEPanelDataProvider provider, TEPanelViewCallback tePanelViewCallback);
 
     void setupWithTEBeautyKit(TEBeautyKit beautyKit);
 

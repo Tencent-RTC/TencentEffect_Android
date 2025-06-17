@@ -2,9 +2,7 @@
 
 
 
-    <string name="te_beauty_ability_menu_action">立即体验</string>
-    <string name="te_beauty_template_dialog_title">美颜、整妆模板</string>
-    <string name="te_beauty_template_dialog_sub_title">一键体验效果、美丽触手可及</string>
+
     <string name="te_beauty_template_panel_edit_btn_name">参数</string>
     <string name="te_beauty_template_panel_edit_back_name">返回</string>
     <string name="te_beauty_activity_base_combo_title">基础套餐</string>
@@ -13,6 +11,8 @@
 
     <string name="te_beauty_capabilities_panel_view_switch_turn_on">打开</string>
     <string name="te_beauty_capabilities_panel_view_switch_turn_off">关闭</string>
+
+
     <!--特效-->
     <string name="te_beauty_panel_menu_view_layout_sticker">贴纸</string>
     <string name="te_beauty_panel_menu_view_layout_beauty_3">美颜美型</string>

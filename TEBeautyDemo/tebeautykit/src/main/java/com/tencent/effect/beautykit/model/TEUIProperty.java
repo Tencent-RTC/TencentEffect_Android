@@ -6,7 +6,6 @@ import android.util.ArrayMap;
 
 import com.tencent.xmagic.XmagicConstant;
 
-import com.tencent.xmagic.XmagicConstant.EffectName;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +56,8 @@ public class TEUIProperty {
         LIGHT_MAKEUP,
         BEAUTY_TEMPLATE,
         SEGMENTATION,
+        GREEN_BACKGROUND_V2_ITEM,   //绿幕子项
+        GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE, //绿幕子项中的导入图片项
     }
 
 
@@ -66,7 +67,7 @@ public class TEUIProperty {
         public static final String EXTRA_INFO_BG_TYPE_IMG = "0";
         public static final String EXTRA_INFO_BG_TYPE_VIDEO = "1";
         // The value of seg_type, if it is a custom segmentation, use: EXTRA_INFO_SEG_TYPE_CUSTOM, for green screen, use EXTRA_INFO_SEG_TYPE_GREEN.
-        public static final String EXTRA_INFO_SEG_TYPE_GREEN = "green_background";
+        public static final String [] EXTRA_INFO_SEG_TYPE_GREEN = {"green_background","green_background_v2"};
         public static final String EXTRA_INFO_SEG_TYPE_CUSTOM = "custom_background";
 
         public static final String EXTRA_INFO_KEY_BG_TYPE = "bgType";
@@ -108,6 +109,15 @@ public class TEUIProperty {
         return (this.sdkParam == null && propertyList == null && paramList == null);
     }
 
+    /**
+     * 用于判断是否是 绿幕2中的导入图片的item
+     *
+     * @return
+     */
+    public boolean isGSV2ImportImageItem() {
+        return (uiCategory == UICategory.GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE);
+    }
+
 
     public boolean isBeautyMakeupNoneItem() {
         if (this.sdkParam != null && TextUtils.isEmpty(this.sdkParam.resourcePath)) {
@@ -133,7 +143,12 @@ public class TEUIProperty {
     public enum EffectValueType {
         RANGE_0_0(0, 0),
         RANGE_0_POS100(0, 100),
-        RANGE_NEG100_POS100(-100, 100);
+        RANGE_NEG100_POS100(-100, 100),
+        RANG_1_POS100(1,100),
+        RANG_0_POS3(0,3),
+        RANG_0_POS5(0,5);
+        
+        
         int min;
         int max;
 
@@ -190,6 +205,13 @@ public class TEUIProperty {
         VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BEAUTY_FACE_FOREHEAD2, EffectValueType.RANGE_NEG100_POS100);
         VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BODY_ENLARGE_CHEST_STRENGTH, EffectValueType.RANGE_NEG100_POS100);
         VALUE_TYPE_MAP.put(XmagicConstant.EffectName.BODY_SLIM_ARM_STRENGTH, EffectValueType.RANGE_NEG100_POS100);
+
+        //新版绿幕 子属性的调节范围
+        VALUE_TYPE_MAP.put(GreenBackgroundItemName.BACKGROUND_V2_SIMILARITY, EffectValueType.RANGE_0_POS100);
+        VALUE_TYPE_MAP.put(GreenBackgroundItemName.BACKGROUND_V2_SMOOTH, EffectValueType.RANG_1_POS100);
+        VALUE_TYPE_MAP.put(GreenBackgroundItemName.BACKGROUND_V2_CORROSION, EffectValueType.RANG_0_POS3);
+        VALUE_TYPE_MAP.put(GreenBackgroundItemName.BACKGROUND_V2_DE_SPILL, EffectValueType.RANGE_0_POS100);
+        VALUE_TYPE_MAP.put(GreenBackgroundItemName.BACKGROUND_V2_DE_SHADOW, EffectValueType.RANG_0_POS5);
     }
 
     public static EffectValueType getEffectValueType(TESDKParam teParam) {
@@ -201,5 +223,15 @@ public class TEUIProperty {
         }
     }
 
+
+    public static class GreenBackgroundItemName {
+        public static final String BACKGROUND_V2_SIMILARITY = "green_background_v2.similarity";
+        public static final String BACKGROUND_V2_SMOOTH = "green_background_v2.smooth";
+        public static final String BACKGROUND_V2_CORROSION = "green_background_v2.corrosion";
+        public static final String BACKGROUND_V2_DE_SPILL = "green_background_v2.despill";
+        public static final String BACKGROUND_V2_DE_SHADOW = "green_background_v2.deshadow";
+    }
+    
+    
 
 }
