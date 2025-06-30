@@ -19,7 +19,9 @@ light.execute("light://js/AEJSBridge.js");
         "uniformMap": {
             "chromakey" : {
                 "key_color" : [0.0, 1.0, 0.0, 0.0],
-                "tex_rect" : [0.0, 0.0, 720.0, 1280.0]
+                "green_params": [0.413, 0.5, 1.0, 1.0],
+                "tex_rect" : [0.0, 0.0, 720.0, 1280.0],
+                "tex_protect_rect" : [0.0, 0.0, 0.0, 0.0]
             }
         }
     }
@@ -30,12 +32,29 @@ light.execute("light://js/AEJSBridge.js");
 //    // 订阅InputEvent事件
     template.onInputEvent = function(params) {
         var jsonData = params["event.script.lightsdk.GreenScreenSetKeyColor"];
+        var jsonDataParams = params["event.script.lightsdk.GreenScreenSetGreenParams"];
+        var jsonDataProtectRect = params["event.script.lightsdk.GreenScreenSetProtectRect"];
+
         if (jsonData) {
             // 目前只会改这三个
             template.uniformJson.uniformMap.chromakey.key_color[0] = jsonData["key_color"][0];
             template.uniformJson.uniformMap.chromakey.key_color[1] = jsonData["key_color"][1];
             template.uniformJson.uniformMap.chromakey.key_color[2] = jsonData["key_color"][2];
         }
+        if(jsonDataParams){
+            template.uniformJson.uniformMap.chromakey.green_params[0] = jsonDataParams["green_params"][0];
+            template.uniformJson.uniformMap.chromakey.green_params[1] = jsonDataParams["green_params"][1];
+            template.uniformJson.uniformMap.chromakey.green_params[2] = jsonDataParams["green_params"][2];
+            template.uniformJson.uniformMap.chromakey.green_params[3] = jsonDataParams["green_params"][3];
+        }
+
+        if(jsonDataProtectRect){
+            template.uniformJson.uniformMap.chromakey.tex_protect_rect[0] = jsonDataProtectRect["tex_protect_rect"][0];
+            template.uniformJson.uniformMap.chromakey.tex_protect_rect[1] = 1.0 - jsonDataProtectRect["tex_protect_rect"][1];
+            template.uniformJson.uniformMap.chromakey.tex_protect_rect[2] = jsonDataProtectRect["tex_protect_rect"][2];
+            template.uniformJson.uniformMap.chromakey.tex_protect_rect[3] = 1.0 - jsonDataProtectRect["tex_protect_rect"][3];
+        }
+
     }
 
     // 素材初始化, 对应c++的configure

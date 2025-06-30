@@ -44,6 +44,7 @@
     <string name="beauty_segmentation">Segmentation</string>
     <string name="beauty_custom_segmentation">Custom Segmentation</string>
     <string name="beauty_motion_merge">Motion Merge</string>
+    <string name="beauty_green_screen_v1">Green_Screen_v1</string>
     <string name="beauty_motion_none">None</string>
     <string name="beauty_other_functions">Others</string>
     <string name="beauty_light_makeup">Light Makeup</string>
