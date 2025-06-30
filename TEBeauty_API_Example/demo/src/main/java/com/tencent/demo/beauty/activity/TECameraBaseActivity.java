@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,6 +47,7 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
     private XmagicApi mXmagicApi;
     private TextView textViewFaceCount;
     private int currentFaceCount = 0;
+    private SeekBar seekBarSegmentation = null;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -71,9 +75,35 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
         ((RadioButton) findViewById(R.id.radio_segmentation)).setOnCheckedChangeListener(this);
         ((RadioButton) findViewById(R.id.radio_custom_segmentation)).setOnCheckedChangeListener(this);
         ((RadioButton) findViewById(R.id.radio_motion_none)).setOnCheckedChangeListener(this);
+        ((RadioButton)findViewById(R.id.radio_green_screen_v1)).setOnCheckedChangeListener(this);
         ((CheckBox) findViewById(R.id.switch_face_occlusion_detect)).setOnCheckedChangeListener(this);
         ((CheckBox) findViewById(R.id.switch_smart_beauty_for_men_and_baby)).setOnCheckedChangeListener(this);
+        this.seekBarSegmentation = ((SeekBar)findViewById(R.id.seekbar_segmentation));
+        //用于测试 背景模糊强度
+        this.seekBarSegmentation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Map<String,String> extrainfo = new ArrayMap<>();
+                extrainfo.put("segType","blur_background");
+                mXmagicApi.setEffect(EffectName.EFFECT_SEGMENTATION, progress, AppConfig.motionResPath + "/segmentMotionRes/video_segmentation_blur_45", extrainfo);
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        ((Switch) findViewById(R.id.te_camera_layout_switch_camera)).setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (mCameraXView != null) {
+                mCameraXView.switchCamera();
+            }
+        });
         initXMagicAPI();
     }
 
@@ -210,9 +240,20 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
                     mXmagicApi.setEffect(EffectName.EFFECT_MOTION, 0, AppConfig.motionResPath + "/2dMotionRes/video_keaituya", null);
                 }
                 break;
+            case R.id.radio_green_screen_v1:
+                if (checked) {
+                    Intent intentToPickPic = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+                    intentToPickPic.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, AppConfig.PICK_CONTENT_ALL);
+                    startActivityForResult(intentToPickPic, AppConfig.TE_CHOOSE_PHOTO_SEG_GREEN_SCREEN);
+                }
+                break;
             case R.id.radio_segmentation:
                 if (checked) {
-                    mXmagicApi.setEffect(EffectName.EFFECT_SEGMENTATION, 0, AppConfig.motionResPath + "/segmentMotionRes/video_segmentation_blur_75", null);
+                    mXmagicApi.setEffect(EffectName.EFFECT_SEGMENTATION, 45, AppConfig.motionResPath + "/segmentMotionRes/video_segmentation_blur_45", null);
+                    this.seekBarSegmentation.setVisibility(View.VISIBLE);
+                    this.seekBarSegmentation.setProgress(45);
+                }else {
+                    this.seekBarSegmentation.setVisibility(View.GONE);
                 }
                 break;
             case R.id.radio_custom_segmentation:
@@ -254,6 +295,8 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
             }
             if (requestCode == AppConfig.TE_CHOOSE_PHOTO_SEG_CUSTOM) {  //custom segmentation
                 setCustomSegParam(filePath);
+            } else if(requestCode == AppConfig.TE_CHOOSE_PHOTO_SEG_GREEN_SCREEN){
+                setGreenScreenParam(filePath);
             }
         }
     }
@@ -268,6 +311,25 @@ public class TECameraBaseActivity extends AppCompatActivity implements CustomTex
                     extraInfo.put("bgType", "0");
                     extraInfo.put("bgPath", imgPath);
                     mXmagicApi.setEffect(EffectName.EFFECT_SEGMENTATION, 0, AppConfig.motionResPath + "/segmentMotionRes/video_empty_segmentation", extraInfo);
+                });
+            }
+        }
+    }
+
+
+    private void setGreenScreenParam(String filePath) {
+        if (!TextUtils.isEmpty(filePath) && new File(filePath).exists()) {
+            if (filePath.endsWith("jpg") || filePath.endsWith("JPG") || filePath.endsWith("PNG") || filePath.endsWith("png") ||
+                    filePath.endsWith("jpeg") || filePath.endsWith("JPEG")) {
+                BitmapUtil.compressImage(getApplicationContext(), filePath, imgPath -> {
+                    Map<String, String> extraInfo = new HashMap<>();
+                    extraInfo.put("keyColor","#ff0000");   //默认是绿色
+                    extraInfo.put("tex_protect_rect","[0.0,0.0,0.3,0.3]");   //0-1.0
+//                    extraInfo.put("green_params", "[0.413,0.5, 1.0, 1.0]");    //分别对应 抠图强度，羽化，去绿幕，增亮
+                    extraInfo.put("segType", "green_background");
+                    extraInfo.put("bgType", "0");
+                    extraInfo.put("bgPath", imgPath);
+                    mXmagicApi.setEffect(EffectName.EFFECT_SEGMENTATION, 0, AppConfig.motionResPath + "/segmentMotionRes/video_greenscreen", extraInfo);
                 });
             }
         }

@@ -45,6 +45,7 @@
     <string name="beauty_segmentation">背景分割</string>
     <string name="beauty_custom_segmentation">自定义背景分割</string>
     <string name="beauty_motion_merge">动效叠加</string>
+    <string name="beauty_green_screen_v1">绿幕V1</string>
     <string name="beauty_motion_none">无</string>
     <string name="beauty_other_functions">其他</string>
     <string name="beauty_light_makeup">轻美妆</string>

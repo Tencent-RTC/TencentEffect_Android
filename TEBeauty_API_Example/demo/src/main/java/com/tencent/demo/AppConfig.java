@@ -14,8 +14,9 @@ public class AppConfig {
 
     //custom segmentation
     public static final int TE_CHOOSE_PHOTO_SEG_CUSTOM = 2002;
-    public static final int TE_CHOOSE_PHOTO_IMAGE_BEAUTY = 2003;
 
+    public static final int TE_CHOOSE_PHOTO_IMAGE_BEAUTY = 2003;
+    public static final int TE_CHOOSE_PHOTO_SEG_GREEN_SCREEN = 2004;
 
     public static String PICK_CONTENT_ALL = "image/*|video/*";
     public static String PICK_CONTENT_IMAGE = "image/*";
