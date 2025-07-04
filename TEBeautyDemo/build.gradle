@@ -1,6 +1,8 @@
 
 buildscript {
     repositories {
+        mavenCentral()
+        google()
         maven { url 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public' }
     }
     dependencies {
@@ -10,6 +12,8 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenCentral()
+        google()
         maven { url 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public' }
     }
 }
