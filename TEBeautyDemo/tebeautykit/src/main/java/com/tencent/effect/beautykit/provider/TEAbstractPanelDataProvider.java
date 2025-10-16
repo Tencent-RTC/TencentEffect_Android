@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 
 import com.google.gson.Gson;
+import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.model.TEPanelDataModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.xmagic.XmagicConstant;
@@ -53,6 +54,9 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
     public List<TEUIProperty> getPanelData(Context context) {
         if (allData != null) {
             return allData;
+        }
+        if (TEUIConfig.getInstance().revertEffect2Json) {
+            this.originalParamList = null;
         }
         return this.forceRefreshPanelData(context);
     }

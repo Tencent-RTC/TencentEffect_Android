@@ -15,7 +15,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.tencent.effect.beautykit.config.DeviceDirection;
+import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
 import com.tencent.xmagic.GlUtil;
 import com.tencent.xmagic.XmagicApi;
@@ -33,6 +35,7 @@ import com.tencent.xmagic.telicense.TELicenseCheck;
 import com.tencent.xmagic.util.FileUtil;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.List;
 
 
@@ -211,7 +214,7 @@ public class TEBeautyKit implements SensorEventListener {
 
 
     public void setEffectList(List<TEUIProperty.TESDKParam> paramList) {
-        if (this.mXMagicApi == null || paramList == null || paramList.size() == 0) {
+        if (this.mXMagicApi == null || paramList == null || paramList.isEmpty()) {
             return;
         }
         for (TEUIProperty.TESDKParam param : paramList) {
@@ -230,7 +233,23 @@ public class TEBeautyKit implements SensorEventListener {
         this.mParamManager.putTEParam(teParam);
     }
 
-
+    /**
+     * 设置上次的美颜效果，只有在没有使用TEPanelView的情况下需要恢复美颜的时候，调用此方法，当使用了TEPanelView的清苦下，使用TEPanelView的方法进行恢复
+     * @param lastParamList
+     */
+    public void setLastParamList(String lastParamList) {
+        if (!TextUtils.isEmpty(lastParamList)) {
+            Type type = new TypeToken<List<TEUIProperty.TESDKParam>>() {
+            }.getType();
+            try {
+                List<TEUIProperty.TESDKParam> list = new Gson().fromJson(lastParamList, type);
+                setEffectList(list);
+            } catch (Exception e) {
+                LogUtils.e(TAG, "JSON parsing failed, please check the json string");
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * 在真正设置参数的进行判断，因为轻美妆和单点美妆在效果上要进行互斥，但是SDK没有实现
@@ -239,7 +258,9 @@ public class TEBeautyKit implements SensorEventListener {
      * @param sdkParam
      */
     private void setSdkParam(TEUIProperty.TESDKParam sdkParam) {
-        this.clearLightMakeup(sdkParam);
+        if (TEUIConfig.getInstance().cleanLightMakeup) {
+            this.clearLightMakeup(sdkParam);
+        }
         this.mXMagicApi.setEffect(sdkParam.effectName, sdkParam.effectValue, sdkParam.resourcePath, sdkParam.extraInfo);
     }
 
@@ -277,7 +298,7 @@ public class TEBeautyKit implements SensorEventListener {
 
     public String exportInUseSDKParam() {
         List<TEUIProperty.TESDKParam> sdkParams = this.mParamManager.getParams();
-        if (sdkParams != null && sdkParams.size() > 0) {
+        if (sdkParams != null && !sdkParams.isEmpty()) {
             return new Gson().toJson(sdkParams);
         } else {
             return null;

@@ -1,20 +1,9 @@
 <resources>
 
-    <string name="te_beauty_template_panel_edit_btn_name">Param</string>
-    <string name="te_beauty_template_panel_edit_back_name">Back</string>
-    <string name="te_beauty_activity_base_combo_title">Basic </string>
-    <string name="te_beauty_activity_advanced_combo_title">Advanced </string>
-    <string name="te_beauty_combo_list_hot_tip">hot selling</string>
 
    <!--特效-->
-    <string name="te_beauty_panel_menu_view_layout_sticker">Stickers</string>
-    <string name="te_beauty_panel_menu_view_layout_beauty_3">Beautify</string>
     <string name="te_beauty_panel_menu_view_layout_makeup">Makeup</string>
     <string name="te_beauty_panel_menu_view_layout_lut">Filters</string>
-    <string name="te_beauty_panel_view_folded_btn_txt">Off</string>
-    <string name="te_beauty_panel_view_expand_btn_txt">On</string>
-    <string name="te_beauty_panel_view_expand_original_txt">Before</string>
-    <string name="te_beauty_panel_view_expand_te_txt">After</string>
 
     <string name="te_beauty_panel_view_revert_tip_title">Are you sure you want to reset the effects?</string>
     <string name="te_beauty_panel_view_revert_tip_msg">The action will reset all effects and cannot be undone</string>
@@ -25,8 +14,6 @@
 
     <string name="te_beauty_panel_view_download_dialog_tip">downloading</string>
 
-    <string name="te_beauty_capabilities_panel_view_switch_turn_on">turn on</string>
-    <string name="te_beauty_capabilities_panel_view_switch_turn_off">turn off</string>
 
 
 
