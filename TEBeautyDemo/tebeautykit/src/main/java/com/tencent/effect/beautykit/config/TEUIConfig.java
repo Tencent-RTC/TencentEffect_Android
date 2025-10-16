@@ -31,6 +31,10 @@ public class TEUIConfig {
 
     public int panelViewHeight = 335;
 
+    public boolean revertEffect2Json = false;   //如果设置为true,那么在点击面板还原按钮的时候就会还原到json配置的状态，否则还原到进入面板设置了 lastParam的状态
+
+    public boolean cleanLightMakeup = true;   //此配置是当设置滤镜，或者单点美妆的时候是否清理轻美妆
+
     public List<TEUIProperty.UICategory> hiddenCategories = Arrays.asList(TEUIProperty.UICategory.BEAUTY, TEUIProperty.UICategory.BODY_BEAUTY, TEUIProperty.UICategory.LUT);
 
 

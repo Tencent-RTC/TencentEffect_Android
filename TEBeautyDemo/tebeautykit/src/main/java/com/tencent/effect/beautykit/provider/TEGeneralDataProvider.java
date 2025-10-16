@@ -3,6 +3,7 @@ package com.tencent.effect.beautykit.provider;
 import android.content.Context;
 import android.util.ArrayMap;
 
+import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.manager.TEParamManager;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.utils.LogUtils;
@@ -35,15 +36,15 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
             if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY) {
                 this.obtainPointMakeup(teuiProperty);
                 //判断是否有默认设置
-                pointMakeupChecked = ProviderUtils.getUsedProperties(pointMakeup).size() > 0 || pointMakeupChecked;
+                pointMakeupChecked = !ProviderUtils.getUsedProperties(pointMakeup).isEmpty() || pointMakeupChecked;
             }
             if (teuiProperty.uiCategory == TEUIProperty.UICategory.LUT) {
-                pointMakeupChecked = ProviderUtils.getUsedProperties(pointMakeup).size() > 0 || pointMakeupChecked;
+                pointMakeupChecked = !ProviderUtils.getUsedProperties(pointMakeup).isEmpty() || pointMakeupChecked;
             }
             if (teuiProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP) {
                 hasLightMakeup = true;
                 //判断是否有默认设置
-                lightMakeupChecked = ProviderUtils.getUsedProperties(Collections.singletonList(teuiProperty)).size() > 0;
+                lightMakeupChecked = !ProviderUtils.getUsedProperties(Collections.singletonList(teuiProperty)).isEmpty();
             }
             dataCategory.put(teuiProperty.uiCategory, teuiProperty);
         }
@@ -222,13 +223,16 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
             return;
         }
         this.checkItem(property, isFromUI);
+
         if (hasLightMakeup && ProviderUtils.isPointMakeup(property.sdkParam)) {  //只有在有轻美妆的情况下才会继续判断点击的是否是 单点妆容
             this.pointMakeupChecked = true;
             if (!this.lightMakeupChecked) {
                 return;
             }
+            if (!TEUIConfig.getInstance().cleanLightMakeup) {
+                return;
+            }
             LogUtils.i(TAG, "revertUIState on lightMakeup item");
-            this.lightMakeupChecked = false;
             this.uncheckLightMakeup();
         }
     }
@@ -243,12 +247,12 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
             return;
         }
         LogUtils.i(TAG, "revertUIState on pointMakeup item");
-        this.pointMakeupChecked = false;
         this.uncheckPointMakeup();
     }
 
 
     private void uncheckPointMakeup() {
+        this.pointMakeupChecked = false;
         TEUIProperty lutData = this.dataCategory.get(TEUIProperty.UICategory.LUT);
         if (lutData != null) {
             ProviderUtils.revertUIStateToInit(Collections.singletonList(lutData));
@@ -260,6 +264,7 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
 
 
     private void uncheckLightMakeup() {
+        this.lightMakeupChecked = false;
         TEUIProperty lightMakeup = this.dataCategory.get(TEUIProperty.UICategory.LIGHT_MAKEUP);
         if (lightMakeup == null) {
             return;

@@ -6,16 +6,12 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
-import android.util.ArrayMap;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,11 +19,9 @@ import androidx.core.widget.PopupWindowCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.tencent.effect.beautykit.R;
 import com.tencent.effect.beautykit.TEBeautyKit;
 import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.model.TEPanelDataModel;
-import com.tencent.effect.beautykit.model.TEPanelMenuCategory;
 import com.tencent.effect.beautykit.model.TEPanelMenuModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.provider.TEGeneralDataProvider;
@@ -37,11 +31,9 @@ import com.tencent.effect.beautykit.utils.ScreenUtils;
 import com.tencent.effect.beautykit.view.dialog.TETipDialog;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 
 public class TEPanelView extends FrameLayout implements ITEPanelView {
@@ -49,21 +41,11 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
     private static final String TAG = TEPanelView.class.getName();
 
 
-    private TEPanelMenuView mPanelMenuView;
-
     private TEDetailPanel mDetailPanel;
-
     private InternalDetailPanelListenerImpl mDetailPanelListener = null;
-    private TEPanelMenuCategory currentMenuCategory = TEPanelMenuCategory.BEAUTY;
-
-    private final Map<TEPanelMenuCategory, TEPanelDataProvider> panelDataProviders = new ArrayMap<>();
-
-
     private List<TEUIProperty.TESDKParam> lastParamList = null;
-
     //用于关闭
     public boolean isShowGreenScreenTipDialog = true;
-
 
     public TEPanelView(@NonNull Context context) {
         this(context, null);
@@ -80,30 +62,9 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
 
 
     private void initView() {
-        this.mPanelMenuView = new TEPanelMenuView(getContext());
-        this.mPanelMenuView.setVisibility(GONE);
         FrameLayout.LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.gravity = Gravity.BOTTOM;
-        this.addView(mPanelMenuView, layoutParams);
         this.mDetailPanelListener = new InternalDetailPanelListenerImpl(this);
-        this.mPanelMenuView.setListener(new TEPanelMenuView.TEPanelMenuViewListener() {
-            @Override
-            public void onPanelMenuItemClick(TEPanelMenuCategory panelDataType) {
-                if (panelDataType == TEPanelMenuCategory.CAMERA && mDetailPanelListener != null) {
-                    mDetailPanelListener.onCameraClick();
-                } else {
-                    currentMenuCategory = panelDataType;
-                    showPanelView();
-                }
-            }
-
-            @Override
-            public void onCloseEffect(boolean isClose) {
-                if (mDetailPanelListener != null) {
-                    mDetailPanelListener.setMenuEffectState(isClose ? TEBeautyKit.EffectState.DISABLED : TEBeautyKit.EffectState.ENABLED);
-                }
-            }
-        });
         this.mDetailPanel = new TEDetailPanel(getContext());
         LayoutParams layoutParams1 = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams1.gravity = Gravity.BOTTOM;
@@ -114,7 +75,7 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
 
     /**
      * Used to set the last saved beauty effect data, in order to restore the beauty panel to its previous state.
-     * Note: This method needs to be used before the {@link #showView(TEPanelMenuModel, TEPanelMenuCategory, int)} method.
+     * Note: This method needs to be used before the {@link #(TEPanelMenuModel,  int)} method.
      *
      * @param lastParamList Beauty data
      */
@@ -166,17 +127,11 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
             return;
         }
         this.setTEPanelViewCallback(tePanelViewCallback);
-        this.currentMenuCategory = TEPanelMenuCategory.ALL;
-        this.panelDataProviders.put(this.currentMenuCategory, provider);
-
-
         provider.getPanelData(getContext().getApplicationContext());
         this.mDetailPanelListener.onDefaultEffectList(provider.getUsedProperties());
 
         this.mDetailPanel.show(provider, this.mDetailPanelListener);
         this.mDetailPanel.setVisibility(VISIBLE);
-        this.removeView(this.mPanelMenuView);
-        this.showBottomLayout(false);
         this.showTopRightLayout(true);
         this.showMenu(false);
     }
@@ -188,27 +143,6 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
     }
 
 
-    /**
-     * Show the panel, this method requires passing in the corresponding data.
-     *
-     * @param beautyPanelMenuData Panel data
-     * @param menuCategory        The current displayed menu data, can be null. If null, it means that the menu is directly displayed after entering. If not null, it displays specific data within the menu.
-     * @param tabIndex            Since the data in the menu has multiple tabs, use this parameter to set the initially selected tab.
-     *                            For example, in the beauty and shaping menu, there are four tabs (beauty, image adjustment, advanced shaping, body shaping).
-     *                            When entering from a single-point beauty capability, the beauty tab needs to be selected. When entering from body shaping, the body shaping tab needs to be selected. Therefore, this parameter can control the selection of the corresponding tab.
-     */
-    @Override
-    public void showView(TEPanelMenuModel beautyPanelMenuData, TEPanelMenuCategory menuCategory, int tabIndex) {
-        this.currentMenuCategory = menuCategory;
-        this.createProviders(beautyPanelMenuData);
-        this.setDependencies();
-        if (this.currentMenuCategory != null) {
-            this.getCurrentProvider().onTabItemClick(tabIndex);
-            this.showPanelView();
-        } else {
-            this.showMenuView();
-        }
-    }
 
 
     @Override
@@ -237,10 +171,7 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
     }
 
 
-    @Override
-    public void showBottomLayout(boolean isVisibility) {
-        this.mDetailPanel.showBottomLayout(isVisibility);
-    }
+
 
     @Override
     public void updateUIConfig(TEUIConfig uiConfig) {
@@ -249,67 +180,15 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
         }
     }
 
-    private void showPanelView() {
-        TEPanelDataProvider panelDataProvider = this.getCurrentProvider();
-        if (panelDataProvider != null) {
-            this.mDetailPanel.show(panelDataProvider, this.mDetailPanelListener);
-            this.mDetailPanel.setVisibility(VISIBLE);
-            this.mPanelMenuView.setVisibility(GONE);
-        } else {
-            Toast.makeText(getContext(), R.string.te_beauty_panel_view_not_included_tips, Toast.LENGTH_LONG).show();
-            LogUtils.e(TAG, "The edition does not include that capability");
-        }
-    }
+
 
 
     private void showMenuView() {
         mDetailPanel.setVisibility(GONE);
-        mPanelMenuView.setVisibility(VISIBLE);
     }
 
 
-    private void createProviders(TEPanelMenuModel beautyPanelMenuData) {
-        List<TEPanelMenuCategory> TEPanelMenuCategoryList = beautyPanelMenuData.getPanelMenuCategories();
-        List<TEUIProperty.TESDKParam> defaultList = new ArrayList<>();
-        for (TEPanelMenuCategory panelMenuCategory : TEPanelMenuCategoryList) {
-            if (TextUtils.isEmpty(panelMenuCategory.className)) {
-                LogUtils.e(TAG, "panelMenuCategory className is null");
-                continue;
-            }
-            try {
-                TEPanelDataProvider provider = (TEPanelDataProvider) Class.forName(panelMenuCategory.className).newInstance();
-                if (this.lastParamList != null && !this.lastParamList.isEmpty()) {
-                    provider.setUsedParams(this.lastParamList);
-                }
-                provider.setPanelDataList(beautyPanelMenuData.getDataByType(panelMenuCategory));
-                provider.getPanelData(getContext().getApplicationContext());
-                defaultList.addAll(provider.getUsedProperties());
-                this.panelDataProviders.put(panelMenuCategory, provider);
-                this.mPanelMenuView.setItemClickable(panelMenuCategory);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        if (this.mDetailPanelListener != null && !defaultList.isEmpty()) {
-            this.mDetailPanelListener.onDefaultEffectList(defaultList);
-        }
 
-    }
-
-
-    private void setDependencies() {
-        TEPanelDataProvider lutProvider = this.panelDataProviders.get(TEPanelMenuCategory.LUT);
-        TEPanelDataProvider makeupProvider = this.panelDataProviders.get(TEPanelMenuCategory.MAKEUP);
-        if (lutProvider != null && makeupProvider != null) {
-            lutProvider.putMutuallyExclusiveProvider(Collections.singletonList(makeupProvider));
-            makeupProvider.putMutuallyExclusiveProvider(Collections.singletonList(lutProvider));
-        }
-    }
-
-
-    private TEPanelDataProvider getCurrentProvider() {
-        return this.panelDataProviders.get(this.currentMenuCategory);
-    }
 
     private static class InternalDetailPanelListenerImpl implements TEDetailPanel.TEDetailPanelListener {
         private final Context context;
@@ -491,18 +370,10 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
         }
     }
 
-    public void setCustomView(View view, ViewGroup.LayoutParams layoutParams) {
-        if (mDetailPanel != null) {
-            mDetailPanel.setCustomView(view, layoutParams);
-        }
-    }
+
 
     private void showGridPanelView() {
         final int height = mDetailPanel.getHeight();
-        boolean isVisibility = this.mDetailPanel.isVisibilityBottomLayout();
-        if (isVisibility) {  //只有在底部已经展示的时候才隐藏
-            this.mDetailPanel.showBottomLayout(false);
-        }
         this.removeView(this.mDetailPanel);
         ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
         layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -519,9 +390,6 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
 
         popupWindow.setOnDismissListener(() -> {
             this.mDetailPanel.switchLayout(TEDetailPanel.LayoutType.LINEAR);
-            if (isVisibility) {
-                this.mDetailPanel.showBottomLayout(isVisibility);
-            }
             this.addDetailPanel();
         });
         PopupWindowCompat.showAsDropDown(popupWindow, this, 0, -popupWindow.getHeight(), Gravity.BOTTOM | Gravity.LEFT);

@@ -123,12 +123,21 @@
             ]
         },
         {
-            "displayName":"GAN 美肌",
+            "displayName":"AI 美肌",
             "displayNameEn":"GAN Beauty Skin",
             "icon":"beauty_panel/panel_icon/beauty/beauty_smooth_gan.png",
             "sdkParam":{
                 "effectName":"beauty.skinRetouch",
                 "effectValue":40
+            }
+        },
+        {
+            "displayName":"皮肤高光",
+            "displayNameEn":"Skin Highlight",
+            "icon":"beauty_panel/panel_icon/beauty/beauty_skin_highlight.png",
+            "sdkParam":{
+                "effectName":"beauty.skinHighlight",
+                "effectValue":0
             }
         },
         {

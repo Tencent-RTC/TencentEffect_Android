@@ -17,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -27,7 +26,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -73,7 +71,6 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
     private static final String TAG = TEDetailPanel.class.getName();
 
-    private ConstraintLayout foldedLayout;
     private LinearLayout expandLayout;
 
     private LinearLayout expandViewCustomViewLayout;
@@ -90,7 +87,6 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
     private LinearLayout expandViewTopRightRevertLayout;
     private TextView expandViewTopRightRevertText;
-    private ConstraintLayout expandViewBottomLayout;
     private ImageView expandViewBackBtn;
     private TextView expandViewTitle;
 
@@ -102,21 +98,9 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TEProgressDialog progressDialog;
 
-    private LinearLayout expandViewLeftBottomBtn;
-    private ImageView expandViewLeftBottomBtnImg;
-    private TextView expandViewLeftBottomBtnText;
-    private LinearLayout foldedViewLeftBottomBtn;
-    private ImageView foldedViewLeftBottomImg;
-    private TextView foldedViewLeftBottomText;
 
     private RecyclerView recyclerView;
     private View panelBgView;
-    private LinearLayout expandViewRightBottomBtn;
-    private ImageView expandViewRightBottomImg;
-    private TextView expandViewRightBottomText;
-    private LinearLayout foldedViewRightBottomBtn;
-    private ImageView foldedViewRightBottomImg;
-    private TextView foldedViewRightBottomText;
 
     // Used to store the previous scroll position of the list. Once this position information is used, it should be deleted.
     private final List<Integer> itemPositions = new ArrayList<>();
@@ -165,17 +149,13 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
     private void initViews(Context context) {
         setClickable(true);
-        foldedLayout = (ConstraintLayout) LayoutInflater.from(context)
-                .inflate(R.layout.te_beauty_panel_view_folded_layout, this, false);
         expandLayout = (LinearLayout) LayoutInflater.from(context)
                 .inflate(R.layout.te_beauty_panel_view_expand_layout, this, false);
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.gravity = Gravity.BOTTOM;
-        addView(foldedLayout, layoutParams);
         addView(expandLayout);
         initExpandViews();
-        initFoldedViews();
     }
 
     @SuppressLint({"ClickableViewAccessibility", "ResourceAsColor"})
@@ -204,7 +184,6 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         expandViewTopRightDivider.setBackgroundColor(uiConfig.panelDividerColor);
 
 
-        expandViewBottomLayout = findViewById(R.id.te_panel_view_bottom_layout);
         expandViewBackBtn = findViewById(R.id.te_panel_expand_view_back_btn);
         expandViewTitle = findViewById(R.id.te_panel_expand_view_title_text);
         gridLayoutEntryBtn = findViewById(R.id.te_panel_view_gridlayout_entry_btn);
@@ -227,11 +206,6 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             recycleViewAdapter = new TEDetailPanelAdapter(linearLayoutManager, this);
         }
         recyclerView.setAdapter(recycleViewAdapter);
-        expandViewLeftBottomBtn = findViewById(R.id.te_panel_expand_view_left_bottom_layout);
-        expandViewRightBottomBtn = findViewById(R.id.te_panel_expand_view_right_bottom_layout);
-        expandViewLeftBottomBtn.setOnClickListener(this);
-        expandViewRightBottomBtn.setOnClickListener(this);
-        Button expandViewCameraBtn = findViewById(R.id.te_panel_view_expand_camera_btn);
         indicatorSeekBar.setOnSeekChangeListener(new OnSeekChangeListenerImp() {
             @Override
             public void onSeeking(SeekParams seekParams) {
@@ -246,28 +220,9 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         });
         expandViewCompareBtn.setOnTouchListener(new CompareBtnTouchListener());
         expandViewBackBtn.setOnClickListener(this);
-        expandViewCameraBtn.setOnClickListener(this);
-        expandViewLeftBottomBtnImg = findViewById(R.id.te_panel_expand_view_left_bottom_img);
-        expandViewLeftBottomBtnText = findViewById(R.id.te_panel_expand_view_left_bottom_text);
-        expandViewRightBottomImg = findViewById(R.id.te_panel_expand_view_right_bottom_img);
-        expandViewRightBottomText = findViewById(R.id.te_panel_expand_view_right_bottom_text);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private void initFoldedViews() {
-        foldedViewLeftBottomBtn = findViewById(R.id.te_panel_folded_view_left_bottom_layout);
-        foldedViewLeftBottomBtn.setOnClickListener(this);
-        foldedViewRightBottomBtn = findViewById(R.id.te_panel_folded_view_right_bottom_layout);
-        foldedViewRightBottomBtn.setOnClickListener(this);
-        findViewById(R.id.te_panel_folded_view_camera_btn).setOnClickListener(this);
 
-        foldedViewLeftBottomImg = findViewById(R.id.te_panel_folded_view_left_bottom_img);
-        foldedViewLeftBottomText = findViewById(R.id.te_panel_folded_view_left_bottom_text);
-
-        foldedViewRightBottomImg = findViewById(R.id.te_panel_folded_view_right_bottom_img);
-        foldedViewRightBottomText = findViewById(R.id.te_panel_folded_view_right_bottom_text);
-        foldedLayout.setBackgroundColor(TEUIConfig.getInstance().panelBackgroundColor);
-    }
 
 
     @SuppressLint({"ResourceType", "RtlHardcoded"})
@@ -613,7 +568,6 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
     private void showView() {
         this.expandLayout.setVisibility(VISIBLE);
-        this.foldedLayout.setVisibility(GONE);
 
         this.expandViewBackBtn.setVisibility(GONE);
         this.expandViewTitle.setVisibility(GONE);
@@ -626,27 +580,9 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.te_panel_folded_view_camera_btn || id == R.id.te_panel_view_expand_camera_btn) {
-            onCameraClick();
-        } else if (id == R.id.te_panel_folded_view_left_bottom_layout) {
-            if (panelViewListener != null) {
-                panelViewListener.onLeftBottomBtnClick(TE_PANEL_VIEW_FOLDED_TYPE);
-            }
-        } else if (id == R.id.te_panel_expand_view_left_bottom_layout) {
-            if (panelViewListener != null) {
-                panelViewListener.onLeftBottomBtnClick(TE_PANEL_VIEW_EXPAND_TYPE);
-            }
-        } else if (id == R.id.te_panel_expand_view_back_btn) {
+          if (id == R.id.te_panel_expand_view_back_btn) {
             onBackClick();
-        } else if (id == R.id.te_panel_expand_view_right_bottom_layout) {
-            if (panelViewListener != null) {
-                panelViewListener.onRightBottomBtnClick(TE_PANEL_VIEW_EXPAND_TYPE);
-            }
-        } else if (id == R.id.te_panel_folded_view_right_bottom_layout) {
-            if (panelViewListener != null) {
-                panelViewListener.onRightBottomBtnClick(TE_PANEL_VIEW_FOLDED_TYPE);
-            }
-        } else if (id == R.id.te_panel_expand_view_top_right_layout) {
+        }   else if (id == R.id.te_panel_expand_view_top_right_layout) {
             if (panelViewListener != null) {
                 panelViewListener.onTopRightBtnClick();
             }
@@ -682,72 +618,12 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
 
     public void showBottomBtn(boolean isShowLeftBottom, boolean isShowRightBottom, int type) {
-        if (type == TE_PANEL_VIEW_FOLDED_TYPE) {
-            this.foldedViewLeftBottomBtn.setVisibility(isShowLeftBottom ? VISIBLE : GONE);
-            this.foldedViewRightBottomBtn.setVisibility(isShowRightBottom ? VISIBLE : GONE);
-        } else if (type == TE_PANEL_VIEW_EXPAND_TYPE) {
-            this.expandViewRightBottomBtn.setVisibility(isShowRightBottom ? VISIBLE : GONE);
-            this.expandViewLeftBottomBtn.setVisibility(isShowLeftBottom ? VISIBLE : GONE);
-        }
+
     }
 
 
     public void showTopRightLayout(boolean isVisibility) {
         this.expandViewTopRightRevertLayout.setVisibility(isVisibility ? VISIBLE : GONE);
-    }
-
-
-    public void showBottomLayout(boolean isVisibility) {
-        this.expandViewBottomLayout.setVisibility(isVisibility ? VISIBLE : GONE);
-    }
-
-    public boolean isVisibilityBottomLayout() {
-        return this.expandViewBottomLayout.getVisibility() == VISIBLE;
-    }
-
-
-    public void showExpandLayout() {
-        expandLayout.setVisibility(VISIBLE);
-        foldedLayout.setVisibility(GONE);
-    }
-
-
-
-    public void showFoldLayout() {
-        foldedLayout.setVisibility(VISIBLE);
-        expandLayout.setVisibility(GONE);
-    }
-
-
-    @SuppressLint("ResourceType")
-    public void setLeftBottomBtnInfo(@IntegerRes int icon, @IntegerRes int name, int type) {
-        if (icon != 0) {
-            ImageView imageView = type == TE_PANEL_VIEW_FOLDED_TYPE ? foldedViewLeftBottomImg : expandViewLeftBottomBtnImg;
-            imageView.setImageResource(icon);
-        }
-        if (name != 0) {
-            TextView textView = type == TE_PANEL_VIEW_FOLDED_TYPE ? foldedViewLeftBottomText : expandViewLeftBottomBtnText;
-            textView.setText(name);
-        }
-    }
-
-
-    @SuppressLint("ResourceType")
-    public void setRightBottomBtnInfo(@IntegerRes int icon, @IntegerRes int name, int type) {
-        if (icon != 0) {
-            ImageView imageView = type == TE_PANEL_VIEW_FOLDED_TYPE ? foldedViewRightBottomImg : expandViewRightBottomImg;
-            imageView.setImageResource(icon);
-        }
-        if (name != 0) {
-            TextView textView = type == TE_PANEL_VIEW_FOLDED_TYPE ? foldedViewRightBottomText : expandViewRightBottomText;
-            textView.setText(name);
-        }
-    }
-
-    private void onCameraClick() {
-        if (this.panelViewListener != null) {
-            this.panelViewListener.onCameraClick();
-        }
     }
 
 
@@ -1015,9 +891,6 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         }
         if (this.panelBgView != null) {
             this.panelBgView.setBackgroundColor(uiConfig.panelBackgroundColor);
-        }
-        if (this.foldedLayout != null) {
-            this.foldedLayout.setBackgroundColor(uiConfig.panelBackgroundColor);
         }
         if (this.recycleViewAdapter != null) {
             this.recycleViewAdapter.updateUIConfig(uiConfig);

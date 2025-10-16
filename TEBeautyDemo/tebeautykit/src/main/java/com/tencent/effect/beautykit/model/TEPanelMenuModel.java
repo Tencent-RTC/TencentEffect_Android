@@ -13,22 +13,22 @@ public class TEPanelMenuModel {
     private List<TEPanelDataModel> lut;
 
 
-    public List<TEPanelMenuCategory> getPanelMenuCategories() {
-        List<TEPanelMenuCategory> list = new ArrayList<>();
-        if (motions != null && motions.size() > 0) {
-            list.add(TEPanelMenuCategory.MOTION);
-        }
-        if (beauties != null && beauties.size() > 0) {
-            list.add(TEPanelMenuCategory.BEAUTY);
-        }
-        if (makeups != null && makeups.size() > 0) {
-            list.add(TEPanelMenuCategory.MAKEUP);
-        }
-        if (lut != null && lut.size() > 0) {
-            list.add(TEPanelMenuCategory.LUT);
-        }
-        return list;
-    }
+//    public List<TEPanelMenuCategory> getPanelMenuCategories() {
+//        List<TEPanelMenuCategory> list = new ArrayList<>();
+//        if (motions != null && motions.size() > 0) {
+//            list.add(TEPanelMenuCategory.MOTION);
+//        }
+//        if (beauties != null && beauties.size() > 0) {
+//            list.add(TEPanelMenuCategory.BEAUTY);
+//        }
+//        if (makeups != null && makeups.size() > 0) {
+//            list.add(TEPanelMenuCategory.MAKEUP);
+//        }
+//        if (lut != null && lut.size() > 0) {
+//            list.add(TEPanelMenuCategory.LUT);
+//        }
+//        return list;
+//    }
 
 
     public TEPanelMenuModel() {
@@ -41,35 +41,35 @@ public class TEPanelMenuModel {
         this.lut = lut;
     }
 
-    public List<TEPanelDataModel> getDataByType(TEPanelMenuCategory TEPanelMenuCategory) {
-        switch (TEPanelMenuCategory) {
-            case MOTION:
-                return this.motions;
-            case BEAUTY:
-                return this.beauties;
-            case MAKEUP:
-                return this.makeups;
-            case LUT:
-                return this.lut;
-        }
-        return null;
-    }
+//    public List<TEPanelDataModel> getDataByType(TEPanelMenuCategory TEPanelMenuCategory) {
+//        switch (TEPanelMenuCategory) {
+//            case MOTION:
+//                return this.motions;
+//            case BEAUTY:
+//                return this.beauties;
+//            case MAKEUP:
+//                return this.makeups;
+//            case LUT:
+//                return this.lut;
+//        }
+//        return null;
+//    }
 
 
-    public List<TEPanelDataModel> getAllData() {
-        List<TEPanelDataModel> result = new ArrayList<>();
-        if (this.motions != null) {
-            result.addAll(this.motions);
-        }
-        if (this.beauties != null) {
-            result.addAll(this.beauties);
-        }
-        if (this.makeups != null) {
-            result.addAll(this.makeups);
-        }
-        if (this.lut != null) {
-            result.addAll(this.lut);
-        }
-        return result;
-    }
+//    public List<TEPanelDataModel> getAllData() {
+//        List<TEPanelDataModel> result = new ArrayList<>();
+//        if (this.motions != null) {
+//            result.addAll(this.motions);
+//        }
+//        if (this.beauties != null) {
+//            result.addAll(this.beauties);
+//        }
+//        if (this.makeups != null) {
+//            result.addAll(this.makeups);
+//        }
+//        if (this.lut != null) {
+//            result.addAll(this.lut);
+//        }
+//        return result;
+//    }
 }
