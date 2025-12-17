@@ -37,26 +37,18 @@ public interface ITEPanelView {
 
     void setupWithTEBeautyKit(TEBeautyKit beautyKit);
 
-//    /**
-//     * Show the panel by passing the corresponding data.
-//     *
-//     * @param beautyPanelMenuData The panel data
-//     * @param menuCategory        The current menu data to display. It can be null, which means that the menu will be displayed directly after entering. If it is not null, it will display the specific data in the menu.
-//     * @param tabIndex            The index of the selected tab when opening the menu. For example, in the beauty and shaping menu, there are four tabs (beauty, image adjustment, advanced shaping, body shaping). When entering from a single-point beauty capability, the beauty tab needs to be selected. When entering from body shaping, the body shaping tab needs to be selected. This parameter can be used to control the selection of the corresponding tab.
-//     */
-//    void showView(TEPanelMenuModel beautyPanelMenuData, TEPanelMenuCategory menuCategory, int tabIndex);
 
 
     void checkPanelViewItem(TEUIProperty uiProperty);
 
 
-    void showMenu(boolean isShowMenu);
 
 
     void showTopRightLayout(boolean isVisibility);
 
 
 
+    void revertEffect();
 
     void updateUIConfig(TEUIConfig uiConfig);
 

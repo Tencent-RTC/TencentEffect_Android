@@ -36,6 +36,6 @@ ext {
     camera_core = 'androidx.camera:camera-core:1.3.3'
     camera_camera2 = 'androidx.camera:camera-camera2:1.3.3'
     camera_lifecycle = 'androidx.camera:camera-lifecycle:1.3.3'
-    libpag = 'com.tencent.tav:libpag:4.4.24-noffavc'
+    libpag = 'com.tencent.tav:libpag:4.4.35-noffavc'
 }
 

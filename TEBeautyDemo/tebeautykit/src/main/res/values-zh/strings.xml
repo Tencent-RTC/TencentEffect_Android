@@ -14,6 +14,7 @@
 
     <string name="te_beauty_panel_view_green_screen_tip_title">导入图片</string>
     <string name="te_beauty_panel_view_green_screen_tip_msg">请您站在绿幕前，选择一张图片，将绿幕替换为所选图片</string>
+    <string name="te_beauty_panel_view_blue_screen_tip_msg">请您站在蓝幕前，选择一张图片，将蓝幕替换为所选图片</string>
     <string name="te_beauty_panel_view_green_screen_tip_dialog_left_btn">取消</string>
     <string name="te_beauty_panel_view_green_screen_tip_dialog_right_btn">选择图片</string>
     

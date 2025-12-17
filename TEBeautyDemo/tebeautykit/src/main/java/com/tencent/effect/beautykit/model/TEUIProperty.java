@@ -12,7 +12,7 @@ import java.util.Map;
 public class TEUIProperty {
 
 
-
+    public int id = -1;    //美颜模板数据中的id，用于区分美颜模板
     public String displayName;
     public String displayNameEn;
     public String icon;
@@ -25,9 +25,10 @@ public class TEUIProperty {
 
     public TEUIProperty parentUIProperty;
     public UICategory uiCategory;
+    public String titleType;
     public TEMotionDLModel dlModel = null;
-    public boolean isShowGridLayout = false;
-
+    public boolean verticalLayout = false;
+    public boolean hasSubTitle = false;
 
     private int uiState = 0;
 
@@ -64,11 +65,14 @@ public class TEUIProperty {
     public static class TESDKParam implements Cloneable {
 
 
+        public static final String BEAUTY_TEMPLATE_EFFECT_NAME = "BEAUTY_TEMPLATE";
+
         public static final String EXTRA_INFO_BG_TYPE_IMG = "0";
         public static final String EXTRA_INFO_BG_TYPE_VIDEO = "1";
         // The value of seg_type, if it is a custom segmentation, use: EXTRA_INFO_SEG_TYPE_CUSTOM, for green screen, use EXTRA_INFO_SEG_TYPE_GREEN.
         public static final String [] EXTRA_INFO_SEG_TYPE_GREEN = {"green_background","green_background_v2"};
         public static final String EXTRA_INFO_SEG_TYPE_CUSTOM = "custom_background";
+        public static final String GREEN_PARAMS_V2 = "green_params_v2";
 
         public static final String EXTRA_INFO_KEY_BG_TYPE = "bgType";
         public static final String EXTRA_INFO_KEY_BG_PATH = "bgPath";
@@ -84,6 +88,8 @@ public class TEUIProperty {
         public int effectValue = 0;
         public String resourcePath;
         public Map<String, String> extraInfo;
+        
+        public transient Object tag;
 
         @Override
         public TESDKParam clone() throws CloneNotSupportedException {
@@ -92,16 +98,14 @@ public class TEUIProperty {
 
         @Override
         public String toString() {
-            return "TEParam{" +
+            return "TESDKParam{" +
                     "effectName='" + effectName + '\'' +
                     ", effectValue=" + effectValue +
                     ", resourcePath='" + resourcePath + '\'' +
                     ", extraInfo=" + extraInfo +
+                    ", tag=" + tag +
                     '}';
         }
-
-
-
     }
 
 

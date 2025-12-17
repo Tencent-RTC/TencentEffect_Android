@@ -1,52 +1,42 @@
 package com.tencent.effect.beautykit.view.panelview;
 
 import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.EXTRA_INFO_KEY_BG_PATH;
+import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.EXTRA_INFO_KEY_KEY_COLOR;
 import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.EXTRA_INFO_KEY_SEG_TYPE;
+import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.GREEN_PARAMS_V2;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Typeface;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
-import android.util.ArrayMap;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.tencent.effect.beautykit.R;
+import com.tencent.effect.beautykit.TEBeautyKit;
 import com.tencent.effect.beautykit.config.TEUIConfig;
-import com.tencent.effect.beautykit.download.TEDownloadListener;
-import com.tencent.effect.beautykit.manager.TEDownloadManager;
-import com.tencent.effect.beautykit.model.TEMotionDLModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
+import com.tencent.effect.beautykit.provider.TEGeneralDataProvider;
 import com.tencent.effect.beautykit.provider.TEPanelDataProvider;
 import com.tencent.effect.beautykit.utils.CustomDrawableUtils;
 import com.tencent.effect.beautykit.utils.LogUtils;
 import com.tencent.effect.beautykit.utils.PanelDisplay;
 import com.tencent.effect.beautykit.utils.ScreenUtils;
 import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
-import com.tencent.effect.beautykit.view.dialog.TEProgressDialog;
 import com.tencent.effect.beautykit.view.widget.SwitchLayout;
 import com.tencent.effect.beautykit.view.widget.indicatorseekbar.IndicatorSeekBar;
 import com.tencent.effect.beautykit.view.widget.indicatorseekbar.OnSeekChangeListener;
@@ -60,43 +50,34 @@ import java.util.List;
 import java.util.Map;
 
 
-
-
 public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
-        TEDetailPanelAdapter.ItemClickListener, RadioGroup.OnCheckedChangeListener, SwitchLayout.SwitchLayoutListener {
-
-    public static final int TE_PANEL_VIEW_FOLDED_TYPE = 0;
-    public static final int TE_PANEL_VIEW_EXPAND_TYPE = 1;
+        TEDetailPanelAdapter.ItemClickListener, SwitchLayout.SwitchLayoutListener {
 
 
     private static final String TAG = TEDetailPanel.class.getName();
 
-    private LinearLayout expandLayout;
 
-    private LinearLayout expandViewCustomViewLayout;
-    private ConstraintLayout expandViewCustomViewLayoutSeekbarLayout;
     private IndicatorSeekBar indicatorSeekBar;
     private SwitchLayout switchLayout;
-    private ImageView expandViewCompareBtn;
-    private RadioGroup expandViewRadioGroup;
-    private HorizontalScrollView expandViewHorizontalScrollView;
+    private ImageView compareBtn;
+    private TEBeautyTabLayout mainTabLayout;
+    private TEBeautyTabLayout subTabLayout;
 
-    private View expandViewTitleDivider;
-    private View expandViewTopRightDivider;
-    private LinearLayout expandViewRadioGroupLayout;
+    private View titleDivider;
+    private View topRightDivider;
+    private RelativeLayout mainTitleLayout;
 
-    private LinearLayout expandViewTopRightRevertLayout;
-    private TextView expandViewTopRightRevertText;
-    private ImageView expandViewBackBtn;
-    private TextView expandViewTitle;
+    private LinearLayout rightRevertLayout;
+    private TextView rightRevertText;
+    private ImageView backBtn;
+    private TextView titleText;
 
 
     private TEPanelDataProvider panelDataProvider;
     private TEDetailPanelAdapter recycleViewAdapter;
     private TEDetailPanelListener panelViewListener;
 
-    private final Handler handler = new Handler(Looper.getMainLooper());
-    private TEProgressDialog progressDialog;
+    private TEDownloadHelper downloadHelper = null;
 
 
     private RecyclerView recyclerView;
@@ -104,22 +85,18 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
     // Used to store the previous scroll position of the list. Once this position information is used, it should be deleted.
     private final List<Integer> itemPositions = new ArrayList<>();
-    private final Map<String, Integer> typePropertyPositionMap = new ArrayMap<>();
-    private TEUIProperty lastCheckedUIProperty = null;
+
 
     private LayoutType layoutType = LayoutType.LINEAR;
-    private LinearLayout gridLayoutEntryBtn = null;
 
-    private final int recycleViewPaddingRight = ScreenUtils.dip2px(getContext(), 72);
     private final int recycleViewPaddingLeft = ScreenUtils.dip2px(getContext(), 12);
 
-    private int checkItemIndex = 0;
-    private final int radioBtnLeftMargin = ScreenUtils.dip2px(getContext(), 20);
-    private final int recycleViewHeightLinear = ScreenUtils.dip2px(getContext(), 120);
-
-    private int customViewHeight = ScreenUtils.dip2px(getContext(), 75);
     private final GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 5);
     private final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+
+    private final int recycleViewHeightGrid = ScreenUtils.dip2px(getContext(), 126);
+    private final int recycleViewHeightLinear = ScreenUtils.dip2px(getContext(), 100);
+
 
     public TEDetailPanel(@NonNull Context context) {
         this(context, null);
@@ -141,57 +118,53 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             }
             typedArray.recycle();
         }
+        this.downloadHelper = new TEDownloadHelper(context);
         initViews(context);
     }
 
 
-
-
+    @SuppressLint("ClickableViewAccessibility")
     private void initViews(Context context) {
         setClickable(true);
-        expandLayout = (LinearLayout) LayoutInflater.from(context)
-                .inflate(R.layout.te_beauty_panel_view_expand_layout, this, false);
-        LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.gravity = Gravity.BOTTOM;
-        addView(expandLayout);
-        initExpandViews();
-    }
-
-    @SuppressLint({"ClickableViewAccessibility", "ResourceAsColor"})
-    private void initExpandViews() {
-        expandViewCustomViewLayout = findViewById(R.id.te_panel_expand_view_custom_view_layout);
-        expandViewCustomViewLayoutSeekbarLayout = findViewById(R.id.te_panel_expand_view_custom_view_seekbar_layout);
-        indicatorSeekBar = findViewById(R.id.te_panel_expand_view_seekBar);
+        LayoutInflater.from(context).inflate(R.layout.te_beauty_panel_view_layout, this, true);
+        indicatorSeekBar = findViewById(R.id.te_panel_view_seekBar);
         indicatorSeekBar.setVisibility(GONE);
         TEUIConfig uiConfig = TEUIConfig.getInstance();
         this.indicatorSeekBar.setThumbDrawable(CustomDrawableUtils.createSeekBarThumbDrawable(getContext(), uiConfig.seekBarProgressColor));
         this.indicatorSeekBar.setProgressTrackColor(uiConfig.seekBarProgressColor);
         this.indicatorSeekBar.setIndicatorColor(uiConfig.seekBarProgressColor);
-        switchLayout = findViewById(R.id.te_panel_expand_view_switch);
-        expandViewCompareBtn = findViewById(R.id.te_panel_expand_view_compare_btn);
-        expandViewHorizontalScrollView = findViewById(R.id.te_panel_expand_view_radio_group_scroll_view);
-        expandViewRadioGroup = findViewById(R.id.te_panel_expand_view_radio_group);
-        expandViewRadioGroup.setOnCheckedChangeListener(this);
-        expandViewRadioGroupLayout = findViewById(R.id.te_panel_expand_view_radio_group_layout);
-        expandViewTopRightRevertLayout = findViewById(R.id.te_panel_expand_view_top_right_layout);
-        expandViewTopRightRevertLayout.setOnClickListener(this);
-        expandViewTopRightRevertText = findViewById(R.id.te_panel_expand_view_top_right_txt);
-        expandViewTopRightRevertText.setTextColor(uiConfig.textColor);
-        expandViewTitleDivider = findViewById(R.id.te_panel_expand_view_title_divider);
-        expandViewTitleDivider.setBackgroundColor(uiConfig.panelDividerColor);
-        expandViewTopRightDivider = findViewById(R.id.te_panel_expand_view_top_right_layout_divider);
-        expandViewTopRightDivider.setBackgroundColor(uiConfig.panelDividerColor);
+        switchLayout = findViewById(R.id.te_panel_view_switch);
+        compareBtn = findViewById(R.id.te_panel_view_compare_btn);
 
-
-        expandViewBackBtn = findViewById(R.id.te_panel_expand_view_back_btn);
-        expandViewTitle = findViewById(R.id.te_panel_expand_view_title_text);
-        gridLayoutEntryBtn = findViewById(R.id.te_panel_view_gridlayout_entry_btn);
-        gridLayoutEntryBtn.setOnClickListener(v -> {
-            if (panelViewListener != null) {
-                panelViewListener.onMoreItemBtnClick();
+        mainTabLayout = findViewById(R.id.te_panel_view_main_title_tab_layout);
+        mainTabLayout.setTabSelectedListener((property, selectedTabIndex) -> {
+            if (property.hasSubTitle) {
+                subTabLayout.setVisibility(VISIBLE);
+                subTabLayout.setData(property.propertyList, 12);
+            } else {
+                subTabLayout.setVisibility(GONE);
+                subTabLayout.setData(null, 0);
+                onSelectedInternal(property, selectedTabIndex);
             }
         });
+        subTabLayout = findViewById(R.id.te_panel_view_sub_title_tab_layout);
+        subTabLayout.setTabSelectedListener(this::onSelectedInternal);
+
+
+        mainTitleLayout = findViewById(R.id.te_panel_view_main_tab_layout);
+        rightRevertLayout = findViewById(R.id.te_panel_view_top_right_layout);
+        rightRevertLayout.setOnClickListener(this);
+        rightRevertText = findViewById(R.id.te_panel_view_top_right_txt);
+        rightRevertText.setTextColor(uiConfig.textColor);
+        titleDivider = findViewById(R.id.te_panel_view_title_divider);
+        titleDivider.setBackgroundColor(uiConfig.panelDividerColor);
+        topRightDivider = findViewById(R.id.te_panel_view_top_right_layout_divider);
+        topRightDivider.setBackgroundColor(uiConfig.panelDividerColor);
+
+
+        backBtn = findViewById(R.id.te_panel_view_back_btn);
+        titleText = findViewById(R.id.te_panel_view_title_text);
+
         recyclerView = findViewById(R.id.te_panel_view_recycle_view);
         panelBgView = findViewById(R.id.te_panel_view_bg_view);
         panelBgView.setBackgroundColor(uiConfig.panelBackgroundColor);
@@ -218,125 +191,83 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
                 onSeekBarStopTrackingTouch();
             }
         });
-        expandViewCompareBtn.setOnTouchListener(new CompareBtnTouchListener());
-        expandViewBackBtn.setOnClickListener(this);
+        compareBtn.setOnTouchListener(new CompareBtnTouchListener());
+        backBtn.setOnClickListener(this);
     }
 
 
-
-
-    @SuppressLint({"ResourceType", "RtlHardcoded"})
-    private void initRadioGroup(List<TEUIProperty> propertyList) {
-        checkItemIndex = 0;
-        expandViewRadioGroup.removeAllViews();
-        if (propertyList == null || propertyList.isEmpty()) {
-            return;
+    public void onSelectedInternal(TEUIProperty uiProperty, int selectedTabIndex) {
+        if (selectedTabIndex != -1) {
+            panelDataProvider.onTabSelected(selectedTabIndex);
         }
-        ((FrameLayout.LayoutParams) expandViewRadioGroup.getLayoutParams()).gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
-        TEUIProperty checkedItem = null;
-        for (int i = 0; i < propertyList.size(); i++) {
-            TEUIProperty uiProperty = propertyList.get(i);
-            RadioButton btn = new RadioButton(getContext());
-            btn.setTag(R.id.te_beauty_panel_view_radio_button_key, uiProperty);
-            int uiID = View.generateViewId();
-            btn.setId(uiID);
-            btn.setButtonDrawable(null);
-            btn.setTextSize(16);
-            btn.setLines(1);
-            btn.setTextColor(CustomDrawableUtils.createRadioGroupColorStateList(TEUIConfig.getInstance().textCheckedColor, TEUIConfig.getInstance().textColor));
-            btn.setText(PanelDisplay.getDisplayName(uiProperty));
-            RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            layoutParams.leftMargin = radioBtnLeftMargin;
-
-            expandViewRadioGroup.addView(btn, layoutParams);
-            boolean isHiddenThisRadioBtn = (this.layoutType == LayoutType.GRID) && TEUIConfig.getInstance().hiddenCategories.contains(uiProperty.uiCategory);
-            if (isHiddenThisRadioBtn) {  //如果是网格布局，那么隐藏 美颜、美体、滤镜
-                btn.setVisibility(GONE);
-            }
-            if (uiProperty.getUiState() == TEUIProperty.UIState.CHECKED_AND_IN_USE && !isHiddenThisRadioBtn) {
-                checkItemIndex = i;
-                checkedItem = uiProperty;
-                btn.setChecked(true);
-                recycleViewAdapter.setProperties(uiProperty.propertyList);
-                setSeekBarState(getCheckedUIProperty(uiProperty.propertyList));
-                this.showOrHideEntryBtn(uiProperty);
-            }
-        }
-        if (checkedItem == null) {
-            checkItemIndex = 0;
-            checkedItem = propertyList.get(0);
-            ((RadioButton) expandViewRadioGroup.getChildAt(0)).setChecked(true);
-            recycleViewAdapter.setProperties(checkedItem.propertyList);
-            setSeekBarState(getCheckedUIProperty(checkedItem.propertyList));
-            this.showOrHideEntryBtn(checkedItem);
-            expandViewHorizontalScrollView.scrollTo(0, 0);
-        }
+        onClickTitle(uiProperty);
+        this.initRecycleView(uiProperty);
+        recycleViewAdapter.setProperties(uiProperty.propertyList);
+        setSeekBarState(getCheckedUIProperty(uiProperty.propertyList));
         recycleViewAdapter.scrollToPosition(0);
-        expandViewRadioGroup.post(() -> {
-            RadioButton radioButton = (RadioButton) expandViewRadioGroup.getChildAt(checkItemIndex);
-            scrollToVisible(radioButton, expandViewHorizontalScrollView);
-        });
     }
 
 
-    private void scrollToVisible(RadioButton radioButton, HorizontalScrollView scrollView) {
-        int left = radioButton.getLeft() + radioButton.getWidth();
-        int width = scrollView.getWidth();
-        scrollView.scrollTo(left - width, 0);
+    private void initRecycleView(TEUIProperty uiProperty) {
+        RecyclerView.LayoutManager currentLayoutmanager = recyclerView.getLayoutManager();
+        boolean isLinearLayout = !(uiProperty.parentUIProperty != null ? uiProperty.parentUIProperty.verticalLayout : uiProperty.verticalLayout);
+        if (currentLayoutmanager == null) {
+            if (isLinearLayout) {
+                linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+                recyclerView.setLayoutManager(linearLayoutManager);
+            } else {
+                gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+                recyclerView.setLayoutManager(gridLayoutManager);
+            }
+        } else {
+            if (currentLayoutmanager instanceof GridLayoutManager && isLinearLayout) {
+                linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+                recyclerView.setLayoutManager(linearLayoutManager);
+            } else if (currentLayoutmanager instanceof LinearLayoutManager && !isLinearLayout) {
+                gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
+                recyclerView.setLayoutManager(gridLayoutManager);
+            }
+        }
+        if (isLinearLayout) {
+            recyclerView.getLayoutParams().height = recycleViewHeightLinear;
+        } else {
+            recyclerView.getLayoutParams().height = recycleViewHeightGrid;
+        }
+        if (recycleViewAdapter != null) {
+            recycleViewAdapter.updateLayoutManager((LinearLayoutManager) recyclerView.getLayoutManager());
+        } else {
+            recycleViewAdapter = new TEDetailPanelAdapter((LinearLayoutManager) recyclerView.getLayoutManager(), this);
+            recyclerView.setAdapter(recycleViewAdapter);
+        }
     }
 
 
+    /**
+     * 手动选中item 的时候调用此方法
+     *
+     * @param uiProperty
+     */
     public void checkPanelViewItem(TEUIProperty uiProperty) {
-        if (TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_GREEN[1].equals(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_SEG_TYPE))) {
-            this.checkGSV2Item(uiProperty);
+        if (TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_GREEN[1].equals(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_SEG_TYPE)) && uiProperty.uiCategory == TEUIProperty.UICategory.SEGMENTATION) {
+            List<TEUIProperty> uiPropertyList = panelDataProvider.onHandRecycleViewItemClick(uiProperty);
+            if (uiPropertyList != null && !uiPropertyList.isEmpty()) {
+                this.showChildrenItems(uiProperty, uiPropertyList);
+            }
+            this.handleRecyclerViewItemClick(ProviderUtils.getImportTEUIPropertyItem(uiProperty));
             return;
         }
-        if (panelDataProvider != null) {
-            panelDataProvider.selectPropertyItem(uiProperty);
-        }
-        if (recycleViewAdapter != null) {
-            recycleViewAdapter.notifyDataSetChanged();
-        }
-        setSeekBarState(uiProperty);
-    }
-
-    private void checkGSV2Item(TEUIProperty uiProperty){
-        this.onClickItem(uiProperty);
-        TEUIProperty teuiProperty = ProviderUtils.getImportTEUIPropertyItem(uiProperty);
-        if (panelDataProvider != null) {
-            panelDataProvider.selectPropertyItem(teuiProperty);
-        }
-        if (recycleViewAdapter != null) {
-            recycleViewAdapter.notifyDataSetChanged();
-        }
-        setSeekBarState(teuiProperty);
-    }
-
-
-
-    public void setCustomView(View view, ViewGroup.LayoutParams layoutParams) {
-        this.expandViewCustomViewLayout.removeAllViews();
-        if (view == null) {
-            // 75 = 滑竿区域高度35 + 标题区域高度 40
-            customViewHeight = ScreenUtils.dip2px(getContext(), 75);
-            this.expandViewCustomViewLayout.addView(this.expandViewCustomViewLayoutSeekbarLayout);
-        } else {
-            // customViewHeight = view height + 标题区域高度 40
-            customViewHeight = layoutParams.height + ScreenUtils.dip2px(getContext(),40);
-            this.expandViewCustomViewLayout.addView(view, layoutParams);
-        }
+        this.handleRecyclerViewItemClick(uiProperty);
     }
 
 
     @Override
-    public void onItemClick(TEUIProperty uiProperty) {
+    public void onRecycleViewItemClick(TEUIProperty uiProperty) {
         if (uiProperty == null) {
             return;
         }
         if (uiProperty.uiCategory == TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE) {  //所以这里判断是不是绿幕2中的导入图片项
             TEUIProperty parentProperty = uiProperty.parentUIProperty;
-            parentProperty.sdkParam.extraInfo.put("green_params_v2", ProviderUtils.getGreenParamsV2(parentProperty));
+            parentProperty.sdkParam.extraInfo.put(GREEN_PARAMS_V2, ProviderUtils.getGreenParamsV2(parentProperty));
             uiProperty.sdkParam = parentProperty.sdkParam;
             panelViewListener.onClickCustomSeg(uiProperty);
             return;
@@ -347,9 +278,9 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         ) {
             if (TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_GREEN[1].equals(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_SEG_TYPE))) {  //这个是绿幕2的情况 需要特殊处理，判断是否有背景图，如果有的话直接进入子目录
                 // 将子项的值填写进去
-                uiProperty.sdkParam.extraInfo.put("green_params_v2", ProviderUtils.getGreenParamsV2(uiProperty));
+                uiProperty.sdkParam.extraInfo.put(GREEN_PARAMS_V2, ProviderUtils.getGreenParamsV2(uiProperty));
                 if (!TextUtils.isEmpty(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_BG_PATH))) {
-                    this.onClickItem(uiProperty);
+                    this.handleRecyclerViewItemClick(uiProperty);
                     return;
                 }
             }
@@ -357,57 +288,83 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
                 panelViewListener.onClickCustomSeg(uiProperty);
             }
         } else {
-            this.onClickItem(uiProperty);
+            this.handleRecyclerViewItemClick(uiProperty);
         }
     }
 
 
-    private void onClickItem(TEUIProperty uiProperty) {
-        List<TEUIProperty> uiPropertyList = panelDataProvider.onItemClick(uiProperty);
-        if (uiPropertyList == null) {
-            if (isNeedDownload(uiProperty)) {
-                startDownload(uiProperty, new DefaultTEDownloadListenerImp() {
-                    @Override
-                    public void onDownloadSuccess(String directory) {
-                        recycleViewAdapter.notifyDataSetChanged();
-                        setSeekBarState(uiProperty);
-                        if (panelViewListener != null) {
-                            panelViewListener.onUpdateEffect(uiProperty.sdkParam);
-                        }
-                    }
-                });
-            } else {
-                if (panelViewListener == null) {
-                    return;
-                }
-                if (uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE) {
-                    panelViewListener.onUpdateEffectList(panelDataProvider.getBeautyTemplateData(uiProperty));
-                } else if (uiProperty.isNoneItem()) {
-                    List<TEUIProperty.TESDKParam> closeList = panelDataProvider.getCloseEffectItems(uiProperty);
-                    if (closeList != null && !closeList.isEmpty()) {
-                        panelViewListener.onUpdateEffectList(closeList);
-                    }
-                } else {
-                    panelViewListener.onUpdateEffect(this.getSDKParam(uiProperty));
-                }
-                recycleViewAdapter.notifyDataSetChanged();
-                setSeekBarState(uiProperty);
-            }
+    /**
+     * 处理RecyclerView项的点击事件
+     * 根据数据提供者的返回结果决定是显示子项列表还是执行具体的点击逻辑
+     *
+     * @param uiProperty 被点击的UI属性对象
+     *                   逻辑流程：
+     *                   1. 检查UI属性是否为null
+     *                   2. 调用数据提供者处理点击事件，获取子项列表
+     *                   3. 如果存在子项列表，则显示子项界面
+     *                   4. 如果没有子项列表，则执行具体的点击处理逻辑
+     */
+    private void handleRecyclerViewItemClick(TEUIProperty uiProperty) {
+        if (uiProperty == null) {
+            return;
+        }
+        List<TEUIProperty> uiPropertyList = panelDataProvider.onHandRecycleViewItemClick(uiProperty);
+
+        if (uiPropertyList != null) {
+            this.showChildrenItems(uiProperty, uiPropertyList);
         } else {
-            this.showChildrenItem(uiProperty, uiPropertyList);
+            handleUIPropertyClickLogic(uiProperty);
+        }
+    }
+
+    /**
+     * 处理UI属性点击事件的逻辑
+     * 包括下载检查、不同UI分类的处理（美颜模板、无效果项、普通项等）
+     *
+     * @param uiProperty 被点击的UI属性对象
+     */
+    private void handleUIPropertyClickLogic(TEUIProperty uiProperty) {
+        if (isNeedDownload(uiProperty)) {
+            this.downloadHelper.startDownload(uiProperty, new TEDownloadHelper.DefaultTEDownloadListenerImp() {
+                @Override
+                public void onDownloadSuccess(String directory) {
+                    recycleViewAdapter.notifyDataSetChanged();
+                    setSeekBarState(uiProperty);
+                    if (panelViewListener != null) {
+                        panelViewListener.onUpdateEffect(uiProperty.sdkParam);
+                    }
+                }
+            });
+        } else {
+            if (panelViewListener == null) {
+                return;
+            }
+            if (uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE) {     //美颜模板需要特殊处理
+                panelViewListener.onUpdateEffect(uiProperty.sdkParam);
+                ((TEGeneralDataProvider) this.panelDataProvider).restoreUIStateFromParams(uiProperty.paramList, "点击的时候同步");
+                //同步美颜数据
+            } else if (uiProperty.isNoneItem()) {
+                List<TEUIProperty.TESDKParam> closeList = panelDataProvider.getCloseEffectItems(uiProperty);
+                if (closeList != null && !closeList.isEmpty()) {
+                    panelViewListener.onUpdateEffectList(closeList);
+                }
+            } else {
+                panelViewListener.onUpdateEffect(this.getSDKParamFromTEUIProperty(uiProperty));
+            }
+            recycleViewAdapter.notifyDataSetChanged();
+            setSeekBarState(uiProperty);
         }
     }
 
 
-
-    private void showChildrenItem(TEUIProperty currentItem, List<TEUIProperty> uiPropertyList) {
+    private void showChildrenItems(TEUIProperty currentItem, List<TEUIProperty> uiPropertyList) {
         itemPositions.add(recycleViewAdapter.findFirstVisibleItemPosition());
         setSeekBarState(null);
-        expandViewBackBtn.setVisibility(VISIBLE);
-        expandViewTitle.setText(PanelDisplay.getDisplayName(currentItem));
-        expandViewTitle.setVisibility(VISIBLE);
-        expandViewTitle.setTag(currentItem);
-        expandViewRadioGroupLayout.setVisibility(INVISIBLE);
+        backBtn.setVisibility(VISIBLE);
+        titleText.setText(PanelDisplay.getDisplayName(currentItem));
+        titleText.setVisibility(VISIBLE);
+        titleText.setTag(currentItem);
+        mainTitleLayout.setVisibility(INVISIBLE);
         recycleViewAdapter.setProperties(uiPropertyList);
         recycleViewAdapter.scrollToPosition(0);
     }
@@ -418,10 +375,11 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             hideSeekBar();
             return;
         }
-        if (uiProperty != null && uiProperty.sdkParam != null && uiProperty.propertyList == null
+        if (uiProperty.sdkParam != null && uiProperty.propertyList == null
                 && uiProperty.uiCategory != TEUIProperty.UICategory.MOTION
                 && uiProperty.uiCategory != TEUIProperty.UICategory.SEGMENTATION
                 && !uiProperty.isBeautyMakeupNoneItem()
+                && uiProperty.uiCategory != TEUIProperty.UICategory.BEAUTY_TEMPLATE
         ) {
             TEUIProperty.EffectValueType type = TEUIProperty.getEffectValueType(uiProperty.sdkParam);
             if ((uiProperty.uiCategory == TEUIProperty.UICategory.MAKEUP || uiProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP) && uiProperty.sdkParam.extraInfo != null
@@ -438,65 +396,22 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             indicatorSeekBar.setMax(type.getMax());
             if (type.getMax() - type.getMin() <= 10) {
                 indicatorSeekBar.setTickCount(type.getMax() - type.getMin() + 1);
-            }else {
+            } else {
                 indicatorSeekBar.setTickCount(0);
             }
             indicatorSeekBar.setProgress(uiProperty.sdkParam.effectValue);
             indicatorSeekBar.setVisibility(View.VISIBLE);
             indicatorSeekBar.setTag(uiProperty);
         } else {
-           this.hideSeekBar();
+            this.hideSeekBar();
         }
     }
 
 
-    private void hideSeekBar(){
+    private void hideSeekBar() {
         indicatorSeekBar.setVisibility(View.GONE);
         switchLayout.setVisibility(GONE);
         indicatorSeekBar.setTag(null);
-    }
-
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-        if (lastCheckedUIProperty != null) {
-            typePropertyPositionMap.put(getPositionKey(lastCheckedUIProperty), recycleViewAdapter.findFirstVisibleItemPosition());
-        }
-        RadioButton radioButton = group.findViewById(checkedId);
-        if (radioButton == null) {
-            return;
-        }
-        int count = group.getChildCount();
-        int index = -1;
-        for (int i = 0; i < count; i++) {
-            RadioButton button = (RadioButton) group.getChildAt(i);
-            button.setTypeface(null, button.isChecked() ? Typeface.BOLD : Typeface.NORMAL);
-            if (radioButton == button) {
-                index = i;
-            }
-        }
-        if (index != -1) {
-            panelDataProvider.onTabItemClick(index);
-        }
-        TEUIProperty uiProperty = (TEUIProperty) radioButton.getTag(R.id.te_beauty_panel_view_radio_button_key);
-        this.showOrHideEntryBtn(uiProperty);
-        this.onClickTitle(uiProperty);
-        recycleViewAdapter.setProperties(uiProperty.propertyList);
-        setSeekBarState(getCheckedUIProperty(uiProperty.propertyList));
-        this.lastCheckedUIProperty = uiProperty;
-        Integer position = typePropertyPositionMap.get(getPositionKey(uiProperty));
-        if (position != null) {
-            recycleViewAdapter.scrollToPosition(position);
-        } else {
-            recycleViewAdapter.scrollToPosition(0);
-        }
-    }
-
-
-    private String getPositionKey(TEUIProperty teuiProperty) {
-        if (teuiProperty != null) {
-            return teuiProperty.displayName + teuiProperty.displayNameEn;
-        }
-        return null;
     }
 
 
@@ -507,40 +422,41 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
                 return;
             }
             if ((focusProperty.uiCategory == TEUIProperty.UICategory.MAKEUP || focusProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP) && switchLayout.getVisibility() == VISIBLE) {
-                onChangeMakeupItem(focusProperty.sdkParam, seekParams.progress);
+                onChangeMakeupItemEffectValue(focusProperty.sdkParam, seekParams.progress);
             } else {
                 focusProperty.sdkParam.effectValue = seekParams.progress;
             }
             if (panelViewListener != null) {
-                panelViewListener.onUpdateEffect(this.getSDKParam(focusProperty));
+                panelViewListener.onUpdateEffect(this.getSDKParamFromTEUIProperty(focusProperty));
             }
         }
     }
 
 
     /**
-     * 从TEUIProperty 中获取 TESDKParam，主要用于处理 绿幕2 子项目的情况
-     * @param teuiProperty
-     * @return
+     * 从UI属性对象中获取对应的SDK参数
+     * 对于绿幕背景V2项，需要特殊处理：检查父属性的背景路径和关键颜色，并添加GREEN_PARAMS_V2参数
+     *
+     * @param teuiProperty UI属性对象
+     * @return 处理后的SDK参数，如果UI属性为null或绿幕背景V2项的条件不满足则返回null
      */
-    private TEUIProperty.TESDKParam getSDKParam(TEUIProperty teuiProperty) {
+    private TEUIProperty.TESDKParam getSDKParamFromTEUIProperty(TEUIProperty teuiProperty) {
         if (teuiProperty == null) {
             return null;
         }
         if (teuiProperty.uiCategory == TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM) {
             TEUIProperty parentProperty = teuiProperty.parentUIProperty;
-            if (TextUtils.isEmpty(parentProperty.sdkParam.extraInfo.get("bgPath")) && TextUtils.isEmpty(parentProperty.sdkParam.extraInfo.get("keyColor"))) {
+            if (TextUtils.isEmpty(parentProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_BG_PATH)) && TextUtils.isEmpty(parentProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_KEY_COLOR))) {
                 return null;
             }
-            parentProperty.sdkParam.extraInfo.put("green_params_v2", ProviderUtils.getGreenParamsV2(parentProperty));
+            parentProperty.sdkParam.extraInfo.put(GREEN_PARAMS_V2, ProviderUtils.getGreenParamsV2(parentProperty));
             return parentProperty.sdkParam;
         }
         return teuiProperty.sdkParam;
     }
 
 
-
-    private void onChangeMakeupItem(TEUIProperty.TESDKParam teParam, int progress) {
+    private void onChangeMakeupItemEffectValue(TEUIProperty.TESDKParam teParam, int progress) {
         int checkedId = switchLayout.getCurrentCheckedItem();
         if (checkedId == SwitchLayout.SWITCH_LEFT_CHECKED) {
             teParam.effectValue = progress;
@@ -567,12 +483,10 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     }
 
     private void showView() {
-        this.expandLayout.setVisibility(VISIBLE);
-
-        this.expandViewBackBtn.setVisibility(GONE);
-        this.expandViewTitle.setVisibility(GONE);
-        this.expandViewRadioGroupLayout.setVisibility(VISIBLE);
-        initRadioGroup(this.panelDataProvider.getPanelData(getContext()));
+        this.backBtn.setVisibility(GONE);
+        this.titleText.setVisibility(GONE);
+        this.mainTitleLayout.setVisibility(VISIBLE);
+        initMainTitleLayout(this.panelDataProvider.getPanelData(getContext()));
     }
 
 
@@ -580,9 +494,9 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         int id = v.getId();
-          if (id == R.id.te_panel_expand_view_back_btn) {
+        if (id == R.id.te_panel_view_back_btn) {
             onBackClick();
-        }   else if (id == R.id.te_panel_expand_view_top_right_layout) {
+        } else if (id == R.id.te_panel_view_top_right_layout) {
             if (panelViewListener != null) {
                 panelViewListener.onTopRightBtnClick();
             }
@@ -601,7 +515,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         this.panelDataProvider = provider;
         this.panelViewListener = panelViewListener;
         this.showView();
-        this.expandViewCompareBtn.setVisibility(this.panelDataProvider.isShowCompareBtn() ? VISIBLE : GONE);
+        this.compareBtn.setVisibility(this.panelDataProvider.isShowCompareBtn() ? VISIBLE : GONE);
     }
 
 
@@ -613,19 +527,13 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         this.panelDataProvider = provider;
         this.panelViewListener = panelViewListener;
         this.showView();
-        this.expandViewCompareBtn.setVisibility(this.panelDataProvider.isShowCompareBtn() ? VISIBLE : GONE);
-    }
-
-
-    public void showBottomBtn(boolean isShowLeftBottom, boolean isShowRightBottom, int type) {
-
+        this.compareBtn.setVisibility(this.panelDataProvider.isShowCompareBtn() ? VISIBLE : GONE);
     }
 
 
     public void showTopRightLayout(boolean isVisibility) {
-        this.expandViewTopRightRevertLayout.setVisibility(isVisibility ? VISIBLE : GONE);
+        this.rightRevertLayout.setVisibility(isVisibility ? VISIBLE : GONE);
     }
-
 
 
     public void revertEffect() {
@@ -635,16 +543,23 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             if (panelViewListener != null) {
                 panelViewListener.onRevertTE(panelDataProvider.getRevertData(getContext()));
             }
-            expandViewBackBtn.setVisibility(GONE);
-            expandViewTitle.setVisibility(GONE);
-            expandViewRadioGroupLayout.setVisibility(VISIBLE);
-            initRadioGroup(panelDataProvider.getPanelData(getContext()));
+            backBtn.setVisibility(GONE);
+            titleText.setVisibility(GONE);
+            mainTitleLayout.setVisibility(VISIBLE);
+            initMainTitleLayout(panelDataProvider.getPanelData(getContext()));
         }
+    }
+
+    private void initMainTitleLayout(List<TEUIProperty> propertyList) {
+        if (propertyList == null || propertyList.isEmpty()) {
+            return;
+        }
+        mainTabLayout.setData(propertyList, 16);
     }
 
 
     private void onBackClick() {
-        TEUIProperty titleProperty = (TEUIProperty) expandViewTitle.getTag();
+        TEUIProperty titleProperty = (TEUIProperty) titleText.getTag();
         if (titleProperty == null) {
             return;
         }
@@ -652,11 +567,11 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         if (parentUIProperty == null || parentUIProperty.parentUIProperty == null) {
             this.showView();
         } else {
-            expandViewTitle.setText(PanelDisplay.getDisplayName(parentUIProperty));
-            expandViewTitle.setTag(parentUIProperty);
+            titleText.setText(PanelDisplay.getDisplayName(parentUIProperty));
+            titleText.setTag(parentUIProperty);
             recycleViewAdapter.setProperties(parentUIProperty.propertyList);
         }
-        if (itemPositions.size() > 0) {
+        if (!itemPositions.isEmpty()) {
             Integer position = itemPositions.remove(itemPositions.size() - 1);
             LogUtils.d(TAG, "onBackClick postion = " + position);
             recycleViewAdapter.scrollToPosition(position);
@@ -671,89 +586,22 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     }
 
 
-
     private boolean isNeedDownload(TEUIProperty uiProperty) {
         if (uiProperty == null) {
             return false;
         }
         if (uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY
-                || uiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY) {
+                || uiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY
+                || uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE) {
             return false;
         }
         return uiProperty.sdkParam != null && !TextUtils.isEmpty(uiProperty.resourceUri) && uiProperty.resourceUri.startsWith("http")
-                && !new File(uiProperty.sdkParam.resourcePath).exists();
+                && !new File(TEBeautyKit.getResPath() + uiProperty.sdkParam.resourcePath).exists();
     }
-
-
-    private void startDownload(TEUIProperty uiProperty, TEDownloadListener downloadListener) {
-        TEMotionDLModel dlModel = uiProperty.dlModel;
-        if (dlModel == null) {
-            LogUtils.e(TAG, "please check this item : " + uiProperty.toString());
-            Toast.makeText(getContext(), "please check if the local resource file exists", Toast.LENGTH_LONG).show();
-            return;
-        }
-        if (progressDialog == null) {
-            progressDialog = TEProgressDialog.createDialog(getContext());
-        }
-        progressDialog.show();
-        String downloadTip = getResources().getString(R.string.te_beauty_panel_view_download_dialog_tip);
-        TEDownloadListener TEDownloadListener = new TEDownloadListener() {
-            private final String TAG = "startDownloadResource " + dlModel.getFileName();
-
-            @Override
-            public void onDownloadSuccess(String directory) {
-                LogUtils.d(TAG, "onDownloadSuccess  " + directory + "   " + Thread.currentThread().getName());
-                handler.post(() -> {
-                    dismissDialog();
-                    if (downloadListener != null) {
-                        downloadListener.onDownloadSuccess(directory);
-                    }
-                });
-            }
-
-            @Override
-            public void onDownloading(int progress) {
-                LogUtils.d(TAG, "onDownloading  " + progress + "   " + Thread.currentThread().getName());
-                StringBuilder builder = new StringBuilder();
-                builder.append(downloadTip).append(progress).append("%");
-                handler.post(() -> {
-                    if (progressDialog != null) {
-                        progressDialog.setMsg(builder.toString());
-                    }
-                    if (downloadListener != null) {
-                        downloadListener.onDownloading(progress);
-                    }
-                });
-            }
-
-            @Override
-            public void onDownloadFailed(int errorCode) {
-                LogUtils.d(TAG, "onDownloadFailed  " + errorCode + "   " + Thread.currentThread().getName());
-                handler.post(() -> {
-                    dismissDialog();
-                    Toast.makeText(getContext(), "Download failed", Toast.LENGTH_LONG).show();
-                    if (downloadListener != null) {
-                        downloadListener.onDownloadFailed(errorCode);
-                    }
-                });
-            }
-        };
-        TEDownloadManager.getInstance().download(dlModel, dlModel.getUrl().endsWith(ProviderUtils.ZIP_NAME), TEDownloadListener);
-
-    }
-
-
-    private void dismissDialog() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-            progressDialog = null;
-        }
-    }
-
 
 
     private TEUIProperty getCheckedUIProperty(List<TEUIProperty> uiPropertyList) {
-        if (uiPropertyList == null || uiPropertyList.size() == 0) {
+        if (uiPropertyList == null || uiPropertyList.isEmpty()) {
             return null;
         }
         for (TEUIProperty teuiProperty : uiPropertyList) {
@@ -789,45 +637,8 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
                 try {
                     indicatorSeekBar.setProgress(Integer.parseInt(makeupLutStrength));
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }
-        }
-    }
-
-
-    public void switchLayout(LayoutType layoutType) {
-        if (this.recyclerView == null) {
-            return;
-        }
-        if (this.layoutType == layoutType) {
-            return;
-        }
-        this.layoutType = layoutType;
-        if (layoutType == LayoutType.LINEAR) {
-            this.recyclerView.setLayoutManager(this.linearLayoutManager);
-        } else if (layoutType == LayoutType.GRID) {
-            this.recyclerView.setLayoutManager(this.gridLayoutManager);
-        }
-        this.clearPositionData();
-        this.showOrHideRadioBtn();
-    }
-
-
-    private void showOrHideRadioBtn() {
-        int count = this.expandViewRadioGroup.getChildCount();
-        for (int i = 0; i < count; i++) {
-            RadioButton radioButton = (RadioButton) expandViewRadioGroup.getChildAt(i);
-            if (radioButton == null) {
-                continue;
-            }
-            TEUIProperty uiProperty = (TEUIProperty) radioButton.getTag(R.id.te_beauty_panel_view_radio_button_key);
-            if (radioButton.isChecked()) {
-                this.showOrHideEntryBtn(uiProperty);
-            }
-            if (this.layoutType == LayoutType.GRID && TEUIConfig.getInstance().hiddenCategories.contains(uiProperty.uiCategory)) {  //如果是网格布局，那么不展示美颜、美体、滤镜
-                radioButton.setVisibility(GONE);
-            } else {
-                radioButton.setVisibility(VISIBLE);
             }
         }
     }
@@ -837,35 +648,6 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         GRID, LINEAR
     }
 
-    private boolean isShowGridLayoutEntry(TEUIProperty teuiProperty) {
-        if (this.layoutType == LayoutType.GRID) {
-            return false;
-        }
-        return teuiProperty.isShowGridLayout;
-    }
-
-    private void showOrHideEntryBtn(TEUIProperty teuiProperty) {
-        if (this.gridLayoutEntryBtn == null) {
-            return;
-        }
-        boolean isShowEntryBtn = isShowGridLayoutEntry(teuiProperty) && this.panelDataProvider.isShowEntryBtn();
-        boolean currentState = this.gridLayoutEntryBtn.getVisibility() == VISIBLE;
-        if (isShowEntryBtn == currentState) {
-            return;
-        }
-        this.gridLayoutEntryBtn.setVisibility(isShowEntryBtn ? VISIBLE : GONE);
-        if (this.recyclerView == null) {
-            return;
-        }
-        ViewGroup.LayoutParams layoutParams = this.recyclerView.getLayoutParams();
-        this.recyclerView.setPadding(recycleViewPaddingLeft, 0, isShowEntryBtn ? recycleViewPaddingRight : 0, 0);
-        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        layoutParams.height = (this.layoutType == LayoutType.GRID) ? ScreenUtils.dip2px(getContext(), TEUIConfig.getInstance().panelViewHeight) - customViewHeight : recycleViewHeightLinear;
-        this.recyclerView.setLayoutParams(layoutParams);
-    }
-
-
-
 
     public void updatePanelUIConfig(TEUIConfig uiConfig) {
         if (this.indicatorSeekBar != null) {
@@ -873,21 +655,18 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             this.indicatorSeekBar.setProgressTrackColor(uiConfig.seekBarProgressColor);
             this.indicatorSeekBar.setIndicatorColor(uiConfig.seekBarProgressColor);
         }
-        if (this.expandViewRadioGroup != null) {
-            int count = this.expandViewRadioGroup.getChildCount();
-            for (int i = 0; i < count; i++) {
-                RadioButton button = (RadioButton) this.expandViewRadioGroup.getChildAt(i);
-                button.setTextColor(CustomDrawableUtils.createRadioGroupColorStateList(uiConfig.textCheckedColor, uiConfig.textColor));
-            }
+
+        mainTabLayout.updateItemTextColor(uiConfig.textCheckedColor, uiConfig.textColor);
+        subTabLayout.updateItemTextColor(uiConfig.textCheckedColor, uiConfig.textColor);
+
+        if (this.rightRevertText != null) {
+            this.rightRevertText.setTextColor(uiConfig.textColor);
         }
-        if (this.expandViewTopRightRevertText != null) {
-            this.expandViewTopRightRevertText.setTextColor(uiConfig.textColor);
+        if (this.titleDivider != null) {
+            this.titleDivider.setBackgroundColor(uiConfig.panelDividerColor);
         }
-        if (this.expandViewTitleDivider != null) {
-            this.expandViewTitleDivider.setBackgroundColor(uiConfig.panelDividerColor);
-        }
-        if (this.expandViewTopRightDivider != null) {
-            this.expandViewTopRightDivider.setBackgroundColor(uiConfig.panelDividerColor);
+        if (this.topRightDivider != null) {
+            this.topRightDivider.setBackgroundColor(uiConfig.panelDividerColor);
         }
         if (this.panelBgView != null) {
             this.panelBgView.setBackgroundColor(uiConfig.panelBackgroundColor);
@@ -900,10 +679,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
     private void clearPositionData() {
         this.itemPositions.clear();
-        this.typePropertyPositionMap.clear();
-        this.lastCheckedUIProperty = null;
     }
-
 
 
     private class CompareBtnTouchListener implements View.OnTouchListener {
@@ -956,36 +732,10 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
     }
 
 
-    private static class DefaultTEDownloadListenerImp implements TEDownloadListener {
-
-        @Override
-        public void onDownloadSuccess(String directory) {
-
-        }
-
-        @Override
-        public void onDownloading(int progress) {
-
-        }
-
-        @Override
-        public void onDownloadFailed(int errorCode) {
-
-        }
-    }
-
-
     public interface TEDetailPanelListener {
 
 
         void onTopRightBtnClick();
-
-
-
-        void onLeftBottomBtnClick(int type);
-
-
-        void onRightBottomBtnClick(int type);
 
 
         void onCloseEffect(boolean isClose);
@@ -994,81 +744,17 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         void onRevertTE(List<TEUIProperty.TESDKParam> properties);
 
 
-
         void onUpdateEffect(TEUIProperty.TESDKParam param);
 
 
         void onUpdateEffectList(List<TEUIProperty.TESDKParam> paramList);
 
 
-
         void onClickCustomSeg(TEUIProperty uiProperty);
 
-
-        void onCameraClick();
-
-        void onMoreItemBtnClick();
 
         void onTitleClick(TEUIProperty uiProperty);
     }
 
-    public static class DefaultTEDetailPanelListener implements TEDetailPanelListener {
-
-        @Override
-        public void onTopRightBtnClick() {
-
-        }
-
-        @Override
-        public void onLeftBottomBtnClick(int type) {
-
-        }
-
-        @Override
-        public void onRightBottomBtnClick(int type) {
-
-        }
-
-        @Override
-        public void onCloseEffect(boolean isClose) {
-
-        }
-
-        @Override
-        public void onRevertTE(List<TEUIProperty.TESDKParam> sdkParams) {
-
-        }
-
-        @Override
-        public void onUpdateEffect(TEUIProperty.TESDKParam param) {
-
-        }
-
-        @Override
-        public void onUpdateEffectList(List<TEUIProperty.TESDKParam> sdkParams) {
-
-        }
-
-        @Override
-        public void onClickCustomSeg(TEUIProperty uiProperty) {
-
-        }
-
-
-        @Override
-        public void onCameraClick() {
-
-        }
-
-        @Override
-        public void onMoreItemBtnClick() {
-
-        }
-
-        @Override
-        public void onTitleClick(TEUIProperty uiProperty) {
-
-        }
-    }
 
 }
