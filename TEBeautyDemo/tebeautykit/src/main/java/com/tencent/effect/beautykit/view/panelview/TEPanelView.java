@@ -3,19 +3,15 @@ package com.tencent.effect.beautykit.view.panelview;
 import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.EXTRA_INFO_KEY_SEG_TYPE;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.widget.PopupWindowCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,7 +23,6 @@ import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.provider.TEGeneralDataProvider;
 import com.tencent.effect.beautykit.provider.TEPanelDataProvider;
 import com.tencent.effect.beautykit.utils.LogUtils;
-import com.tencent.effect.beautykit.utils.ScreenUtils;
 import com.tencent.effect.beautykit.view.dialog.TETipDialog;
 
 import java.lang.reflect.Type;
@@ -44,8 +39,9 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
     private TEDetailPanel mDetailPanel;
     private InternalDetailPanelListenerImpl mDetailPanelListener = null;
     private List<TEUIProperty.TESDKParam> lastParamList = null;
-    //用于关闭
-    public boolean isShowGreenScreenTipDialog = true;
+
+    // Dialog处理接口
+    private DialogHandler mDialogHandler = null;
 
     public TEPanelView(@NonNull Context context) {
         this(context, null);
@@ -72,6 +68,14 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
         this.addView(mDetailPanel, layoutParams1);
     }
 
+    /**
+     * 设置Dialog处理接口
+     *
+     * @param dialogHandler Dialog处理接口
+     */
+    public void setDialogHandler(DialogHandler dialogHandler) {
+        this.mDialogHandler = dialogHandler;
+    }
 
     /**
      * Used to set the last saved beauty effect data, in order to restore the beauty panel to its previous state.
@@ -128,12 +132,17 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
         }
         this.setTEPanelViewCallback(tePanelViewCallback);
         provider.getPanelData(getContext().getApplicationContext());
-        this.mDetailPanelListener.onDefaultEffectList(provider.getUsedProperties());
+        //此处需要特殊处理，如果设置了上次的美颜数据 lastParamList，那么直接将lastParamList
+        // 作为默认效果返回即可，为什么这样呢？因为默认效果中可能包含了只在模板中配置的单点美妆或者滤镜，这样在同步数据的时候就会出现这些数据如法同步上去，从而不会有选中效果，
+        // 那么使用provider.getUsedProperties() 方法获取的数据中就会缺少这部分数据，所以直接返回 lastParamList 即可
+        if (this.lastParamList != null) {
+            this.mDetailPanelListener.onDefaultEffectList(this.lastParamList);
+        } else {
+            this.mDetailPanelListener.onDefaultEffectList(provider.getUsedProperties());
+        }
 
         this.mDetailPanel.show(provider, this.mDetailPanelListener);
-        this.mDetailPanel.setVisibility(VISIBLE);
         this.showTopRightLayout(true);
-        this.showMenu(false);
     }
 
 
@@ -141,8 +150,6 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
     public void setupWithTEBeautyKit(TEBeautyKit beautyKit) {
         this.mDetailPanelListener.setTEBeautyKit(beautyKit);
     }
-
-
 
 
     @Override
@@ -160,17 +167,14 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
 
 
     @Override
-    public void showMenu(boolean isShowMenu) {
-        this.mDetailPanel.showBottomBtn(true, isShowMenu, TEDetailPanel.TE_PANEL_VIEW_EXPAND_TYPE);
-    }
-
-
-    @Override
     public void showTopRightLayout(boolean isVisibility) {
         this.mDetailPanel.showTopRightLayout(isVisibility);
     }
 
-
+    @Override
+    public void revertEffect() {
+        this.mDetailPanel.revertEffect();
+    }
 
 
     @Override
@@ -181,20 +185,10 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
     }
 
 
-
-
-    private void showMenuView() {
-        mDetailPanel.setVisibility(GONE);
-    }
-
-
-
-
     private static class InternalDetailPanelListenerImpl implements TEDetailPanel.TEDetailPanelListener {
         private final Context context;
         private TEPanelViewCallback mBeautyPanelCallback;
         private final TEPanelView mPanelView;
-        private long onCameraClickLastTime = 0;
 
         private TEBeautyKit beautyKit = null;
         private TEBeautyKit.EffectState menuEffectState = TEBeautyKit.EffectState.ENABLED;
@@ -221,30 +215,23 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
 
         @Override
         public void onTopRightBtnClick() {
-            TETipDialog.showRevertDialog(this.context, new TETipDialog.TipDialogClickListener() {
-                @Override
-                public void onLeftBtnClick(Button btn) {
+            if (mPanelView.mDialogHandler != null) {
+                mPanelView.mDialogHandler.showRevertDialog(this.context);
+            } else {
+                TETipDialog.showRevertDialog(this.context, new TETipDialog.TipDialogClickListener() {
+                    @Override
+                    public void onLeftBtnClick(Button btn) {
 
-                }
+                    }
 
-                @Override
-                public void onRightBtnCLick(Button btn) {
-                    mPanelView.mDetailPanel.revertEffect();
-                }
-            });
-        }
-
-        @Override
-        public void onLeftBottomBtnClick(int type) {
-            onTopRightBtnClick();
-        }
-
-        @Override
-        public void onRightBottomBtnClick(int type) {
-            if (mPanelView != null) {
-                this.mPanelView.showMenuView();
+                    @Override
+                    public void onRightBtnCLick(Button btn) {
+                        mPanelView.mDetailPanel.revertEffect();
+                    }
+                });
             }
         }
+
 
         public void setMenuEffectState(TEBeautyKit.EffectState effectState) {
             this.menuEffectState = effectState;
@@ -311,8 +298,20 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
                 return;
             }
             if (uiProperty.sdkParam != null && uiProperty.sdkParam.extraInfo != null && Arrays.asList(TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_GREEN).contains(uiProperty.sdkParam.extraInfo.get(EXTRA_INFO_KEY_SEG_TYPE))) {
-                if (mPanelView.isShowGreenScreenTipDialog) {
-                    TETipDialog.showGreenScreenTipDialog(this.context, new TETipDialog.TipDialogClickListener() {
+                if (mPanelView.mDialogHandler != null) {
+                    mPanelView.mDialogHandler.showGreenOrBlueScreenTipDialog(this.context, uiProperty);
+                } else {
+                    showGreenOrScreenTipDialog(context, uiProperty);
+                }
+            } else {
+                this.callBackCustomSeg(uiProperty);
+            }
+        }
+
+
+        private void showGreenOrScreenTipDialog(Context context, TEUIProperty uiProperty) {
+            TETipDialog.showGreenOrScreenTipDialog(context, uiProperty,
+                    new TETipDialog.TipDialogClickListener() {
                         @Override
                         public void onLeftBtnClick(Button btn) {
 
@@ -323,11 +322,8 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
                             callBackCustomSeg(uiProperty);
                         }
                     });
-                    return;
-                }
-            }
-            this.callBackCustomSeg(uiProperty);
         }
+
 
         private void callBackCustomSeg(TEUIProperty uiProperty) {
             if (mBeautyPanelCallback != null) {
@@ -335,20 +331,6 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
             }
         }
 
-
-        @Override
-        public void onCameraClick() {
-            long currentTime = System.currentTimeMillis();
-            if (mBeautyPanelCallback != null && currentTime - onCameraClickLastTime >= 3 * 1000) {
-                onCameraClickLastTime = currentTime;
-                mBeautyPanelCallback.onCameraClick();
-            }
-        }
-
-        @Override
-        public void onMoreItemBtnClick() {
-            mPanelView.showGridPanelView();
-        }
 
         @Override
         public void onTitleClick(TEUIProperty uiProperty) {
@@ -371,37 +353,20 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
     }
 
 
+    // Dialog处理接口定义
+    public interface DialogHandler {
+        /**
+         * 显示恢复默认效果对话框
+         *
+         * @param context 上下文
+         */
+        void showRevertDialog(Context context);
 
-    private void showGridPanelView() {
-        final int height = mDetailPanel.getHeight();
-        this.removeView(this.mDetailPanel);
-        ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
-        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        layoutParams.height = height;
-        this.setLayoutParams(layoutParams);
-
-        this.mDetailPanel.switchLayout(TEDetailPanel.LayoutType.GRID);
-        PopupWindow popupWindow = new PopupWindow(getContext());
-        popupWindow.setContentView(this.mDetailPanel);
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
-        popupWindow.setHeight(ScreenUtils.dip2px(getContext(), TEUIConfig.getInstance().panelViewHeight));
-
-        popupWindow.setOnDismissListener(() -> {
-            this.mDetailPanel.switchLayout(TEDetailPanel.LayoutType.LINEAR);
-            this.addDetailPanel();
-        });
-        PopupWindowCompat.showAsDropDown(popupWindow, this, 0, -popupWindow.getHeight(), Gravity.BOTTOM | Gravity.LEFT);
+        /**
+         * 显示绿幕提示对话框
+         *
+         * @param context 上下文
+         */
+        void showGreenOrBlueScreenTipDialog(Context context, TEUIProperty teuiProperty);
     }
-
-
-    private void addDetailPanel() {
-        ViewGroup.LayoutParams layoutParams = this.getLayoutParams();
-        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        this.setLayoutParams(layoutParams);
-        this.addView(mDetailPanel, 0);
-    }
-
 }

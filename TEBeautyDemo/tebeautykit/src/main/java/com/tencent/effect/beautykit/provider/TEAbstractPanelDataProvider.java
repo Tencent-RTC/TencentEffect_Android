@@ -1,8 +1,10 @@
 package com.tencent.effect.beautykit.provider;
 
+
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.tencent.effect.beautykit.config.TEUIConfig;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 
-abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
+public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
 
     private static final String TAG = TEAbstractPanelDataProvider.class.getName();
 
@@ -29,7 +31,7 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
     /**
      * Used to store the mapping between TEParam.effectName and TEUIProperty.
      */
-    private final Map<String, TEUIProperty> uiPropertyIndexByNameMap = new ArrayMap<>();
+    private final Map<String, TEUIProperty> indexUIPropertyMap = new ArrayMap<>();
 
     private List<TEPanelDataModel> panelDataModels = null;
 
@@ -40,10 +42,11 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
     }
 
     /**
-     *  Used to store the incoming data, which is the original data.
-     *  This data is mainly used to restore the selected state of UI on the panel to the previous state.
+     * Used to store the incoming data, which is the original data.
+     * This data is mainly used to restore the selected state of UI on the panel to the previous state.
      */
     protected List<TEUIProperty.TESDKParam> originalParamList = null;
+
 
     @Override
     public void setUsedParams(List<TEUIProperty.TESDKParam> paramList) {
@@ -69,97 +72,34 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
         } else {
             allData.clear();
         }
-        uiPropertyIndexByNameMap.clear();
+        indexUIPropertyMap.clear();
+        TEUIProperty templateData = null;
         for (TEPanelDataModel dataModel : this.panelDataModels) {
-            if (TextUtils.isEmpty(dataModel.jsonFilePath)) {
+            TEUIProperty uiProperty = this.loadUIPropertyFromJson(dataModel.jsonFilePath, context);
+            if (uiProperty == null) {
                 continue;
             }
-            String dataStr = null;
-            if (dataModel.jsonFilePath.startsWith(File.separator)) {
-                dataStr = FileUtil.readFile(dataModel.jsonFilePath);
-            } else {
-                dataStr = FileUtil.readAssetFile(context, dataModel.jsonFilePath);
-            }
-            if (TextUtils.isEmpty(dataStr)) {
-                continue;
-            }
-            TEUIProperty uiProperty = new Gson().fromJson(dataStr.trim(), TEUIProperty.class);
             if (uiProperty.uiCategory == null) {
                 uiProperty.uiCategory = dataModel.category;
             }
-            this.completionParam(uiProperty.propertyList, dataModel.category, uiProperty);
-            this.putDataToMap(uiProperty);
+            uiProperty.titleType = uiProperty.displayName;
+            this.initializeUIPropertyHierarchy(uiProperty.propertyList, dataModel.category, uiProperty.titleType, uiProperty);
+            if (uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE) {
+                templateData = uiProperty;
+            }
+            this.indexUIProperty(uiProperty);
             this.allData.add(uiProperty);
         }
-        this.syncUIState();
+        this.restoreUIStateFromParams(this.originalParamList, "originalParamList");     //将上次的数据进行同步
+        //被选中的模板中的美颜数据
+        List<TEUIProperty.TESDKParam> checkedTemplateBeautyData = ProviderUtils.processTemplateData(templateData);
+        this.restoreUIStateFromParams(checkedTemplateBeautyData, "checkedTemplateBeautyData");   //将模板项同步到美颜、滤镜上
         return allData;
     }
 
 
-    /**
-     * Synchronize UI state.
-     */
-    private void syncUIState() {
-        if (this.originalParamList == null || this.originalParamList.size() == 0) {
-            return;
-        }
-        for (TEUIProperty.TESDKParam param : this.originalParamList) {
-            if (param == null) {
-                continue;
-            }
-            // Assuming this data is for beauty or body enhancement, we can query it using the effectName.
-            TEUIProperty teuiProperty = uiPropertyIndexByNameMap.get(this.getNameMapKey(param));
-            if (teuiProperty != null) {
-                if (teuiProperty.sdkParam != null) {
-                    teuiProperty.sdkParam.effectValue = param.effectValue;
-                    teuiProperty.sdkParam.extraInfo = param.extraInfo;
-                }
-                if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY || teuiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY) {
-                    teuiProperty.setUiState(TEUIProperty.UIState.IN_USE);
-                    ProviderUtils.changeParentUIState(teuiProperty, TEUIProperty.UIState.IN_USE);
-                } else {
-                    teuiProperty.setUiState(TEUIProperty.UIState.CHECKED_AND_IN_USE);
-                    ProviderUtils.changeParentUIState(teuiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
-                }
-            }
-        }
-        List<TEUIProperty> allBeautyPropertyList = new ArrayList<>();
-        for (TEUIProperty teuiProperty : allData) {
-            if (teuiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY
-                    && teuiProperty.propertyList != null) {
-                ProviderUtils.findFirstInUseItemAndMakeChecked(teuiProperty.propertyList);
-            }
-            if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY) {
-                allBeautyPropertyList.add(teuiProperty);
-            }
-        }
-        if (allBeautyPropertyList.size() > 0) {
-            ProviderUtils.findFirstInUseItemAndMakeChecked(allBeautyPropertyList);
-        }
-
-    }
-
-
-
-
-
-
-
-
-
-    private void putDataToMap(TEUIProperty property) {
-        if (this.originalParamList == null || this.originalParamList.size() == 0) {
-            return;
-        }
-        property.setUiState(TEUIProperty.UIState.INIT);
-        if (property.sdkParam != null) {
-            uiPropertyIndexByNameMap.put(getNameMapKey(property.sdkParam), property);
-        }
-    }
-
-
     @Override
-    public void onTabItemClick(int index) {
+    public void onTabSelected(int index) {
         if (index < 0 || index >= allData.size()) {
             return;
         }
@@ -174,7 +114,7 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
     }
 
     @Override
-    public abstract List<TEUIProperty> onItemClick(TEUIProperty uiProperty);
+    public abstract List<TEUIProperty> onHandRecycleViewItemClick(TEUIProperty uiProperty);
 
 
     @Override
@@ -182,7 +122,6 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
 
     @Override
     public abstract List<TEUIProperty.TESDKParam> getCloseEffectItems(TEUIProperty uiProperty);
-
 
 
     @Override
@@ -196,40 +135,121 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
     }
 
 
-    @Override
-    public List<TEUIProperty.TESDKParam> getBeautyTemplateData(TEUIProperty teuiProperty) {
-        return null;
+    /**
+     * 根据参数列表恢复UI属性的状态和值
+     *
+     * @param originalParamList 原始参数列表，包含需要恢复的UI属性参数
+     * @param TAG               日志标签，用于调试和跟踪
+     *                          <p>
+     *                          方法功能：
+     *                          1. 遍历参数列表，通过索引映射找到对应的UI属性
+     *                          2. 更新UI属性的effectValue和extraInfo
+     *                          3. 根据UI分类设置不同的UI状态：
+     *                          - BEAUTY和BODY_BEAUTY类型：设置为IN_USE状态
+     *                          - 其他类型：设置为CHECKED_AND_IN_USE状态
+     *                          4. 同时更新父属性的UI状态
+     *                          <p>
+     *                          使用场景：
+     *                          - 面板数据刷新时恢复上次的选中状态
+     *                          - 模板数据同步到美颜、滤镜等UI属性
+     */
+    public void restoreUIStateFromParams(List<TEUIProperty.TESDKParam> originalParamList, String TAG) {
+        if (originalParamList == null || originalParamList.isEmpty()) {
+            return;
+        }
+        for (TEUIProperty.TESDKParam param : originalParamList) {
+            if (param == null) {
+                continue;
+            }
+            // Assuming this data is for beauty or body enhancement, we can query it using the effectName.
+            TEUIProperty teuiProperty = indexUIPropertyMap.get(this.getNameMapKey(param));
+            if (teuiProperty != null) {
+                if (teuiProperty.sdkParam != null) {
+                    teuiProperty.sdkParam.effectValue = param.effectValue;
+                    teuiProperty.sdkParam.extraInfo = param.extraInfo;
+                }
+                if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY || teuiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY) {
+                    teuiProperty.setUiState(TEUIProperty.UIState.IN_USE);
+                    ProviderUtils.changeParentUIState(teuiProperty, TEUIProperty.UIState.IN_USE);
+                } else {
+                    teuiProperty.setUiState(TEUIProperty.UIState.CHECKED_AND_IN_USE);
+                    ProviderUtils.changeParentUIState(teuiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
+                }
+            }
+        }
     }
 
-    @Override
-    public List<TEUIProperty.TESDKParam> getBeautyTemplateData() {
-        return null;
+
+    /**
+     * 将UI属性添加到索引映射中，便于后续快速查找
+     *
+     * @param property 要添加的UI属性对象
+     *                 对于BEAUTY_TEMPLATE类型的属性：
+     *                 - 只有当originalParamList不为空且property.paramList不为空时才添加到映射
+     *                 - 只添加包含真实美颜数据的模板节点
+     *                 对于其他类型的属性：直接添加到映射中
+     *                 所有属性都会设置初始UI状态为INIT
+     */
+    private void indexUIProperty(TEUIProperty property) {
+        if (property.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE) {
+            if (this.originalParamList != null) {
+                property.setUiState(TEUIProperty.UIState.INIT);
+                if (property.paramList != null) {   //只添加有真实美颜数据的  模板节点
+                    String uiIndex = this.getNameMapKey(property);
+                    if (!TextUtils.isEmpty(uiIndex)) {
+                        indexUIPropertyMap.put(uiIndex, property);
+                    }
+                }
+            }
+        } else {
+            property.setUiState(TEUIProperty.UIState.INIT);
+            String uiIndex = this.getNameMapKey(property);
+            if (!TextUtils.isEmpty(uiIndex)) {
+                indexUIPropertyMap.put(uiIndex, property);
+            }
+        }
     }
 
 
-    @Override
-    public String getOriginalParam() {
-        return null;
+    /**
+     * 为TESDKParam对象生成唯一的映射键
+     *
+     * @param teuiProperty UI属性对象
+     * @return 映射键，如果参数为null或无效则返回null
+     * <p>
+     * 特殊处理逻辑：
+     * - 对于BEAUTY_TEMPLATE类型且包含参数列表的模板数据，使用"BEAUTY_TEMPLATE_KEY + id"作为键
+     * - 对于其他类型，委托给getNameMapKey(TESDKParam)方法处理
+     */
+    private String getNameMapKey(TEUIProperty teuiProperty) {
+        if (teuiProperty == null) {
+            return null;
+        }
+        if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE && teuiProperty.paramList != null && !teuiProperty.paramList.isEmpty()) { //在这里判断一下是不是模板数据，如果是直接返回
+            return TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME + teuiProperty.id;
+        }
+        if (teuiProperty.sdkParam == null) {
+            return null;
+        }
+        return getNameMapKey(teuiProperty.sdkParam);
     }
 
-    @Override
-    public void updateBeautyTemplateData(List<TEUIProperty.TESDKParam> paramList) {
-
-    }
-
-    @Override
-    public void putMutuallyExclusiveProvider(List<TEPanelDataProvider> providerList) {
-
-    }
-
-    @Override
-    public void unCheckAll() {
-
-    }
-
+    /**
+     * 为TESDKParam对象生成唯一的映射键
+     *
+     * @param param SDK参数对象
+     * @return 映射键，由effectName和resourcePath组合而成
+     * <p>
+     * 特殊处理逻辑：
+     * - 对于BEAUTY_TEMPLATE类型的参数，使用"BEAUTY_TEMPLATE_KEY + effectValue"作为键
+     * - 对于其他类型，组合effectName和resourcePath生成键
+     */
     private String getNameMapKey(TEUIProperty.TESDKParam param) {
         StringBuilder keyBuilder = new StringBuilder();
         if (!TextUtils.isEmpty(param.effectName)) {
+            if (TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME.equals(param.effectName)) {   //在这里判断一下是不是模板数据，如果是直接返回
+                return TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME + param.effectValue;
+            }
             keyBuilder.append(param.effectName);
         }
         if (!TextUtils.isEmpty(param.resourcePath)) {
@@ -238,7 +258,26 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
         return keyBuilder.toString();
     }
 
-    private void completionParam(List<TEUIProperty> list, TEUIProperty.UICategory category, TEUIProperty parentProperty) {
+
+    /**
+     * 初始化UI属性层次结构，递归设置所有相关参数
+     *
+     * @param list           UI属性列表
+     * @param category       UI分类
+     * @param titleType      标题类型
+     * @param parentProperty 父属性对象
+     *                       <p>
+     *                       方法功能：
+     *                       1. 设置父子属性关系
+     *                       2. 设置UI分类（如果未设置）
+     *                       3. 创建DL模型和SDK参数
+     *                       4. 根据UI分类设置对应的effectName
+     *                       5. 设置titleType
+     *                       6. 将属性添加到索引映射
+     *                       7. 递归处理子属性列表
+     */
+    private void initializeUIPropertyHierarchy(List<TEUIProperty> list, TEUIProperty.UICategory category,
+                                               String titleType, TEUIProperty parentProperty) {
         for (TEUIProperty property : list) {
             property.parentUIProperty = parentProperty;
             if (property.uiCategory == null) {
@@ -262,19 +301,39 @@ abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider {
                     case SEGMENTATION:
                         property.sdkParam.effectName = XmagicConstant.EffectName.EFFECT_SEGMENTATION;
                         break;
+                    default:
+                        break;
                 }
             }
-            ProviderUtils.completionResPath(property);
-            this.putDataToMap(property);
+            property.titleType = titleType;
+            this.indexUIProperty(property);
             if (property.propertyList != null) {
-                this.completionParam(property.propertyList, category, property);
+                this.initializeUIPropertyHierarchy(property.propertyList, category, titleType, property);
             }
         }
     }
 
-
-    @Override
-    public boolean isShowEntryBtn() {
-        return false;
+    /**
+     * 从JSON文件路径加载并解析TEUIProperty对象
+     *
+     * @param jsonFilePath JSON文件路径，可以是绝对路径或asset路径
+     * @param context      上下文对象，用于读取asset文件
+     * @return 解析成功的TEUIProperty对象，如果失败则返回null
+     */
+    private TEUIProperty loadUIPropertyFromJson(String jsonFilePath, Context context) {
+        if (TextUtils.isEmpty(jsonFilePath)) {
+            return null;
+        }
+        String dataStr = null;
+        if (jsonFilePath.startsWith(File.separator)) {
+            dataStr = FileUtil.readFile(jsonFilePath);
+        } else {
+            dataStr = FileUtil.readAssetFile(context, jsonFilePath);
+        }
+        if (TextUtils.isEmpty(dataStr)) {
+            return null;
+        }
+        return new Gson().fromJson(dataStr.trim(), TEUIProperty.class);
     }
+
 }

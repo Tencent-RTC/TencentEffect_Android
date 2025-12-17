@@ -9,18 +9,18 @@ import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.utils.LogUtils;
 import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
 import com.tencent.xmagic.XmagicConstant;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.PrimitiveIterator;
 
 
 public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
 
     private static final String TAG = TEGeneralDataProvider.class.getName();
 
-    protected Map<TEUIProperty.UICategory, TEUIProperty> dataCategory = new ArrayMap<>();
+    protected Map<String, TEUIProperty> titleTypeData = new ArrayMap<>();   //根据一级标题名对数据进行分类
 
 
     private List<TEUIProperty> pointMakeup = new ArrayList<>();
@@ -29,9 +29,13 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
     private boolean pointMakeupChecked = false;
     private boolean lightMakeupChecked = false;
 
+
+    private boolean hasBeautyTemplateChecked = true;
+
     @Override
     public List<TEUIProperty> forceRefreshPanelData(Context context) {
         super.forceRefreshPanelData(context);
+        titleTypeData.clear();
         for (TEUIProperty teuiProperty : allData) {
             if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY) {
                 this.obtainPointMakeup(teuiProperty);
@@ -46,7 +50,7 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
                 //判断是否有默认设置
                 lightMakeupChecked = !ProviderUtils.getUsedProperties(Collections.singletonList(teuiProperty)).isEmpty();
             }
-            dataCategory.put(teuiProperty.uiCategory, teuiProperty);
+            titleTypeData.put(teuiProperty.titleType, teuiProperty);
         }
         LogUtils.i(TAG, "default clickPointMakeup = " + pointMakeupChecked + " default clickLightMakeup = " + lightMakeupChecked);
         return allData;
@@ -72,60 +76,67 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
     }
 
     @Override
-    public List<TEUIProperty> onItemClick(TEUIProperty uiProperty) {
-       return this.onItemClickInternal(uiProperty,true);
+    public List<TEUIProperty> onHandRecycleViewItemClick(TEUIProperty uiProperty) {
+        return this.onHandRecycleViewItemClick(uiProperty, true);
     }
 
-    private List<TEUIProperty> onItemClickInternal(TEUIProperty uiProperty, boolean isFromUI) {
+    private List<TEUIProperty> onHandRecycleViewItemClick(TEUIProperty uiProperty, boolean isFromUI) {
+        if (uiProperty == null) {
+            return null;
+        }
         switch (uiProperty.uiCategory) {
+            case BEAUTY_TEMPLATE:
+                this.hasBeautyTemplateChecked = true;
+                this.uncheckBeautyAndLut();
+                this.checkItem(uiProperty, isFromUI);
+                break;
             case BEAUTY:
-            case BODY_BEAUTY:
             case LUT:
-                this.onClickPointMakeup(uiProperty,isFromUI);
+                this.uncheckBeautyTemplate();
+                this.onClickPointMakeup(uiProperty, isFromUI);
+                break;
+            case BODY_BEAUTY:
+                this.onClickPointMakeup(uiProperty, isFromUI);
                 break;
             case LIGHT_MAKEUP:  //此处需要将 单点美妆和滤镜全部设置为 未选中
-                this.onClickLightMakeup(uiProperty,isFromUI);
+                this.onClickLightMakeup(uiProperty, isFromUI);
                 break;
             case MAKEUP:
             case MOTION:
             case SEGMENTATION:
-                 this.handleMakeupMotionSegmentation(uiProperty,isFromUI);
+                this.handleMakeupMotionSegmentation(uiProperty, isFromUI);
                 break;
+            case GREEN_BACKGROUND_V2_ITEM:
+            case GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE:
+                this.handleMakeupMotionSegmentation(uiProperty, isFromUI);
+                break;
+
         }
         return uiProperty.propertyList;
     }
 
     private void handleMakeupMotionSegmentation(TEUIProperty uiProperty, boolean isFromUI) {
-        TEUIProperty makeUpProperty = dataCategory.get(TEUIProperty.UICategory.MAKEUP);
-        TEUIProperty motionProperty = dataCategory.get(TEUIProperty.UICategory.MOTION);
-        TEUIProperty segProperty = dataCategory.get(TEUIProperty.UICategory.SEGMENTATION);
+        List<TEUIProperty> makeUpProperty = getDataByUICategory(TEUIProperty.UICategory.MAKEUP);
+        List<TEUIProperty> motionProperty = getDataByUICategory(TEUIProperty.UICategory.MOTION);
+        List<TEUIProperty> segProperty = getDataByUICategory(TEUIProperty.UICategory.SEGMENTATION);
 
         boolean shouldProcess = !isFromUI ||
                 ((uiProperty.propertyList == null && uiProperty.sdkParam != null) ||
                         uiProperty.isNoneItem());
 
         if (shouldProcess) {
-            if (makeUpProperty != null) {
-                ProviderUtils.revertUIState(makeUpProperty.propertyList, uiProperty);
-            }
-            if (motionProperty != null) {
-                ProviderUtils.revertUIState(motionProperty.propertyList, uiProperty);
-            }
-            if (segProperty != null) {
-                ProviderUtils.revertUIState(segProperty.propertyList, uiProperty);
-            }
+            ProviderUtils.revertUIState(makeUpProperty, uiProperty);
+            ProviderUtils.revertUIState(motionProperty, uiProperty);
+            ProviderUtils.revertUIState(segProperty, uiProperty);
             ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
         }
     }
 
-    @Override
-    public void selectPropertyItem(TEUIProperty uiProperty) {
-        this.onItemClickInternal(uiProperty,false);
-    }
 
 
-    private void checkItem(TEUIProperty uiProperty , boolean isFromUI) {
-        TEUIProperty currentProperty = dataCategory.get(uiProperty.uiCategory);
+
+    private void checkItem(TEUIProperty uiProperty, boolean isFromUI) {
+        TEUIProperty currentProperty = titleTypeData.get(uiProperty.titleType);
         if (!isFromUI) {
             if (currentProperty == null) {
                 return;
@@ -139,6 +150,15 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
                 return;
             }
             ProviderUtils.revertUIState(currentProperty.propertyList, uiProperty);
+            ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
+        } else if (uiProperty.paramList != null || uiProperty.isNoneItem()) {
+            List<TEUIProperty> processData = new ArrayList<>();
+            for (TEUIProperty property : allData) {
+                if (property.uiCategory == uiProperty.uiCategory) {   //找到所有的模板item
+                    processData.add(property);
+                }
+            }
+            ProviderUtils.revertUIState(processData, uiProperty);
             ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
         }
     }
@@ -159,7 +179,6 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
                 hasMotion = true;
             }
         }
-
 
         this.forceRefreshPanelData(context.getApplicationContext());
 
@@ -194,7 +213,7 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
         switch (uiProperty.uiCategory) {
             case BEAUTY:
             case BODY_BEAUTY:
-                TEUIProperty currentProperty = dataCategory.get(uiProperty.uiCategory);
+                TEUIProperty currentProperty = titleTypeData.get(uiProperty.titleType);
                 if (currentProperty != null) {
                     List<TEUIProperty.TESDKParam> usedList = ProviderUtils.getUsedProperties(currentProperty.propertyList);
                     ProviderUtils.changParamValuedTo0(usedList);
@@ -253,9 +272,9 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
 
     private void uncheckPointMakeup() {
         this.pointMakeupChecked = false;
-        TEUIProperty lutData = this.dataCategory.get(TEUIProperty.UICategory.LUT);
-        if (lutData != null) {
-            ProviderUtils.revertUIStateToInit(Collections.singletonList(lutData));
+        List<TEUIProperty> lutData = this.getDataByUICategory(TEUIProperty.UICategory.LUT);
+        for (TEUIProperty teuiProperty : lutData) {
+            unCheckItem(teuiProperty);
         }
         if (this.pointMakeup != null) {
             ProviderUtils.revertUIStateToInit(this.pointMakeup);
@@ -265,16 +284,54 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
 
     private void uncheckLightMakeup() {
         this.lightMakeupChecked = false;
-        TEUIProperty lightMakeup = this.dataCategory.get(TEUIProperty.UICategory.LIGHT_MAKEUP);
-        if (lightMakeup == null) {
+        List<TEUIProperty> lightMakeup = this.getDataByUICategory(TEUIProperty.UICategory.LIGHT_MAKEUP);
+        for (TEUIProperty teuiProperty : lightMakeup) {
+            unCheckItem(teuiProperty);
+        }
+    }
+
+
+    private void uncheckBeautyTemplate() {
+        if (!this.hasBeautyTemplateChecked) {
             return;
         }
-        ProviderUtils.revertUIStateToInit(Collections.singletonList(lightMakeup));
+        this.hasBeautyTemplateChecked = false;
+        List<TEUIProperty> beautyTemplate = this.getDataByUICategory(TEUIProperty.UICategory.BEAUTY_TEMPLATE);
+        for (TEUIProperty teuiProperty : beautyTemplate) {
+            unCheckItem(teuiProperty);
+        }
     }
 
 
-    @Override
-    public boolean isShowEntryBtn() {
-        return true;
+    private void uncheckBeautyAndLut() {
+        List<TEUIProperty> beautyData = this.getDataByUICategory(TEUIProperty.UICategory.BEAUTY);
+        for (TEUIProperty teuiProperty : beautyData) {
+            unCheckItem(teuiProperty);
+        }
+        List<TEUIProperty> lutData = this.getDataByUICategory(TEUIProperty.UICategory.LUT);
+        for (TEUIProperty teuiProperty : lutData) {
+            unCheckItem(teuiProperty);
+        }
     }
+
+
+    private void unCheckItem(TEUIProperty teuiProperty) {
+        if (teuiProperty == null) {
+            return;
+        }
+        ProviderUtils.revertUIStateToInit(Collections.singletonList(teuiProperty));
+    }
+
+
+    private List<TEUIProperty> getDataByUICategory(TEUIProperty.UICategory uiCategory) {
+        List<TEUIProperty> result = new ArrayList<>();
+        for (TEUIProperty teuiProperty : allData) {
+            if (teuiProperty.uiCategory == uiCategory) {
+                result.add(teuiProperty);
+            }
+        }
+        return result;
+    }
+
+
 }

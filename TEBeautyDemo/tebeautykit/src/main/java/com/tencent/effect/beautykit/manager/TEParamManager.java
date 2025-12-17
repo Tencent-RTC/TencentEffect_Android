@@ -1,7 +1,9 @@
 package com.tencent.effect.beautykit.manager;
 
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
 import com.tencent.xmagic.XmagicConstant;
 import com.tencent.effect.beautykit.model.TEUIProperty;
@@ -34,7 +36,7 @@ public class TEParamManager {
                 //当设置了轻美妆的时候 需要删除 单点美妆和滤镜
                 this.removePointMakeup();
             }
-            if (ProviderUtils.isPointMakeup(param)) {
+            if (ProviderUtils.isPointMakeup(param) && TEUIConfig.getInstance().cleanLightMakeup) {
                 //当设置了单点妆容或滤镜的时候 需要删除 轻美妆
                 this.removeLightMakeup();
             }
@@ -50,18 +52,34 @@ public class TEParamManager {
         }
     }
 
-    private void removeLightMakeup(){
+    private void removeLightMakeup() {
         allData.remove(XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP);
     }
 
 
+    public void remove(TEUIProperty.TESDKParam param) {
+        if (param == null) {
+            return;
+        }
+        allData.remove(getKey(param));
+    }
+
 
     public void putTEParams(List<TEUIProperty.TESDKParam> paramList) {
-        if (paramList != null && paramList.size() > 0) {
+        if (paramList != null && !paramList.isEmpty()) {
             for (TEUIProperty.TESDKParam teParam : paramList) {
                 putTEParam(teParam);
             }
         }
+    }
+
+
+    /**
+     * 获取模板数据
+     * @return
+     */
+    public TEUIProperty.TESDKParam getTemplateData() {
+        return allData.get(TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME);
     }
 
 

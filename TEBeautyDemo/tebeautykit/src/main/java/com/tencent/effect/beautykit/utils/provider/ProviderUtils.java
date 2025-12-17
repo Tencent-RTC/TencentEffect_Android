@@ -7,27 +7,32 @@ import static com.tencent.effect.beautykit.model.TEUIProperty.GreenBackgroundIte
 import static com.tencent.effect.beautykit.model.TEUIProperty.GreenBackgroundItemName.BACKGROUND_V2_SMOOTH;
 
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.google.gson.Gson;
 import com.tencent.effect.beautykit.TEBeautyKit;
 import com.tencent.xmagic.XmagicConstant;
 import com.tencent.effect.beautykit.model.TEMotionDLModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.utils.FileUtil;
 
+import org.light.utils.GsonUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class ProviderUtils {
 
     private static final String TAG = ProviderUtils.class.getName();
 
-   // This is used to store beauty properties that cannot be applied simultaneously, such as having three different whitening effects in the "whitening" category. These three effects cannot be applied simultaneously, so the UIState on the UI needs special handling.
+    // This is used to store beauty properties that cannot be applied simultaneously, such as having three different whitening effects in the "whitening" category. These three effects cannot be applied simultaneously, so the UIState on the UI needs special handling.
     private static final String[] BEAUTY_WHITEN_EFFECT_NAMES = {
-           XmagicConstant.EffectName.BEAUTY_WHITEN_0,
-           XmagicConstant.EffectName.BEAUTY_WHITEN,
-           XmagicConstant.EffectName.BEAUTY_WHITEN_2,
-           XmagicConstant.EffectName.BEAUTY_WHITEN_3,
+            XmagicConstant.EffectName.BEAUTY_WHITEN_0,
+            XmagicConstant.EffectName.BEAUTY_WHITEN,
+            XmagicConstant.EffectName.BEAUTY_WHITEN_2,
+            XmagicConstant.EffectName.BEAUTY_WHITEN_3,
 
     };
     private static final String[] BEAUTY_BLACK_EFFECT_NAMES = {
@@ -35,9 +40,9 @@ public class ProviderUtils {
             XmagicConstant.EffectName.BEAUTY_BLACK_2,
     };
     private static final String[] BEAUTY_FACE_EFFECT_NAMES = {
-              XmagicConstant.EffectName.BEAUTY_FACE_NATURE,
-              XmagicConstant.EffectName.BEAUTY_FACE_GODNESS,
-              XmagicConstant.EffectName.BEAUTY_FACE_MALE_GOD,
+            XmagicConstant.EffectName.BEAUTY_FACE_NATURE,
+            XmagicConstant.EffectName.BEAUTY_FACE_GODNESS,
+            XmagicConstant.EffectName.BEAUTY_FACE_MALE_GOD,
 
     };
 
@@ -65,10 +70,11 @@ public class ProviderUtils {
 
 
     /**
-     Find the data corresponding to the given category in allData.
-     @param allData The complete set of data
-     @param uiCategory The category to search for
-     @return The data corresponding to the given category
+     * Find the data corresponding to the given category in allData.
+     *
+     * @param allData    The complete set of data
+     * @param uiCategory The category to search for
+     * @return The data corresponding to the given category
      */
     public static TEUIProperty getUIPropertyByCategory(List<TEUIProperty> allData, TEUIProperty.UICategory uiCategory) {
         for (TEUIProperty uiProperty : allData) {
@@ -80,7 +86,6 @@ public class ProviderUtils {
     }
 
 
-
     public static void changeParamUIState(TEUIProperty teuiProperty, int uiState) {
         if (teuiProperty == null) {
             return;
@@ -88,7 +93,6 @@ public class ProviderUtils {
         teuiProperty.setUiState(uiState);
         ProviderUtils.changeParamUIState(teuiProperty.parentUIProperty, uiState);
     }
-
 
 
     public static void revertUIState(List<TEUIProperty> uiPropertyList, TEUIProperty currentItem) {
@@ -119,6 +123,7 @@ public class ProviderUtils {
 
     /**
      * 将item的状态强制设置为 init
+     *
      * @param uiPropertyList
      */
     public static void revertUIStateToInit(List<TEUIProperty> uiPropertyList) {
@@ -166,8 +171,9 @@ public class ProviderUtils {
 
     /**
      * Create a clone of teParam based on the usage and set the effectValue to 0.
-     *      @param usedList The list of teParam currently in effect
-     *      @return A new clone of teParam with effectValue set to 0
+     *
+     * @param usedList The list of teParam currently in effect
+     * @return A new clone of teParam with effectValue set to 0
      **/
     public static List<TEUIProperty.TESDKParam> clone0ValuedParam(List<TEUIProperty.TESDKParam> usedList) {
         if (usedList == null) {
@@ -187,7 +193,6 @@ public class ProviderUtils {
     }
 
 
-
     public static void changParamValuedTo0(List<TEUIProperty.TESDKParam> usedList) {
         if (usedList == null) {
             return;
@@ -198,16 +203,41 @@ public class ProviderUtils {
     }
 
 
-
     public static List<TEUIProperty.TESDKParam> getUsedProperties(List<TEUIProperty> uiProperties) {
         List<TEUIProperty.TESDKParam> usedProperties = new ArrayList<>();
-        getUsedProperties(uiProperties, usedProperties);
+        TEUIProperty templateSDKParam = new TEUIProperty();
+        getUsedProperties(uiProperties, usedProperties, templateSDKParam);
+        if (templateSDKParam.sdkParam != null) {  //表示有模板数据.需要删除 美颜和滤镜数据
+            Iterator<TEUIProperty.TESDKParam> iterator = usedProperties.iterator();
+            while (iterator.hasNext()) {
+                TEUIProperty.TESDKParam tesdkParam = iterator.next();
+                if (ProviderUtils.isBeautyOrLutName(tesdkParam.effectName)) {
+                    iterator.remove();
+                }
+            }
+        }
         return usedProperties;
     }
 
 
+    public static boolean isBeautyOrLutName(String effectName) {
+        if (TextUtils.isEmpty(effectName)) {
+            return false;
+        }
+        if (XmagicConstant.EffectName.EFFECT_LUT.equals(effectName)) {
+            return true;
+        }
+        if (effectName.startsWith("body.")) {
+            return false;
+        }
+        if (TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME.equals(effectName)) {
+            return false;
+        }
+        return !XmagicConstant.EffectName.EFFECT_MOTION.equals(effectName) && !XmagicConstant.EffectName.EFFECT_MAKEUP.equals(effectName) && !XmagicConstant.EffectName.EFFECT_SEGMENTATION.equals(effectName) && !XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP.equals(effectName);
+    }
 
-    private static void getUsedProperties(List<TEUIProperty> uiProperties, List<TEUIProperty.TESDKParam> properties) {
+
+    private static void getUsedProperties(List<TEUIProperty> uiProperties, List<TEUIProperty.TESDKParam> properties, TEUIProperty templateSDKParam) {
         if (uiProperties != null && !uiProperties.isEmpty()) {
             for (TEUIProperty uiProperty : uiProperties) {
                 if (uiProperty == null) {
@@ -216,13 +246,44 @@ public class ProviderUtils {
                 if (uiProperty.getUiState() != TEUIProperty.UIState.INIT && uiProperty.sdkParam != null && uiProperty.uiCategory != TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM) {
                     properties.add(uiProperty.sdkParam);
                 }
+                if (uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE && uiProperty.getUiState() != TEUIProperty.UIState.INIT && uiProperty.paramList != null && !uiProperty.paramList.isEmpty()) {
+                    templateSDKParam.sdkParam = uiProperty.sdkParam;
+                }
                 if (uiProperty.propertyList != null) {
-                    getUsedProperties(uiProperty.propertyList, properties);
+                    getUsedProperties(uiProperty.propertyList, properties, templateSDKParam);
                 }
             }
         }
     }
 
+
+    /**
+     * 对json中解析出来的数据 模板数据进行加工处理
+     * 返回 美颜模板中被选中项的 数据
+     *
+     * @param teuiProperty
+     */
+    public static List<TEUIProperty.TESDKParam> processTemplateData(TEUIProperty teuiProperty) {
+        List<TEUIProperty.TESDKParam> result = null;
+        if (teuiProperty != null
+                && teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE
+                && teuiProperty.propertyList != null
+                && !teuiProperty.propertyList.isEmpty()) {
+            Gson gson = new Gson();
+            for (TEUIProperty uiProperty : teuiProperty.propertyList) {
+                TEUIProperty.TESDKParam tesdkParam = new TEUIProperty.TESDKParam();
+                tesdkParam.effectName = TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME;
+                tesdkParam.effectValue = uiProperty.id;
+                tesdkParam.resourcePath = uiProperty.paramList != null ? gson.toJson(uiProperty.paramList) : null;
+                tesdkParam.tag = uiProperty.paramList;
+                uiProperty.sdkParam = tesdkParam;
+                if (teuiProperty.getUiState() == TEUIProperty.UIState.CHECKED_AND_IN_USE) {
+                    result = uiProperty.paramList;
+                }
+            }
+        }
+        return result;
+    }
 
 
     public static void completionResPath(TEUIProperty uiProperty) {
@@ -238,9 +299,6 @@ public class ProviderUtils {
             }
         }
     }
-
-
-
 
 
     public static void createDlModelAndSDKParam(TEUIProperty teuiProperty, TEUIProperty.UICategory uiCategory) {
@@ -285,13 +343,11 @@ public class ProviderUtils {
     }
 
 
-
     public static TEUIProperty.TESDKParam createNoneItem(String effectName) {
         TEUIProperty.TESDKParam param = new TEUIProperty.TESDKParam();
         param.effectName = effectName;
         return param;
     }
-
 
 
     public static boolean findFirstInUseItemAndMakeChecked(List<TEUIProperty> allData) {
@@ -311,7 +367,6 @@ public class ProviderUtils {
         }
         return false;
     }
-
 
 
     public static void changeParentUIState(TEUIProperty current, int uiState) {
@@ -346,7 +401,7 @@ public class ProviderUtils {
 
 
     public static String getGreenParamsV2(TEUIProperty teuiProperty) {
-        int[] result = new int[]{40, 8, 1, 10, 1};
+        int[] result = new int[5];
         if (teuiProperty.propertyList == null || teuiProperty.propertyList.isEmpty()) {
         } else {
             for (TEUIProperty item : teuiProperty.propertyList) {

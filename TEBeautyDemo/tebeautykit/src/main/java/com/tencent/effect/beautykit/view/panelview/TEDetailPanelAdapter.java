@@ -1,7 +1,6 @@
 package com.tencent.effect.beautykit.view.panelview;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,10 +16,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.tencent.effect.beautykit.R;
 import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.utils.PanelDisplay;
+import com.tencent.effect.beautykit.utils.ScreenUtils;
 import com.tencent.effect.beautykit.view.widget.PanelItemSelectorLayout;
 
 import java.io.File;
@@ -50,6 +51,11 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
     }
 
 
+    public void updateLayoutManager(LinearLayoutManager layoutManager) {
+        this.layoutManager = layoutManager;
+        this.isGridLayout = layoutManager instanceof GridLayoutManager;
+    }
+
     @NonNull
     @Override
     public UIPropertyHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
@@ -72,7 +78,13 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
     @Override
     public void onBindViewHolder(UIPropertyHolder holder, int position) {
         TEUIProperty uiProperty = uiPropertyList.get(position);
-//        holder.tePanelItemRightDivider.setVisibility(View.GONE);
+
+        if (this.isGridLayout) {
+            holder.itemView.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        } else {
+            holder.itemView.getLayoutParams().width = ScreenUtils.dip2px(holder.itemView.getContext(), 72);
+        }
+
         holder.itemView.setTag(position);
         holder.tePanelItemLabel.setText(PanelDisplay.getDisplayName(uiProperty));
         holder.tePanelItemIcon.setVisibility(View.VISIBLE);
@@ -140,7 +152,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
         if (mListener != null) {
             selectedPosition = (int) v.getTag();
             TEUIProperty uiProperty = this.uiPropertyList.get(selectedPosition);
-            mListener.onItemClick(uiProperty);
+            mListener.onRecycleViewItemClick(uiProperty);
         }
     }
 
@@ -173,7 +185,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
     }
 
     public interface ItemClickListener {
-        void onItemClick(TEUIProperty uiProperty);
+        void onRecycleViewItemClick(TEUIProperty uiProperty);
     }
 
     public boolean isCheckedBeautyCloseItem() {
@@ -194,7 +206,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
 
         PanelItemSelectorLayout bgLayout = null;
 
-        View tePanelItemPointView;
+        ShapeableImageView tePanelItemPointView;
 
         public UIPropertyHolder(View itemView) {
             super(itemView);

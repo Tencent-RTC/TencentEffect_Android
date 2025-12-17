@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.tencent.effect.beautykit.R;
-
+import com.tencent.effect.beautykit.model.TEUIProperty;
 
 
 public class TETipDialog extends AlertDialog {
@@ -126,10 +126,19 @@ public class TETipDialog extends AlertDialog {
 
 
 
-    public static void showGreenScreenTipDialog(Context context, TETipDialog.TipDialogClickListener tipDialogClickListener) {
+    public static void showGreenOrScreenTipDialog(Context context,
+                                                  TEUIProperty teuiProperty,
+                                                  TETipDialog.TipDialogClickListener tipDialogClickListener) {
+        String resourceUri = teuiProperty.resourceUri;
+        if (TextUtils.isEmpty(resourceUri) && teuiProperty.parentUIProperty != null) {
+            //如果是蓝幕/绿幕里边的 导入图片，需要找一下parentUIProperty.resourceUri
+            resourceUri = teuiProperty.parentUIProperty.resourceUri;
+        }
+        boolean isBlue = (!TextUtils.isEmpty(resourceUri) && resourceUri.contains("bluescreen"));
         Resources resources = context.getResources();
         String title = resources.getString(R.string.te_beauty_panel_view_green_screen_tip_title);
-        String msg = resources.getString(R.string.te_beauty_panel_view_green_screen_tip_msg);
+        String msg = resources.getString(isBlue ? R.string.te_beauty_panel_view_blue_screen_tip_msg :
+                R.string.te_beauty_panel_view_green_screen_tip_msg);
         String leftStr = resources.getString(R.string.te_beauty_panel_view_green_screen_tip_dialog_left_btn);
         String rightStr = resources.getString(R.string.te_beauty_panel_view_green_screen_tip_dialog_right_btn);
         new TETipDialog(context).setData(title, msg, leftStr, rightStr)

@@ -19,6 +19,8 @@
 
     <string name="te_beauty_panel_view_green_screen_tip_title">Upload background image</string>
     <string name="te_beauty_panel_view_green_screen_tip_msg">Please stand in front of a green screen and upload an image you want to use as the background.</string>
+    <string name="te_beauty_panel_view_blue_screen_tip_msg">Please stand in front of a blue screen and upload an
+        image you want to use as the background.</string>
     <string name="te_beauty_panel_view_green_screen_tip_dialog_left_btn">Cancel</string>
     <string name="te_beauty_panel_view_green_screen_tip_dialog_right_btn">Upload</string>
 

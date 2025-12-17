@@ -2,48 +2,52 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="72dp"
-    android:layout_height="110dp">
+    android:layout_height="85dp"
+    android:paddingTop="2dp">
 
     <com.tencent.effect.beautykit.view.widget.PanelItemSelectorLayout
         android:id="@+id/te_beauty_panel_view_item_left_layout"
-        android:layout_width="62dp"
+        android:layout_width="52dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="7dp"
         android:layout_marginBottom="3dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
+        app:corner_radius="11dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:rect_left_margin="2dp"
+        app:rect_right_margin="2dp"
+        app:rect_top_margin="2dp">
 
         <ImageView
             android:id="@+id/te_panel_view_item_layout_icon"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="3dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="2dp"
             android:clickable="false"
             android:scaleType="fitXY" />
 
         <TextView
             android:id="@+id/te_panel_view_item_layout_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="4dp"
             android:ellipsize="end"
             android:gravity="center"
-            android:maxWidth="56dp"
             android:maxLines="2"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="3dp"
             android:textColor="@color/te_beauty_color_99FFFFFF"
-            android:textSize="12sp" />
+            android:textSize="10sp" />
 
 
-        <View
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/te_panel_view_item_layout_point_view"
-            android:layout_width="2dp"
-            android:layout_height="2dp"
-            android:layout_marginBottom="3dp"
-            android:background="@drawable/te_beauty_panel_menu_item_red_round_bg" />
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="2dp"
+            app:shapeAppearance="@style/te_beauty_panel_view_item_checked_item_style"
+            android:background="@color/te_beauty_color_main_color"
+            />
 
     </com.tencent.effect.beautykit.view.widget.PanelItemSelectorLayout>
 

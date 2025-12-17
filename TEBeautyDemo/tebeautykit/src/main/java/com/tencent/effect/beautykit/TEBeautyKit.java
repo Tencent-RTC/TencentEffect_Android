@@ -1,5 +1,9 @@
 package com.tencent.effect.beautykit;
 
+
+import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME;
+import static com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam.EXTRA_INFO_KEY_SEG_TYPE;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -35,7 +39,9 @@ import com.tencent.xmagic.telicense.TELicenseCheck;
 import com.tencent.xmagic.util.FileUtil;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -55,7 +61,7 @@ public class TEBeautyKit implements SensorEventListener {
     private XmagicApi.XmagicAIDataListener mAIDataListener = null;
     private XmagicApi.XmagicTipsListener mTipsListener = null;
     private Handler mHandler = new Handler(Looper.getMainLooper());
-    private final TEParamManager mParamManager = new TEParamManager();
+    private final TEParamManager mParamManager = new TEParamManager();   //这个不会存储模板中的美颜数据，存储模板
     private final Object mLock = new Object();
 
     private TEParamEnhancingStrategy mParamEnhancingStrategy = new DefaultEnhancingStrategy();
@@ -67,10 +73,13 @@ public class TEBeautyKit implements SensorEventListener {
     private XmagicApi.ExportTextureCallback mTextureCallback = null;
 
     private boolean additionalProcess = false;
+    private final Gson gson = new Gson();
+
+    private TEImageOrientation imageOrientation = TEImageOrientation.ROTATION_0;
 
     /**
-     *  Conventional ending with "/", for easy concatenation.
-     *      xmagic resource local path
+     * Conventional ending with "/", for easy concatenation.
+     * xmagic resource local path
      */
     private static String mResPath = null;
 
@@ -83,7 +92,7 @@ public class TEBeautyKit implements SensorEventListener {
 
     @Deprecated
     public static void create(@NonNull Context context, boolean isEnableHighPerformance, @NonNull OnInitListener initListener) {
-        TEBeautyKit.create(context, isEnableHighPerformance? EffectMode.NORMAL : EffectMode.PRO, initListener);
+        TEBeautyKit.create(context, isEnableHighPerformance ? EffectMode.NORMAL : EffectMode.PRO, initListener);
     }
 
     public static void create(@NonNull Context context, EffectMode effectMode, @NonNull OnInitListener initListener) {
@@ -113,7 +122,7 @@ public class TEBeautyKit implements SensorEventListener {
 
     @Deprecated
     public TEBeautyKit(Context context, boolean isEnableHighPerformance) {
-        this(context, isEnableHighPerformance? EffectMode.NORMAL : EffectMode.PRO);
+        this(context, isEnableHighPerformance ? EffectMode.NORMAL : EffectMode.PRO);
     }
 
     public TEBeautyKit(Context context, EffectMode effectMode) {
@@ -171,13 +180,13 @@ public class TEBeautyKit implements SensorEventListener {
         }
     }
 
-    public void setSyncMode(boolean isSync, int syncFrameCount){
+    public void setSyncMode(boolean isSync, int syncFrameCount) {
         if (this.mXMagicApi != null) {
             this.mXMagicApi.setSyncMode(isSync, syncFrameCount);
         }
     }
 
-    public static DeviceLevel getDeviceLevel(Context context){
+    public static DeviceLevel getDeviceLevel(Context context) {
         return XmagicApi.getDeviceLevel(context);
     }
 
@@ -186,7 +195,9 @@ public class TEBeautyKit implements SensorEventListener {
             return bitmap;
         }
         if (this.mXMagicApi != null) {
-            return this.mXMagicApi.process(bitmap, needReset);
+            Bitmap result = this.mXMagicApi.process(bitmap, needReset);
+            LogUtils.d(TAG, "Bitmap processing completed");
+            return result;
         }
         return bitmap;
     }
@@ -207,7 +218,9 @@ public class TEBeautyKit implements SensorEventListener {
                 this.mXMagicApi.process(textureId, width, height);
                 additionalProcess = false;
             }
-            return this.mXMagicApi.process(textureId, width, height);
+            int result = this.mXMagicApi.process(textureId, width, height);
+            LogUtils.d(TAG, "Texture processing completed, result texture: " + result);
+            return result;
         }
         return textureId;
     }
@@ -229,12 +242,12 @@ public class TEBeautyKit implements SensorEventListener {
         }
         TEUIProperty.TESDKParam param = this.isEnableEnhancedMode ? this.mParamEnhancingStrategy.enhanceParam(teParam) : teParam;
         LogUtils.d(TAG, "setEffect " + this.isEnableEnhancedMode + "    " + param.toString());
-        this.setSdkParam(param);
-        this.mParamManager.putTEParam(teParam);
+        this.applySDKParameterWithTemplateHandling(param);
     }
 
     /**
      * 设置上次的美颜效果，只有在没有使用TEPanelView的情况下需要恢复美颜的时候，调用此方法，当使用了TEPanelView的清苦下，使用TEPanelView的方法进行恢复
+     *
      * @param lastParamList
      */
     public void setLastParamList(String lastParamList) {
@@ -242,36 +255,12 @@ public class TEBeautyKit implements SensorEventListener {
             Type type = new TypeToken<List<TEUIProperty.TESDKParam>>() {
             }.getType();
             try {
-                List<TEUIProperty.TESDKParam> list = new Gson().fromJson(lastParamList, type);
+                List<TEUIProperty.TESDKParam> list = gson.fromJson(lastParamList, type);
                 setEffectList(list);
             } catch (Exception e) {
                 LogUtils.e(TAG, "JSON parsing failed, please check the json string");
                 e.printStackTrace();
             }
-        }
-    }
-
-    /**
-     * 在真正设置参数的进行判断，因为轻美妆和单点美妆在效果上要进行互斥，但是SDK没有实现
-     * （SDK实现了 设置单点美妆后再设置轻美妆，会清除单点美妆的效果，但是没有实现设置单点美妆清除轻美妆的问题）
-     *
-     * @param sdkParam
-     */
-    private void setSdkParam(TEUIProperty.TESDKParam sdkParam) {
-        if (TEUIConfig.getInstance().cleanLightMakeup) {
-            this.clearLightMakeup(sdkParam);
-        }
-        this.mXMagicApi.setEffect(sdkParam.effectName, sdkParam.effectValue, sdkParam.resourcePath, sdkParam.extraInfo);
-    }
-
-
-    private void clearLightMakeup(TEUIProperty.TESDKParam sdkParam) {
-        if (XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP.equals(sdkParam.effectName)) {
-            hasLightMakeup = true;
-        }
-        if (hasLightMakeup && ProviderUtils.isPointMakeup(sdkParam)) {
-            hasLightMakeup = false;
-            this.mXMagicApi.setEffect(XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP, 0, null, null);
         }
     }
 
@@ -295,16 +284,15 @@ public class TEBeautyKit implements SensorEventListener {
     }
 
 
-
     public String exportInUseSDKParam() {
         List<TEUIProperty.TESDKParam> sdkParams = this.mParamManager.getParams();
-        if (sdkParams != null && !sdkParams.isEmpty()) {
-            return new Gson().toJson(sdkParams);
+        this.filterInvalidSDKParameters(sdkParams);
+        if (!sdkParams.isEmpty()) {
+            return gson.toJson(sdkParams);
         } else {
             return null;
         }
     }
-
 
 
     public void onResume() {
@@ -328,6 +316,7 @@ public class TEBeautyKit implements SensorEventListener {
 
 
     public void onDestroy() {
+        this.onPause();
         synchronized (mLock) {
             this.isXMagicApiDestroyed = true;
             WorkThread.getInstance().cancel(this.hashCode());
@@ -360,7 +349,6 @@ public class TEBeautyKit implements SensorEventListener {
             this.mXMagicApi.setAIDataListener(mAIDataListener);
         }
     }
-
 
 
     public void setTipsListener(XmagicApi.XmagicTipsListener tipsListener) {
@@ -402,7 +390,7 @@ public class TEBeautyKit implements SensorEventListener {
                 deviceDirection = DeviceDirection.HORIZONTAL_DOWN;
                 LogUtils.d("dispatchOrientation", "HORIZONTAL_DOWN");
             } else {  // 手机非水平放置
-                LogUtils.d("dispatchOrientation","not HORIZONTAL");
+                LogUtils.d("dispatchOrientation", "not HORIZONTAL");
                 if (Math.abs(currentYAxis) > Math.abs(currentXAxis)) {
                     if (currentYAxis > 1) {
                         deviceDirection = DeviceDirection.PORTRAIT_UP;
@@ -441,15 +429,16 @@ public class TEBeautyKit implements SensorEventListener {
     }
 
 
-
     public void setImageOrientation(TEImageOrientation orientation) {
         if (this.mXMagicApi == null) {
             LogUtils.e(TAG, "setImageOrientation: xmagicApi is null ");
             return;
         }
-        this.mXMagicApi.setImageOrientation(orientation);
+        if (imageOrientation != orientation) {
+            this.mXMagicApi.setImageOrientation(orientation);
+        }
+        imageOrientation = orientation;
     }
-
 
 
     public boolean isDeviceSupport(String motionResPath) {
@@ -499,9 +488,6 @@ public class TEBeautyKit implements SensorEventListener {
     }
 
 
-
-
-
     public static void setResPath(String resPath) {
         if (!TextUtils.isEmpty(resPath)) {
             if (resPath.endsWith(File.separator)) {
@@ -539,11 +525,10 @@ public class TEBeautyKit implements SensorEventListener {
      * so you can refer to the demo to not set the callback when calling in the application,
      * but call this method again (set the callback interface) before using the xMagicApi object to authenticate.
      *
-     *   @param context                Application context
-     *
-     *      @param licenseUrl             License URL obtained from the platform
-     *      @param licenseKey             License key obtained from the platform
-     *      @param teLicenseCheckListener Authentication callback interface
+     * @param context                Application context
+     * @param licenseUrl             License URL obtained from the platform
+     * @param licenseKey             License key obtained from the platform
+     * @param teLicenseCheckListener Authentication callback interface
      */
     public static void setTELicense(Context context, String licenseUrl, String licenseKey, TELicenseCheck.TELicenseCheckListener teLicenseCheckListener) {                         //
         if (teLicenseCheckListener == null) {
@@ -560,10 +545,10 @@ public class TEBeautyKit implements SensorEventListener {
      * This method aggregates the setResPath, copyRes, and setTELicense methods,
      * therefore, it includes the copying of resource files and the verification of License information
      *
-     * @param context      Application context
-     * @param licenseUrl   License URL obtained from the platform
-     * @param licenseKey   License key obtained from the platform
-     * @param callback     SetupSDKCallback interface
+     * @param context    Application context
+     * @param licenseUrl License URL obtained from the platform
+     * @param licenseKey License key obtained from the platform
+     * @param callback   SetupSDKCallback interface
      */
     public static void setupSDK(Context context, String licenseUrl, String licenseKey, @NonNull SetupSDKCallback callback) {
         mResPath = new File(context.getFilesDir(), "xmagic").getAbsolutePath() + File.separator;
@@ -586,6 +571,176 @@ public class TEBeautyKit implements SensorEventListener {
         }
     }
 
+    /**
+     * 过滤无效的SDK参数
+     * 该方法负责清理参数列表中无效的参数项，主要移除以下类型的参数：
+     * 1. LUT效果但资源路径为空
+     * 2. 动作效果但资源路径为空
+     * 3. 美妆效果但资源路径为空
+     * 4. 轻美妆效果但资源路径为空
+     * 5. 分割效果但资源路径为空
+     * 这些参数通常表示未正确配置或无效的效果项，需要被过滤掉以避免SDK处理错误
+     *
+     * @param sdkParams 原始参数列表
+     */
+    private void filterInvalidSDKParameters(@NonNull List<TEUIProperty.TESDKParam> sdkParams) {
+        Iterator<TEUIProperty.TESDKParam> iterator = sdkParams.iterator();
+        while (iterator.hasNext()) {
+            TEUIProperty.TESDKParam tesdkParam = iterator.next();
+            if (XmagicConstant.EffectName.EFFECT_LUT.equals(tesdkParam.effectName) && TextUtils.isEmpty(tesdkParam.resourcePath)) {
+                iterator.remove();
+            }
+
+            if (XmagicConstant.EffectName.EFFECT_MOTION.equals(tesdkParam.effectName) && TextUtils.isEmpty(tesdkParam.resourcePath)) {
+                iterator.remove();
+            }
+
+            if (XmagicConstant.EffectName.EFFECT_MAKEUP.equals(tesdkParam.effectName) && TextUtils.isEmpty(tesdkParam.resourcePath)) {
+                iterator.remove();
+            }
+
+            if (XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP.equals(tesdkParam.effectName) && TextUtils.isEmpty(tesdkParam.resourcePath)) {
+                iterator.remove();
+            }
+            if (XmagicConstant.EffectName.EFFECT_SEGMENTATION.equals(tesdkParam.effectName) && TextUtils.isEmpty(tesdkParam.resourcePath)) {
+                iterator.remove();
+            }
+
+            if (XmagicConstant.EffectName.EFFECT_SEGMENTATION.equals(tesdkParam.effectName)
+                    && tesdkParam.extraInfo != null) {
+                String segType = tesdkParam.extraInfo.get(EXTRA_INFO_KEY_SEG_TYPE);
+                //如果是背景自定义背景分割、绿幕抠图1   、绿幕抠图2 则移除
+                if (!TextUtils.isEmpty(segType) && (TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_GREEN[0].equals(segType)
+                        || TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_GREEN[1].equals(segType)
+                        || TEUIProperty.TESDKParam.EXTRA_INFO_SEG_TYPE_CUSTOM.equals(segType))) {
+                    iterator.remove();
+                }
+            }
+
+//移除模板0
+            if (BEAUTY_TEMPLATE_EFFECT_NAME.equals(tesdkParam.effectName) && TextUtils.isEmpty(tesdkParam.resourcePath)) {
+                iterator.remove();
+            }
+        }
+    }
+
+
+    /**
+     * 应用SDK参数并处理模板逻辑
+     * 该方法负责处理复杂的参数设置逻辑，包括：
+     * 1. 清理轻美妆效果（如果配置要求）
+     * 2. 处理模板数据：重置之前的美颜参数，设置新的模板数据
+     * 3. 处理美颜数据：如果之前有模板数据，需要转换为美颜数据
+     * 4. 设置参数到XMagic API
+     * 5. 将参数添加到参数管理器
+     *
+     * @param sdkParam 要设置的SDK参数对象
+     */
+    private void applySDKParameterWithTemplateHandling(TEUIProperty.TESDKParam sdkParam) {
+        if (TEUIConfig.getInstance().cleanLightMakeup) {
+            this.clearLightMakeup(sdkParam);
+        }
+        //如果设置了模板，那么需要先检查一下之前是否有设置模板或者 isBeautyOrLutName 数据，
+        //如果之前设置了 模板，那么需要先获取到之前模板数据，并将数据设置为0，然后再拼接上 此模板的数据
+        //如果之前设置了  isBeautyOrLutName 数据，那么需要将这些数据设置为0，并从 mParamManager 中删除，
+        if (TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME.equals(sdkParam.effectName)) {  //表示是模板数据
+            List<TEUIProperty.TESDKParam> paramList = this.mParamManager.getParams();
+            TEParamManager teParamManager = new TEParamManager();
+            for (TEUIProperty.TESDKParam tesdkParam : paramList) {
+                if (TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME.equals(tesdkParam.effectName) && tesdkParam.tag instanceof List) {
+                    //表示之前设置了模板数据
+                    List<TEUIProperty.TESDKParam> tesdkParamList = (List<TEUIProperty.TESDKParam>) tesdkParam.tag;
+                    teParamManager.putTEParams(ProviderUtils.clone0ValuedParam(tesdkParamList));
+                }
+                if (ProviderUtils.isBeautyOrLutName(tesdkParam.effectName)) {
+                    try {
+                        TEUIProperty.TESDKParam cloneParam = tesdkParam.clone();
+                        cloneParam.effectValue = 0;
+                        cloneParam.resourcePath = null;
+                        this.mParamManager.remove(tesdkParam);
+                        teParamManager.putTEParam(cloneParam);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if (sdkParam.tag instanceof List) {  //表示是模板数据中的非 关闭数据
+                Object tag = sdkParam.tag;
+                teParamManager.putTEParams((List<TEUIProperty.TESDKParam>) tag);
+            }
+            List<TEUIProperty.TESDKParam> templateBeautyData = teParamManager.getParams();
+            for (TEUIProperty.TESDKParam tesdkParam : templateBeautyData) {
+                applySDKParameterToXMagicApi(tesdkParam);
+            }
+        } else if (ProviderUtils.isBeautyOrLutName(sdkParam.effectName)) {
+            //需要检查一下之前是否设置过模板，如果设置过美颜模板，那么需要将模板的数据解析为 isBeautyOrLutName 数据添加到  mParamManager，并移除这个模板
+            //最后设置isBeautyOrLutName 数据
+            TEUIProperty.TESDKParam templateData = this.mParamManager.getTemplateData();
+            if (templateData != null) {
+                this.mParamManager.remove(templateData);
+                if (templateData.tag instanceof List) {
+                    List<TEUIProperty.TESDKParam> tesdkParamList = (List<TEUIProperty.TESDKParam>) templateData.tag;
+                    this.mParamManager.putTEParams(tesdkParamList);
+                }
+            }
+            applySDKParameterToXMagicApi(sdkParam);
+        } else {
+            applySDKParameterToXMagicApi(sdkParam);
+        }
+        this.mParamManager.putTEParam(sdkParam);
+    }
+
+
+    /**
+     * 应用SDK参数到XMagic API，处理资源路径的拼接逻辑
+     * 该方法根据不同的效果类型，智能处理资源路径的拼接：
+     * 1. 对于LUT效果：检查资源路径是否需要拼接完整路径（仅当路径以"light_material/lut"开头时）
+     * 2. 对于分割、动作、美妆、轻美妆效果：检查资源路径是否需要拼接TEBeautyKit资源路径
+     * 3. 对于其他效果：直接设置参数，不进行路径处理
+     * <p>
+     * 这种设计确保了资源文件能够正确加载，同时避免了重复拼接路径的问题
+     *
+     * @param sdkParam 要设置的SDK参数对象，包含效果名称、值、资源路径和额外信息
+     */
+    private void applySDKParameterToXMagicApi(TEUIProperty.TESDKParam sdkParam) {
+        if (XmagicConstant.EffectName.EFFECT_LUT.equals(sdkParam.effectName)) {
+            //这种情况可能是1、配置的无 2、配置的完整路径
+            if (TextUtils.isEmpty(sdkParam.resourcePath) || !sdkParam.resourcePath.startsWith("light_material/lut")) {
+                this.mXMagicApi.setEffect(sdkParam.effectName, sdkParam.effectValue,
+                        sdkParam.resourcePath, sdkParam.extraInfo);
+                return;
+            }
+            this.mXMagicApi.setEffect(sdkParam.effectName, sdkParam.effectValue,
+                    TEBeautyKit.getResPath() + sdkParam.resourcePath, sdkParam.extraInfo);
+        } else if (XmagicConstant.EffectName.EFFECT_SEGMENTATION.equals(sdkParam.effectName)
+                || XmagicConstant.EffectName.EFFECT_MOTION.equals(sdkParam.effectName)
+                || XmagicConstant.EffectName.EFFECT_MAKEUP.equals(sdkParam.effectName)
+                || XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP.equals(sdkParam.effectName)
+        ) {
+            if (TextUtils.isEmpty(sdkParam.resourcePath) || sdkParam.resourcePath.startsWith(TEBeautyKit.getResPath())) {
+                this.mXMagicApi.setEffect(sdkParam.effectName, sdkParam.effectValue,
+                        sdkParam.resourcePath, sdkParam.extraInfo);
+            } else {
+                this.mXMagicApi.setEffect(sdkParam.effectName, sdkParam.effectValue,
+                        TEBeautyKit.getResPath() + sdkParam.resourcePath, sdkParam.extraInfo);
+            }
+        } else {
+            this.mXMagicApi.setEffect(sdkParam.effectName, sdkParam.effectValue, sdkParam.resourcePath, sdkParam.extraInfo);
+        }
+    }
+
+
+    private void clearLightMakeup(TEUIProperty.TESDKParam sdkParam) {
+        if (XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP.equals(sdkParam.effectName)) {
+            hasLightMakeup = true;
+        }
+        if (hasLightMakeup && ProviderUtils.isPointMakeup(sdkParam)) {
+            hasLightMakeup = false;
+            this.mXMagicApi.setEffect(XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP, 0, null, null);
+        }
+    }
+
+
     public interface SetupSDKCallback {
         void onResult(int errorCode, String msg);
     }
@@ -596,13 +751,13 @@ public class TEBeautyKit implements SensorEventListener {
     private static boolean isNeedCopy(Context context) {
         SharedPreferences sp = context.getSharedPreferences(XMAGIC_SP_NAME, Context.MODE_PRIVATE);
         String spVersion = sp.getString(XMAGIC_SP_KEY_VERSION, "");
-        return !XmagicApi.VERSION.equals(spVersion);
+        return !getVersion().equals(spVersion);
     }
 
     private static void writeVersionToSp(Context context) {
-        context.getSharedPreferences(XMAGIC_SP_NAME, Context.MODE_PRIVATE).edit().putString(XMAGIC_SP_KEY_VERSION, XmagicApi.VERSION).commit();
+        context.getSharedPreferences(XMAGIC_SP_NAME, Context.MODE_PRIVATE).edit().putString(XMAGIC_SP_KEY_VERSION,
+                getVersion()).commit();
     }
-
 
 
     public interface OnInitListener {
@@ -623,6 +778,17 @@ public class TEBeautyKit implements SensorEventListener {
 
     public enum EffectState {
         ENABLED, DISABLED
+    }
+
+    private static String getVersion() {
+        try {
+            Field versionField = XmagicApi.class.getDeclaredField("VERSION");
+            versionField.setAccessible(true);
+            return (String) versionField.get(null);
+        } catch (Exception e) {
+            LogUtils.e(TAG, "Failed to get XmagicApi.VERSION via reflection: " + e.getMessage());
+            return XmagicApi.VERSION;
+        }
     }
 
 

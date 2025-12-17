@@ -1,3 +1,11 @@
 include ':demo'
 include ':tebeautykit'
-        
+
+gradle.projectsLoaded {
+    if (new File("../../../scripts/copyAssets_android.sh").exists()){
+        exec {
+            workingDir rootDir.getAbsolutePath()
+            commandLine 'sh', '-c', "chmod +x ../../../scripts/copyAssets_android.sh ; ../../../scripts/copyAssets_android.sh "
+        }
+    }
+}
