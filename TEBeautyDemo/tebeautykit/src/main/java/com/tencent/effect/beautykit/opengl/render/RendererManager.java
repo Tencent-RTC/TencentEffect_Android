@@ -1,4 +1,4 @@
-package com.tencent.demo.opengl.render;
+package com.tencent.effect.beautykit.opengl.render;
 
 
 

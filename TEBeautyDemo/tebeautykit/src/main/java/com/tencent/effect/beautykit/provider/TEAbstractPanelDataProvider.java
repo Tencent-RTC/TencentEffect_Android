@@ -16,6 +16,7 @@ import com.tencent.xmagic.util.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -58,9 +59,6 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
         if (allData != null) {
             return allData;
         }
-        if (TEUIConfig.getInstance().revertEffect2Json) {
-            this.originalParamList = null;
-        }
         return this.forceRefreshPanelData(context);
     }
 
@@ -90,9 +88,15 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
             this.indexUIProperty(uiProperty);
             this.allData.add(uiProperty);
         }
+        if (originalParamList != null && !originalParamList.isEmpty()) {
+            this.uncheckBeautyAndLut();
+        }
         this.restoreUIStateFromParams(this.originalParamList, "originalParamList");     //将上次的数据进行同步
         //被选中的模板中的美颜数据
         List<TEUIProperty.TESDKParam> checkedTemplateBeautyData = ProviderUtils.processTemplateData(templateData);
+        if (checkedTemplateBeautyData != null && !checkedTemplateBeautyData.isEmpty()) {
+            this.uncheckBeautyAndLut();
+        }
         this.restoreUIStateFromParams(checkedTemplateBeautyData, "checkedTemplateBeautyData");   //将模板项同步到美颜、滤镜上
         return allData;
     }
@@ -202,7 +206,6 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
                 }
             }
         } else {
-            property.setUiState(TEUIProperty.UIState.INIT);
             String uiIndex = this.getNameMapKey(property);
             if (!TextUtils.isEmpty(uiIndex)) {
                 indexUIPropertyMap.put(uiIndex, property);
@@ -336,4 +339,5 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
         return new Gson().fromJson(dataStr.trim(), TEUIProperty.class);
     }
 
+    protected abstract void uncheckBeautyAndLut();
 }

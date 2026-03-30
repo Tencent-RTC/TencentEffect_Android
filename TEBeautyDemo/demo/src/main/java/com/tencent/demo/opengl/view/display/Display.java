@@ -2,7 +2,7 @@ package com.tencent.demo.opengl.view.display;
 
 import android.view.View;
 
-import com.tencent.demo.opengl.gles.EglCore;
+import com.tencent.effect.beautykit.opengl.gles.EglCore;
 import com.tencent.demo.opengl.view.FrameTexture;
 
 public interface Display {

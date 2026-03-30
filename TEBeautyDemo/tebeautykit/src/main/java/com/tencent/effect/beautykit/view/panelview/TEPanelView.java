@@ -23,6 +23,7 @@ import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.provider.TEGeneralDataProvider;
 import com.tencent.effect.beautykit.provider.TEPanelDataProvider;
 import com.tencent.effect.beautykit.utils.LogUtils;
+import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
 import com.tencent.effect.beautykit.view.dialog.TETipDialog;
 
 import java.lang.reflect.Type;
@@ -136,6 +137,7 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
         // 作为默认效果返回即可，为什么这样呢？因为默认效果中可能包含了只在模板中配置的单点美妆或者滤镜，这样在同步数据的时候就会出现这些数据如法同步上去，从而不会有选中效果，
         // 那么使用provider.getUsedProperties() 方法获取的数据中就会缺少这部分数据，所以直接返回 lastParamList 即可
         if (this.lastParamList != null) {
+            ProviderUtils.processLastData(this.lastParamList);
             this.mDetailPanelListener.onDefaultEffectList(this.lastParamList);
         } else {
             this.mDetailPanelListener.onDefaultEffectList(provider.getUsedProperties());
@@ -206,6 +208,7 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
             if (defaultParamList != null && !defaultParamList.isEmpty() && this.beautyKit != null) {
                 this.beautyKit.setEffectList(this.defaultParamList);
                 this.notificationEffectChange(this.defaultParamList);
+                this.defaultParamList = null;
             }
         }
 
@@ -289,6 +292,7 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
             if (this.beautyKit != null && this.defaultParamList != null && !this.defaultParamList.isEmpty()) {
                 this.beautyKit.setEffectList(this.defaultParamList);
                 this.notificationEffectChange(paramList);
+                this.defaultParamList = null;
             }
         }
 

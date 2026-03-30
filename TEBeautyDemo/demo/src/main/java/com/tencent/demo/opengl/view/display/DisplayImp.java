@@ -9,9 +9,9 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.tencent.demo.opengl.TextureTransform;
-import com.tencent.demo.opengl.gles.EglCore;
-import com.tencent.demo.opengl.gles.WindowSurface;
+import com.tencent.effect.beautykit.opengl.TextureTransform;
+import com.tencent.effect.beautykit.opengl.gles.EglCore;
+import com.tencent.effect.beautykit.opengl.gles.WindowSurface;
 import com.tencent.demo.opengl.view.FrameTexture;
 import com.tencent.effect.beautykit.utils.LogUtils;
 

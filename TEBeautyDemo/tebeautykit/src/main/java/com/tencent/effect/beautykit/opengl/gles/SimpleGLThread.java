@@ -1,4 +1,4 @@
-package com.tencent.demo.opengl.gles;
+package com.tencent.effect.beautykit.opengl.gles;
 
 import android.annotation.TargetApi;
 import android.opengl.EGLContext;

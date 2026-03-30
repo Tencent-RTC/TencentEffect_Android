@@ -180,6 +180,9 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
             }
         }
 
+        if (TEUIConfig.getInstance().revertEffect2Json) {
+            this.originalParamList = null;
+        }
         this.forceRefreshPanelData(context.getApplicationContext());
 
         List<TEUIProperty.TESDKParam> defaultUsedList = ProviderUtils.getUsedProperties(allData);
@@ -303,7 +306,7 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
     }
 
 
-    private void uncheckBeautyAndLut() {
+    protected void uncheckBeautyAndLut() {
         List<TEUIProperty> beautyData = this.getDataByUICategory(TEUIProperty.UICategory.BEAUTY);
         for (TEUIProperty teuiProperty : beautyData) {
             unCheckItem(teuiProperty);

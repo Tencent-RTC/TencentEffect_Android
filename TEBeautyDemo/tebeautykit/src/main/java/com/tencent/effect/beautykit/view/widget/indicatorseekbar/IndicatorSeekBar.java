@@ -15,7 +15,6 @@ import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
- 
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -25,7 +24,6 @@ import android.view.ViewParent;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -53,6 +51,8 @@ public class IndicatorSeekBar extends View {
     private float lastProgress;
     private float mFaultTolerance = -1;//the tolerance for user seek bar touching
     private float mScreenWidth = -1;
+    // 性能优化：缓存指示器宽度，避免每次滑动都重新测量
+    private int mCachedIndicatorWidth = -1;
     private boolean mClearPadding;
     private SeekParams mSeekParams;//save the params when seeking change.
     //seek bar
@@ -1317,8 +1317,12 @@ public class IndicatorSeekBar extends View {
             return;
         }
         mIndicator.setProgressTextView(getIndicatorTextString());
-        mIndicatorContentView.measure(0, 0);
-        int measuredWidth = mIndicatorContentView.getMeasuredWidth();
+        // 性能优化：只在首次或缓存失效时进行测量
+        if (mCachedIndicatorWidth <= 0) {
+            mIndicatorContentView.measure(0, 0);
+            mCachedIndicatorWidth = mIndicatorContentView.getMeasuredWidth();
+        }
+        int measuredWidth = mCachedIndicatorWidth;
         float thumbCenterX = getThumbCenterX();
 
         if (mScreenWidth == -1) {
@@ -1342,8 +1346,7 @@ public class IndicatorSeekBar extends View {
             arrowOffset = 0;
         }
 
-        mIndicator.updateIndicatorLocation(indicatorOffset);
-        mIndicator.updateArrowViewLocation(arrowOffset);
+        mIndicator.updateStayIndicatorLocation(indicatorOffset, arrowOffset);
     }
 
     private boolean autoAdjustThumb() {

@@ -1,9 +1,9 @@
-package com.tencent.demo.opengl.render;
+package com.tencent.effect.beautykit.opengl.render;
 
 import android.graphics.Point;
 import android.opengl.GLES20;
 
-import com.tencent.demo.opengl.GlUtil;
+import com.tencent.xmagic.GlUtil;
 
 
 /**
@@ -11,7 +11,7 @@ import com.tencent.demo.opengl.GlUtil;
  */
 public abstract class Renderer {
 
-    private static final String TAG = GlUtil.TAG;
+    private static final String TAG = Renderer.class.getName();
 
     /**
      * The M program handle.

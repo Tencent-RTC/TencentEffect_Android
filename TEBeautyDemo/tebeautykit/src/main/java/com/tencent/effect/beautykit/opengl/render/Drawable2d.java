@@ -1,7 +1,8 @@
-package com.tencent.demo.opengl.render;
+package com.tencent.effect.beautykit.opengl.render;
 
 
-import com.tencent.demo.opengl.GlUtil;
+
+import com.tencent.xmagic.GlUtil;
 
 import java.nio.FloatBuffer;
 

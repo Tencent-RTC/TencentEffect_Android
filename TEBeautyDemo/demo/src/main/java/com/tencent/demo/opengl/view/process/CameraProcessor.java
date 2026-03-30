@@ -3,9 +3,9 @@ package com.tencent.demo.opengl.view.process;
 import android.util.Size;
 import android.widget.ImageView;
 
-import com.tencent.demo.opengl.TextureTransform;
-import com.tencent.demo.opengl.gles.EglCore;
-import com.tencent.demo.opengl.render.TextureFormat;
+import com.tencent.effect.beautykit.opengl.TextureTransform;
+import com.tencent.effect.beautykit.opengl.gles.EglCore;
+import com.tencent.effect.beautykit.opengl.render.TextureFormat;
 import com.tencent.demo.opengl.view.CustomTextureProcessor;
 import com.tencent.demo.opengl.view.FrameTexture;
 import com.tencent.demo.opengl.view.display.Display;

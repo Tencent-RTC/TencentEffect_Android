@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tencent.demo.opengl.gles;
+package com.tencent.effect.beautykit.opengl.gles;
 
 /**
  * Off-screen EGL surface (pbuffer).
