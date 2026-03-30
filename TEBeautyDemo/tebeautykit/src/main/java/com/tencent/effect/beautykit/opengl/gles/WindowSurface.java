@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tencent.demo.opengl.gles;
+package com.tencent.effect.beautykit.opengl.gles;
 
 import android.graphics.SurfaceTexture;
 import android.view.Surface;

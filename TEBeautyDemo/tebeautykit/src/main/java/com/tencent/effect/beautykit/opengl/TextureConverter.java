@@ -1,8 +1,8 @@
-package com.tencent.demo.opengl;
+package com.tencent.effect.beautykit.opengl;
 
 import androidx.annotation.IntDef;
 
-import com.tencent.demo.opengl.render.TextureFormat;
+import com.tencent.effect.beautykit.opengl.render.TextureFormat;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -84,6 +84,6 @@ public class TextureConverter {
 
     @IntDef({0, 90, 180, 270})
     @Retention(RetentionPolicy.SOURCE)
-    @interface RotationDegreesValue {
+    public @interface RotationDegreesValue {
     }
 }

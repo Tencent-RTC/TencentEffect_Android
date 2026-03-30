@@ -7,9 +7,9 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 
-import com.tencent.demo.opengl.GlUtil;
-import com.tencent.demo.opengl.gles.EglCore;
-import com.tencent.demo.opengl.render.TextureFormat;
+import com.tencent.effect.beautykit.opengl.GlUtil;
+import com.tencent.effect.beautykit.opengl.gles.EglCore;
+import com.tencent.effect.beautykit.opengl.render.TextureFormat;
 import com.tencent.demo.opengl.view.FrameTexture;
 import com.tencent.demo.utils.TimerManager;
 

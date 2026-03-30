@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.effect.beautykit.config.DeviceDirection;
 import com.tencent.effect.beautykit.config.TEUIConfig;
+import com.tencent.effect.beautykit.opengl.TextureConverter;
 import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
 import com.tencent.xmagic.GlUtil;
 import com.tencent.xmagic.XmagicApi;
@@ -84,6 +85,9 @@ public class TEBeautyKit implements SensorEventListener {
     private static String mResPath = null;
 
     private boolean hasLightMakeup = false;
+
+    private TextureConverter preRotateConverter = new TextureConverter();
+    private TextureConverter postRotateConverter = new TextureConverter();
 
     @Deprecated
     public static void create(@NonNull Context context, @NonNull OnInitListener initListener) {
@@ -202,6 +206,30 @@ public class TEBeautyKit implements SensorEventListener {
         return bitmap;
     }
 
+    /**
+     * @param textureId 纹理
+     * @param width 宽度
+     * @param height 高度
+     * @param rotate 顺时针旋转的角度
+     * @return 美颜处理后的纹理
+     */
+    public int process(int textureId, int width, int height, int rotate) {
+        if (rotate % 90 != 0) {
+            return textureId;
+        }
+        if (rotate == 0) {
+            return process(textureId, width, height);
+        }
+        int converterId = this.preRotateConverter.convert(textureId, width, height, rotate, false, false);
+        if (rotate == 90 || rotate == 270) {
+            int processid = this.process(converterId, height, width);
+            return this.postRotateConverter.convert(processid, height, width, 360 - rotate, false, false);
+        } else {
+            int processid = this.process(converterId, width, height);
+            return this.postRotateConverter.convert(processid, width, height, 360 - rotate, false, false);
+        }
+    }
+
 
     public int process(int textureId, int width, int height) {
         if (this.mEffectState == EffectState.DISABLED) {
@@ -256,6 +284,7 @@ public class TEBeautyKit implements SensorEventListener {
             }.getType();
             try {
                 List<TEUIProperty.TESDKParam> list = gson.fromJson(lastParamList, type);
+                ProviderUtils.processLastData(list);
                 setEffectList(list);
             } catch (Exception e) {
                 LogUtils.e(TAG, "JSON parsing failed, please check the json string");
@@ -319,6 +348,14 @@ public class TEBeautyKit implements SensorEventListener {
         this.onPause();
         synchronized (mLock) {
             this.isXMagicApiDestroyed = true;
+            if (this.preRotateConverter != null) {
+                this.preRotateConverter.release();
+                this.preRotateConverter = null;
+            }
+            if (this.postRotateConverter != null) {
+                this.postRotateConverter.release();
+                this.postRotateConverter = null;
+            }
             WorkThread.getInstance().cancel(this.hashCode());
             if (this.mXMagicApi != null) {
                 this.mXMagicApi.onDestroy();

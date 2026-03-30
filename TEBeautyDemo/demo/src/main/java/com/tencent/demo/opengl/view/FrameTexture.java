@@ -1,7 +1,7 @@
 package com.tencent.demo.opengl.view;
 
 
-import com.tencent.demo.opengl.render.TextureFormat;
+import com.tencent.effect.beautykit.opengl.render.TextureFormat;
 
 public class FrameTexture {
     public TextureFormat textureFormat = TextureFormat.Texture_2D;

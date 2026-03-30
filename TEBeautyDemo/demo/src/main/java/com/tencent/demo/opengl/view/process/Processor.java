@@ -1,6 +1,6 @@
 package com.tencent.demo.opengl.view.process;
 
-import com.tencent.demo.opengl.gles.EglCore;
+import com.tencent.effect.beautykit.opengl.gles.EglCore;
 import com.tencent.demo.opengl.view.CustomTextureProcessor;
 import com.tencent.demo.opengl.view.FrameTexture;
 import com.tencent.demo.opengl.view.display.Display;

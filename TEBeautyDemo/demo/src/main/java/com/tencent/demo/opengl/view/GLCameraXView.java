@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tencent.demo.R;
-import com.tencent.demo.opengl.gles.EglCore;
+import com.tencent.effect.beautykit.opengl.gles.EglCore;
 import com.tencent.demo.opengl.view.display.Display;
 import com.tencent.demo.opengl.view.display.DisplayImp;
 import com.tencent.demo.opengl.view.display.DisplayStateChangeListener;

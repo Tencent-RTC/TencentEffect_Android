@@ -277,12 +277,32 @@ public class ProviderUtils {
                 tesdkParam.resourcePath = uiProperty.paramList != null ? gson.toJson(uiProperty.paramList) : null;
                 tesdkParam.tag = uiProperty.paramList;
                 uiProperty.sdkParam = tesdkParam;
-                if (teuiProperty.getUiState() == TEUIProperty.UIState.CHECKED_AND_IN_USE) {
+                if (uiProperty.getUiState() >= TEUIProperty.UIState.IN_USE) {
                     result = uiProperty.paramList;
                 }
             }
         }
         return result;
+    }
+
+
+    /**
+     * 对上次的数据进行处理，主要是处理模板数据，这种数据比较特殊，需要给tag 赋值
+     *
+     * @param sdkParamList
+     */
+    public static void processLastData(List<TEUIProperty.TESDKParam> sdkParamList) {
+        if (sdkParamList == null) {
+            return;
+        }
+        Gson gson = new Gson();
+        for (TEUIProperty.TESDKParam tesdkParam : sdkParamList) {
+            if (TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME.equals(tesdkParam.effectName) && !TextUtils.isEmpty(tesdkParam.resourcePath) && tesdkParam.tag == null) {
+                tesdkParam.tag = gson.fromJson(tesdkParam.resourcePath,
+                        new com.google.gson.reflect.TypeToken<List<TEUIProperty.TESDKParam>>() {
+                        }.getType());
+            }
+        }
     }
 
 

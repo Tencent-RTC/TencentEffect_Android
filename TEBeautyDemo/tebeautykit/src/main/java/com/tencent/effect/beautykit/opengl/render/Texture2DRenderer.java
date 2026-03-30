@@ -1,14 +1,13 @@
-package com.tencent.demo.opengl.render;
+package com.tencent.effect.beautykit.opengl.render;
 
 import static android.opengl.GLES20.GL_FRAMEBUFFER;
 
-import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 
-import com.tencent.demo.opengl.GlUtil;
+import com.tencent.xmagic.GlUtil;
 
 
-public class TextureOesRenderer extends Renderer {
+public class Texture2DRenderer extends Renderer {
 
     // Simple vertex shader, used for all programs.
     private static final String VERTEX_SHADER =
@@ -21,13 +20,11 @@ public class TextureOesRenderer extends Renderer {
                     + "    vTextureCoord = aTextureCoord;\n"
                     + "}\n";
 
-    // Simple fragment shader for use with external 2D textures (e.g. what we get from
-    // SurfaceTexture).
-    private static final String FRAGMENT_SHADER_EXT =
-            "#extension GL_OES_EGL_image_external : require\n"
-                    + "precision mediump float;\n"
+    // Simple fragment shader for use with "normal" 2D textures.
+    private static final String FRAGMENT_SHADER_2D =
+            "precision mediump float;\n"
                     + "varying vec2 vTextureCoord;\n"
-                    + "uniform samplerExternalOES sTexture;\n"
+                    + "uniform sampler2D sTexture;\n"
                     + "void main() {\n"
                     + "    gl_FragColor = texture2D(sTexture, vTextureCoord);\n"
                     + "}\n";
@@ -37,11 +34,12 @@ public class TextureOesRenderer extends Renderer {
     private int maTextureCoordLoc;
 
     /**
-     * Prepares the program in the current EGL context.
+     * Instantiates a new Renderer texture 2 d.
      */
-    public TextureOesRenderer() {
-        super(VERTEX_SHADER, FRAGMENT_SHADER_EXT);
+    public Texture2DRenderer() {
+        super(VERTEX_SHADER, FRAGMENT_SHADER_2D);
     }
+
 
 
     @Override
@@ -58,13 +56,14 @@ public class TextureOesRenderer extends Renderer {
     public void renderOnScreen(int textureId, int width, int height, float[] mvpMatrix) {
         GlUtil.checkGlError("draw start");
 
+        GLES20.glBindFramebuffer(GL_FRAMEBUFFER, 0);
         // Select the program.
         GLES20.glUseProgram(mProgramHandle);
         GlUtil.checkGlError("glUseProgram");
 
         // Set the texture.
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureId);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
 
         // Copy the model / view / projection matrix over.
         GLES20.glUniformMatrix4fv(muMVPMatrixLoc, 1, false, mvpMatrix, 0);
@@ -88,24 +87,24 @@ public class TextureOesRenderer extends Renderer {
         GLES20.glVertexAttribPointer(maTextureCoordLoc, 2,
                 GLES20.GL_FLOAT, false, Drawable2d.TEXTURE_COORD_STRIDE, mDrawable2d.getTexCoordArray());
         GlUtil.checkGlError("glVertexAttribPointer");
+
         GLES20.glViewport(0, 0, width, height);
-        GlUtil.checkGlError("oes glViewport OnScreen");
+
+
         // Draw the rect.
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, mDrawable2d.getVertexCount());
-        GlUtil.checkGlError("oes glDrawArrays OnScreen");
+        GlUtil.checkGlError("2d glDrawArrays  OnScreen ");
 
         // Done -- disable vertex array, texture, and program.
         GLES20.glDisableVertexAttribArray(maPositionLoc);
         GLES20.glDisableVertexAttribArray(maTextureCoordLoc);
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glUseProgram(0);
     }
-
 
     @Override
     public int renderOffScreen(int textureId, int width, int height, float[] mvpMatrix) {
         GlUtil.checkGlError("draw start");
-        GLES20.glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         initFrameBufferIfNeed(width, height);
         GlUtil.checkGlError("initFrameBufferIfNeed");
@@ -116,11 +115,12 @@ public class TextureOesRenderer extends Renderer {
 
         // Set the texture.
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureId);
+
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
         GlUtil.checkGlError("glBindTexture");
 
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBuffers[0]);
+        GLES20.glBindFramebuffer(GL_FRAMEBUFFER, mFrameBuffers[0]);
         GlUtil.checkGlError("glBindFramebuffer");
 
         // Copy the model / view / projection matrix over.
@@ -148,15 +148,14 @@ public class TextureOesRenderer extends Renderer {
 
         GLES20.glViewport(0, 0, width, height);
 
-
         // Draw the rect.
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, mDrawable2d.getVertexCount());
-        GlUtil.checkGlError("oes glDrawArrays");
+        GlUtil.checkGlError("2d glDrawArrays");
 
         // Done -- disable vertex array, texture, and program.
         GLES20.glDisableVertexAttribArray(maPositionLoc);
         GLES20.glDisableVertexAttribArray(maTextureCoordLoc);
-        GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLES20.glUseProgram(0);
         return mFrameBufferTextures[0];

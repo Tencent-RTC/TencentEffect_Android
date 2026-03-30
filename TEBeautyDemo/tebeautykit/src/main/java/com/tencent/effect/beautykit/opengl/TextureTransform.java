@@ -1,12 +1,12 @@
-package com.tencent.demo.opengl;
+package com.tencent.effect.beautykit.opengl;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Size;
 import android.widget.ImageView;
 
-import com.tencent.demo.opengl.render.RendererManager;
-import com.tencent.demo.opengl.render.TextureFormat;
+import com.tencent.effect.beautykit.opengl.render.RendererManager;
+import com.tencent.effect.beautykit.opengl.render.TextureFormat;
 import com.tencent.effect.beautykit.utils.LogUtils;
 
 

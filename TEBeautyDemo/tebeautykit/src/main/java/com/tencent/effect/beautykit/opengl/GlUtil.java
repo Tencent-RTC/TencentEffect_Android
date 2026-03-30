@@ -1,4 +1,4 @@
-package com.tencent.demo.opengl;
+package com.tencent.effect.beautykit.opengl;
 
 import static android.widget.ImageView.ScaleType.FIT_XY;
 

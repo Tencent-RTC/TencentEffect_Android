@@ -7,7 +7,7 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
-import com.tencent.demo.opengl.gles.EglCore;
+import com.tencent.effect.beautykit.opengl.gles.EglCore;
 import com.tencent.effect.beautykit.utils.LogUtils;
 
 
