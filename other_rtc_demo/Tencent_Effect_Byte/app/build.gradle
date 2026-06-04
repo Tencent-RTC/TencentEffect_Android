@@ -1,0 +1,132 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt' // 如果你需要使用Kotlin注解处理器
+    id 'kotlin-parcelize' // 如果你需要使用Parcelize注解
+}
+
+android {
+    namespace 'rtc.volcengine.apiexample'
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "com.tencent.pitumotiondemo.effects"
+        minSdk 21
+        targetSdk 32
+        versionCode 1
+        versionName "1.0"
+
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+            java.srcDirs = ['src/main/java', 'src/main/kotlin']
+            aidl.srcDirs = ['src/main/aidl']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("bytertc.jks")
+            storePassword "bytertc"
+            keyAlias "bytertc"
+            keyPassword "bytertc"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                outputFileName = "ApiExample.apk"
+            }
+        }
+    }
+
+    packagingOptions {
+        pickFirst 'lib/arm64-v8a/libbytertc_fdk-aac_extension.so'
+        pickFirst 'lib/arm64-v8a/libbytertc_nico_extension.so'
+        pickFirst 'lib/arm64-v8a/libbytertc_vp8codec_extension.so'
+        pickFirst 'lib/arm64-v8a/libh265enc.so'
+
+        pickFirst 'lib/armeabi-v7a/libbytertc_fdk-aac_extension.so'
+        pickFirst 'lib/armeabi-v7a/libbytertc_nico_extension.so'
+        pickFirst 'lib/armeabi-v7a/libbytertc_vp8codec_extension.so'
+        pickFirst 'lib/armeabi-v7a/libh265enc.so'
+
+
+        pickFirst 'lib/x86/libbytertc_fdk-aac_extension.so'
+        pickFirst 'lib/x86/libbytertc_nico_extension.so'
+        pickFirst 'lib/x86/libbytertc_vp8codec_extension.so'
+        pickFirst 'lib/x86/libh265enc.so'
+
+
+
+        pickFirst 'lib/x86_64/libbytertc_fdk-aac_extension.so'
+        pickFirst 'lib/x86_64/libbytertc_nico_extension.so'
+        pickFirst 'lib/x86_64/libbytertc_vp8codec_extension.so'
+        pickFirst 'lib/x86_64/libh265enc.so'
+
+    }
+
+
+    configurations.all {
+//        all*.exclude group: 'com.bytedance.applog', module: 'RangersAppLog-Log'
+//        all*.exclude group: 'com.bytedance.applog', module: 'RangersAppLog-Lite-cn'
+        all*.exclude group: 'com.bytedanceapi', module: 'ttsdk-ttbmf'
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+}
+
+
+
+dependencies {
+
+
+
+
+    implementation files('libs/ByteEffect.aar')
+
+
+    implementation "com.bytedanceapi:ttsdk-player_premium:1.40.2.8"
+
+    implementation ("com.bytedanceapi:ttsdk-ttlivepull:1.40.2.8") {
+    }
+    implementation 'commons-net:commons-net:3.6'
+
+    // 日志上报 SDK，用于点播日志上传, 使用 6.14.3 及以上版本
+    implementation "com.bytedance.applog:RangersAppLog-Lite-cn:6.15.0"
+    // 用于视频源获取
+    implementation 'com.squareup.okhttp3:okhttp:4.2.1'
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+
+
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.0"
+    api project(path: ':Xmagic')
+
+
+}

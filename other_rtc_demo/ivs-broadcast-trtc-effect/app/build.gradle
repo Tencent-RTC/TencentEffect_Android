@@ -1,0 +1,61 @@
+plugins {
+    alias libs.plugins.android.application
+    alias libs.plugins.kotlin
+    alias libs.plugins.kapt
+}
+
+android {
+    compileSdk 35
+    namespace 'com.amazonaws.ivs.basicbroadcast'
+
+    defaultConfig {
+        applicationId "com.tencent.pitumotiondemo.effects"
+        minSdkVersion 21
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    flavorDimensions = [ 'flavor' ]
+    productFlavors {
+        core {
+            dimension 'flavor'
+        }
+
+        stages {
+            dimension 'flavor'
+            applicationIdSuffix = ".stages"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
+}
+
+apply from: '../dependencies.gradle'
+
+dependencies {
+    implementation libs.constraintlayout
+
+    implementation 'com.tencent.liteav:LiteAVSDK_Professional:12.6.0.17772'
+}

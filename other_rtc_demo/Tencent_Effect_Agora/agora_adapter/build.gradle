@@ -1,0 +1,57 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.tencent.effect.adapter.agora'
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionName rootProject.ext.adapterVersionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            buildConfigField "String", "VERSION", "\"${rootProject.ext.adapterVersionName}\""
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            android.libraryVariants.all { variant ->
+                variant.outputs.all { output ->
+                    output.outputFileName = "te_adapter_agora_" + android.defaultConfig.versionName + ".aar"
+                }
+            }
+        }
+
+        debug {
+            buildConfigField "String", "VERSION", "\"${rootProject.ext.adapterVersionName}\""
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    implementation rootProject.ext.material
+    implementation rootProject.ext.appcompat
+    implementation rootProject.ext.agorartc
+    implementation rootProject.ext.effect
+//    compileOnly rootProject.ext.beautykit
+
+}
+
+//用于保留方法参数名
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-parameters"
+    }
+}

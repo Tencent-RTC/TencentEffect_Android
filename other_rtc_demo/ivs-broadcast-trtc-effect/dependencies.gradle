@@ -1,0 +1,53 @@
+dependencies {
+
+    // Library
+    coreImplementation "com.amazonaws:ivs-broadcast:$broadcast_version"
+    stagesImplementation "com.amazonaws:ivs-broadcast:$broadcast_version:stages@aar"
+
+    // The Amazon IVS SDK works without OkHttp, but because many applications include it,
+    // so we are including it in this demo app to mimic real world behavior
+    implementation libs.okhttp
+
+    // Material design
+    implementation libs.google.material
+
+    // Kotlin
+    implementation libs.coroutines.core
+    implementation libs.coroutines.android
+
+    // Android
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.lifecycle.extensions
+    implementation libs.androidx.lifecycle.livedata.ktx
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.camera2
+
+    // Json
+    implementation libs.serialization.core
+    implementation libs.serialization.json
+
+    // Room components
+    implementation libs.room.runtime
+    implementation libs.room.ktx
+    kapt libs.room.compiler
+
+    // Dagger
+    kapt libs.dagger.compiler
+    kapt libs.dagger.processor
+    implementation libs.dagger.android
+
+
+
+    implementation 'com.tencent.mediacloud:TEBeautyKit:4.2.0.6'
+    api 'com.tencent.mediacloud:TencentEffect_S1-04:4.2.0.15'
+
+    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.github.bumptech.glide:glide:4.12.0@aar'
+    implementation 'com.github.bumptech.glide:gifdecoder:4.12.0'
+    implementation 'com.github.bumptech.glide:disklrucache:4.12.0'
+    implementation 'androidx.exifinterface:exifinterface:1.3.6' // 使用最新版本
+
+}

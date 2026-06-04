@@ -1,0 +1,26 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    id 'com.android.application' version '7.3.1' apply false
+    id 'com.android.library' version '7.3.1' apply false
+}
+
+ext {
+    compileSdkVersion = 31
+    minSdkVersion = 19
+    targetSdkVersion = 29
+    adapterVersionName = '4.2.0.11'
+
+
+    // 公共依赖库定义
+    material = 'com.google.android.material:material:1.10.0'
+    appcompat = 'androidx.appcompat:appcompat:1.6.1'
+    constraintlayout = 'androidx.constraintlayout:constraintlayout:2.1.4'
+    effect = "com.tencent.mediacloud:TencentEffect_S1-04:4.2.0.15"
+    beautykit = 'com.tencent.mediacloud:TEBeautyKit:4.2.0.6'
+    agorartc = 'io.agora.rtc:full-sdk:4.3.1'
+    okhttp = 'com.squareup.okhttp3:okhttp:3.9.0'
+    gson = 'com.google.code.gson:gson:2.8.2'
+    glide = 'com.github.bumptech.glide:glide:4.12.0'
+    navigationFragment = 'androidx.navigation:navigation-fragment:2.5.3'
+    navigationUi = 'androidx.navigation:navigation-ui:2.5.3'
+}

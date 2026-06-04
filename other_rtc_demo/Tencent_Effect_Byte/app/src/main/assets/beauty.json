@@ -1,0 +1,1872 @@
+[
+  {
+    "showId": "beauty_whiten",
+    "name": "美白",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "beauty.lutFoundationAlpha",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 30,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "beauty_smooth",
+    "name": "磨皮",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "smooth.smooth",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "beauty_rosy",
+    "name": "紅潤",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "smooth.rosy",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 20,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "screen_contrast",
+    "name": "對比度",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "beauty.imageContrastAlpha",
+      "effValue": {
+        "displayMinValue": -100,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": -1,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "screen_saturation",
+    "name": "飽和度",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "smooth.saturation",
+      "effValue": {
+        "displayMinValue": -100,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": -1,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "screen_clear",
+    "name": "清晰度",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "beauty.lutClearAlpha",
+      "effValue": {
+        "displayMinValue": -100,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": -1,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_eye_enlarge",
+    "name": "大眼",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.enlargeEye",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 20,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_eye_lighter",
+    "name": "亮眼",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "beauty.eyeLighten",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 30,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_eye_distance",
+    "name": "眼距",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.eyeDistance",
+      "effValue": {
+        "displayMinValue": -100,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": -1,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_eye_angle",
+    "name": "眼角",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.eyeAngle",
+      "effValue": {
+        "displayMinValue": -100,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": -1,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_eye_bags",
+    "name": "祛眼袋",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "beauty.removeEyeBags",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_nose_thin",
+    "name": "瘦鼻",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.thinNose",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_nose_wing",
+    "name": "鼻翼",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.noseWing",
+      "effValue": {
+        "displayMinValue": -100,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": -1,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_nose_height",
+    "name": "鼻子位置",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.noseHeight",
+      "effValue": {
+        "displayMinValue": -100,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": -1,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_mouth_baiya",
+    "name": "白牙",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "beauty.toothWhiten",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_mouth_size",
+    "name": "嘴型",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.mouthSize",
+      "effValue": {
+        "displayMinValue": -100,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": -1,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_mouth_height",
+    "name": "嘴唇厚度",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.mouthHeight",
+      "effValue": {
+        "displayMinValue": -100,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": -1,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_thin",
+    "name": "窄臉",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.thinFace",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_tight_nature",
+    "name": "瘦臉-自然",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "nature",
+      "resPath": "",
+      "effKey": "basicV7.natureFace",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 30,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_tight_god_ness",
+    "name": "瘦臉-女神",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "femaleGod",
+      "resPath": "",
+      "effKey": "basicV7.godnessFace",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_tight_god",
+    "name": "瘦臉-英俊",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "maleGod",
+      "resPath": "",
+      "effKey": "basicV7.maleGodFace",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_v",
+    "name": "V臉",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.vFace",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 30,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_slim",
+    "name": "收下颌",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.faceJaw",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_short",
+    "name": "短臉",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.shortFace",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_basic",
+    "name": "臉型",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "liquefaction.basic3",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_forehead",
+    "name": "額頭",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.forehead",
+      "effValue": {
+        "displayMinValue": -100,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": -1,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_remove_wrinkle",
+    "name": "祛皺",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "beauty.removeWrinkle",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_remove_law_line",
+    "name": "祛法令紋",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "beauty.removeLawLine",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "micro_surgery_face_thin_cheekbone",
+    "name": "瘦颧骨",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "",
+      "resPath": "",
+      "effKey": "basicV7.cheekboneThin",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 0,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_kouhong_fuguhong",
+    "name": "口紅-復古紅",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.lips.lipsMask",
+      "resPath": "/images/beauty/lips_fuguhong.png",
+      "effKey": "beauty.faceFeatureLipsLut",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_kouhong_mitaose",
+    "name": "口紅-蜜桃色",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.lips.lipsMask",
+      "resPath": "/images/beauty/lips_mitaose.png",
+      "effKey": "beauty.faceFeatureLipsLut",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_kouhong_shanhuju",
+    "name": "口紅-珊瑚橘",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.lips.lipsMask",
+      "resPath": "/images/beauty/lips_shanhuju.png",
+      "effKey": "beauty.faceFeatureLipsLut",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_kouhong_wenroufen",
+    "name": "口紅-溫柔粉",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.lips.lipsMask",
+      "resPath": "/images/beauty/lips_wenroufen.png",
+      "effKey": "beauty.faceFeatureLipsLut",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_kouhong_huolicheng",
+    "name": "口紅-活力橙",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.lips.lipsMask",
+      "resPath": "/images/beauty/lips_huolicheng.png",
+      "effKey": "beauty.faceFeatureLipsLut",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_saihong_jianyue",
+    "name": "腮紅-簡約",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.makeupMultiply.multiplyMask",
+      "resPath": "/images/beauty/saihong_jianyue.png",
+      "effKey": "beauty.faceFeatureRedCheek",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_saihong_shengxia",
+    "name": "腮紅-盛夏",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.makeupMultiply.multiplyMask",
+      "resPath": "/images/beauty/saihong_shengxia.png",
+      "effKey": "beauty.faceFeatureRedCheek",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_saihong_haixiu",
+    "name": "腮紅-害羞",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.makeupMultiply.multiplyMask",
+      "resPath": "/images/beauty/saihong_haixiu.png",
+      "effKey": "beauty.faceFeatureRedCheek",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_saihong_cengsou",
+    "name": "腮紅-成熟",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.makeupMultiply.multiplyMask",
+      "resPath": "/images/beauty/saihong_chengshu.png",
+      "effKey": "beauty.faceFeatureRedCheek",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_saihong_queban",
+    "name": "腮紅-雀斑",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.makeupMultiply.multiplyMask",
+      "resPath": "/images/beauty/saihong_queban.png",
+      "effKey": "beauty.faceFeatureRedCheek",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_liti_ziran",
+    "name": "立體-自然",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.softLight.softLightMask",
+      "resPath": "/images/beauty/liti_ziran.png",
+      "effKey": "beauty.faceFeatureSoftlight",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_liti_junlang",
+    "name": "立體-俊朗",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.softLight.softLightMask",
+      "resPath": "/images/beauty/liti_junlang.png",
+      "effKey": "beauty.faceFeatureSoftlight",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_liti_guangmang",
+    "name": "立體-光芒",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.softLight.softLightMask",
+      "resPath": "/images/beauty/liti_guangmang.png",
+      "effKey": "beauty.faceFeatureSoftlight",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_liti_qingxi",
+    "name": "立體-清晰",
+    "eff": {
+      "category": "BEAUTY",
+      "id": "beauty.softLight.softLightMask",
+      "resPath": "/images/beauty/liti_qingxin.png",
+      "effKey": "beauty.faceFeatureSoftlight",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 50,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_none",
+    "name": "滤镜-无",
+    "eff": {
+      "category": "LUT",
+      "id": "ID_NONE",
+      "resPath": "",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_aiqing",
+    "name": "滤镜-爱情",
+    "eff": {
+      "category": "LUT",
+      "id": "aiqing_lf.png",
+      "resPath": "light_material/lut/aiqing_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_baicha2",
+    "name": "滤镜-白茶-2",
+    "eff": {
+      "category": "LUT",
+      "id": "baicha2_lf.png",
+      "resPath": "light_material/lut/baicha2_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_baicha",
+    "name": "滤镜-白茶",
+    "eff": {
+      "category": "LUT",
+      "id": "baicha_lf.png",
+      "resPath": "light_material/lut/baicha_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_bainen",
+    "name": "滤镜-白嫩",
+    "eff": {
+      "category": "LUT",
+      "id": "bainen_lf.png",
+      "resPath": "light_material/lut/bainen_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_baixi2",
+    "name": "滤镜-白皙-2",
+    "eff": {
+      "category": "LUT",
+      "id": "baixi2_lf.png",
+      "resPath": "light_material/lut/baixi2_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_baixi",
+    "name": "滤镜-白皙",
+    "eff": {
+      "category": "LUT",
+      "id": "baixi_lf.png",
+      "resPath": "light_material/lut/baixi_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_chonglang",
+    "name": "滤镜-冲浪",
+    "eff": {
+      "category": "LUT",
+      "id": "chonglang_lf.png",
+      "resPath": "light_material/lut/chonglang_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_chuwen",
+    "name": "滤镜-初吻",
+    "eff": {
+      "category": "LUT",
+      "id": "chuwen_lf.png",
+      "resPath": "light_material/lut/chuwen_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_dannai",
+    "name": "滤镜-淡奶",
+    "eff": {
+      "category": "LUT",
+      "id": "dannai_lf.png",
+      "resPath": "light_material/lut/dannai_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_dongjing",
+    "name": "滤镜-东京",
+    "eff": {
+      "category": "LUT",
+      "id": "dongjing_lf.png",
+      "resPath": "light_material/lut/dongjing_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_dongri",
+    "name": "滤镜-冬日",
+    "eff": {
+      "category": "LUT",
+      "id": "dongri_lf.png",
+      "resPath": "light_material/lut/dongri_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_fennen",
+    "name": "滤镜-粉嫩",
+    "eff": {
+      "category": "LUT",
+      "id": "fennen_lf.png",
+      "resPath": "light_material/lut/fennen_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_gaobai",
+    "name": "滤镜-告白",
+    "eff": {
+      "category": "LUT",
+      "id": "gaobai_lf.png",
+      "resPath": "light_material/lut/gaobai_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_haishui",
+    "name": "滤镜-海水",
+    "eff": {
+      "category": "LUT",
+      "id": "haishui_lf.png",
+      "resPath": "light_material/lut/haishui_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_hudie",
+    "name": "滤镜-蝴蝶",
+    "eff": {
+      "category": "LUT",
+      "id": "hudie_lf.png",
+      "resPath": "light_material/lut/hudie_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_huoli2",
+    "name": "滤镜-活力-2",
+    "eff": {
+      "category": "LUT",
+      "id": "huoli2_lf.png",
+      "resPath": "light_material/lut/huoli2_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_huoli",
+    "name": "滤镜-活力",
+    "eff": {
+      "category": "LUT",
+      "id": "huoli_lf.png",
+      "resPath": "light_material/lut/huoli_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_jiaoye",
+    "name": "滤镜-蕉叶",
+    "eff": {
+      "category": "LUT",
+      "id": "jiaoye_lf.png",
+      "resPath": "light_material/lut/jiaoye_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_jidong",
+    "name": "滤镜-悸动",
+    "eff": {
+      "category": "LUT",
+      "id": "jidong_lf.png",
+      "resPath": "light_material/lut/jidong_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_jiudiao",
+    "name": "滤镜-旧调",
+    "eff": {
+      "category": "LUT",
+      "id": "jiudiao_lf.png",
+      "resPath": "light_material/lut/jiudiao_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_liucai",
+    "name": "滤镜-流彩",
+    "eff": {
+      "category": "LUT",
+      "id": "liucai_lf.png",
+      "resPath": "light_material/lut/liucai_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_luoma2",
+    "name": "滤镜-罗马-2",
+    "eff": {
+      "category": "LUT",
+      "id": "luoma2_lf.png",
+      "resPath": "light_material/lut/luoma2_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_meihuo",
+    "name": "滤镜-魅惑",
+    "eff": {
+      "category": "LUT",
+      "id": "meihuo_lf.png",
+      "resPath": "light_material/lut/meihuo_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_naika",
+    "name": "滤镜-奶咖",
+    "eff": {
+      "category": "LUT",
+      "id": "naika_lf.png",
+      "resPath": "light_material/lut/naika_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_nenya",
+    "name": "滤镜-嫩芽",
+    "eff": {
+      "category": "LUT",
+      "id": "nenya_lf.png",
+      "resPath": "light_material/lut/nenya_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_ningmeng",
+    "name": "滤镜-柠檬",
+    "eff": {
+      "category": "LUT",
+      "id": "ningmeng_lf.png",
+      "resPath": "light_material/lut/ningmeng_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_nuanxin",
+    "name": "滤镜-暖心",
+    "eff": {
+      "category": "LUT",
+      "id": "nuanxin_lf.png",
+      "resPath": "light_material/lut/nuanxin_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_nuanyang",
+    "name": "滤镜-暖阳",
+    "eff": {
+      "category": "LUT",
+      "id": "nuanyang_lf.png",
+      "resPath": "light_material/lut/nuanyang_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_qiangwei",
+    "name": "滤镜-蔷薇",
+    "eff": {
+      "category": "LUT",
+      "id": "qiangwei_lf.png",
+      "resPath": "light_material/lut/qiangwei_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_qingche",
+    "name": "滤镜-清澈",
+    "eff": {
+      "category": "LUT",
+      "id": "qingche_lf.png",
+      "resPath": "light_material/lut/qingche_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_qingcheng",
+    "name": "滤镜-倾城",
+    "eff": {
+      "category": "LUT",
+      "id": "qingcheng_lf.png",
+      "resPath": "light_material/lut/qingcheng_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_qingchun",
+    "name": "滤镜-青春",
+    "eff": {
+      "category": "LUT",
+      "id": "qingchun_lf.png",
+      "resPath": "light_material/lut/qingchun_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_qingjiaopian",
+    "name": "滤镜-轻胶片",
+    "eff": {
+      "category": "LUT",
+      "id": "qingjiaopian_lf.png",
+      "resPath": "light_material/lut/qingjiaopian_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_qingtou",
+    "name": "滤镜-清透",
+    "eff": {
+      "category": "LUT",
+      "id": "qingtou_lf.png",
+      "resPath": "light_material/lut/qingtou_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_qingyi2",
+    "name": "滤镜-清逸-2",
+    "eff": {
+      "category": "LUT",
+      "id": "qingyi2_lf.png",
+      "resPath": "light_material/lut/qingyi2_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_rixi",
+    "name": "滤镜-日系",
+    "eff": {
+      "category": "LUT",
+      "id": "rixi_lf.png",
+      "resPath": "light_material/lut/rixi_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_shengdai",
+    "name": "滤镜-圣代",
+    "eff": {
+      "category": "LUT",
+      "id": "shengdai_lf.png",
+      "resPath": "light_material/lut/shengdai_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_shengji",
+    "name": "滤镜-生机",
+    "eff": {
+      "category": "LUT",
+      "id": "shengji_lf.png",
+      "resPath": "light_material/lut/shengji_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_shenmi",
+    "name": "滤镜-神秘",
+    "eff": {
+      "category": "LUT",
+      "id": "shenmi_lf.png",
+      "resPath": "light_material/lut/shenmi_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_shuiguang",
+    "name": "滤镜-水光",
+    "eff": {
+      "category": "LUT",
+      "id": "shuiguang_lf.png",
+      "resPath": "light_material/lut/shuiguang_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_tianbohe",
+    "name": "滤镜-甜薄荷",
+    "eff": {
+      "category": "LUT",
+      "id": "tianbohe_lf.png",
+      "resPath": "light_material/lut/tianbohe_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_tianmei",
+    "name": "滤镜-甜美",
+    "eff": {
+      "category": "LUT",
+      "id": "tianmei_lf.png",
+      "resPath": "light_material/lut/tianmei_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_weifeng",
+    "name": "滤镜-微风",
+    "eff": {
+      "category": "LUT",
+      "id": "weifeng_lf.png",
+      "resPath": "light_material/lut/weifeng_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_wenrou",
+    "name": "滤镜-温柔",
+    "eff": {
+      "category": "LUT",
+      "id": "wenrou_lf.png",
+      "resPath": "light_material/lut/wenrou_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_xiangfen",
+    "name": "滤镜-香氛",
+    "eff": {
+      "category": "LUT",
+      "id": "xiangfen_lf.png",
+      "resPath": "light_material/lut/xiangfen_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_xiari",
+    "name": "滤镜-夏日",
+    "eff": {
+      "category": "LUT",
+      "id": "xiari_lf.png",
+      "resPath": "light_material/lut/xiari_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_xindong",
+    "name": "滤镜-心动",
+    "eff": {
+      "category": "LUT",
+      "id": "xindong_lf.png",
+      "resPath": "light_material/lut/xindong_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_xueding",
+    "name": "滤镜-雪顶",
+    "eff": {
+      "category": "LUT",
+      "id": "xueding_lf.png",
+      "resPath": "light_material/lut/xueding_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_yuedong",
+    "name": "滤镜-悦动",
+    "eff": {
+      "category": "LUT",
+      "id": "yuedong_lf.png",
+      "resPath": "light_material/lut/yuedong_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "lut_ziran2",
+    "name": "滤镜-自然-2",
+    "eff": {
+      "category": "LUT",
+      "id": "ziran2_lf.png",
+      "resPath": "light_material/lut/ziran2_lf.png",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_none",
+    "name": "美妆-无",
+    "eff": {
+      "category": "MAKEUP",
+      "id": "ID_NONE",
+      "resPath": "light_assets/template.json",
+      "effKey": "",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_dongganjiche",
+    "name": "美妆-动感机车妆",
+    "eff": {
+      "category": "MAKEUP",
+      "id": "video_makeup_dongganjiche",
+      "resPath": "MotionRes/makeupRes/video_makeup_dongganjiche",
+      "effKey": "makeup.strength",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_feiluomeng",
+    "name": "美妆-费洛蒙",
+    "eff": {
+      "category": "MAKEUP",
+      "id": "video_makeup_feiluomeng",
+      "resPath": "MotionRes/makeupRes/video_makeup_feiluomeng",
+      "effKey": "makeup.strength",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_naibai",
+    "name": "美妆-奶白妆",
+    "eff": {
+      "category": "MAKEUP",
+      "id": "video_makeup_naibai",
+      "resPath": "MotionRes/makeupRes/video_makeup_naibai",
+      "effKey": "makeup.strength",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_xinjisuyan",
+    "name": "美妆-心机素颜",
+    "eff": {
+      "category": "MAKEUP",
+      "id": "video_makeup_xinjisuyan",
+      "resPath": "MotionRes/makeupRes/video_makeup_xinjisuyan",
+      "effKey": "makeup.strength",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "makeup_shaishangzhuang",
+    "name": "美妆-晒伤妆",
+    "eff": {
+      "category": "MAKEUP",
+      "id": "video_shaishangzhuang",
+      "resPath": "MotionRes/makeupRes/video_shaishangzhuang",
+      "effKey": "makeup.strength",
+      "effValue": {
+        "displayMinValue": 0,
+        "displayMaxValue": 100,
+        "displayDefaultValue": 60,
+        "innerMinValue": 0,
+        "innerMaxValue": 1
+      }
+    }
+  },
+  {
+    "showId": "tie_zhi_none",
+    "name": "贴纸-无",
+    "eff": {
+      "category": "MOTION",
+      "id": "ID_NONE",
+      "resPath": "light_assets/template.json",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_inlove",
+    "name": "贴纸-戀愛嗎",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_diejia_w_inlove",
+      "resPath": "MotionRes/2dMotionRes/video_diejia_w_inlove",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_xuanmeizhuang",
+    "name": "贴纸-元气",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_xuanmeizhuang",
+      "resPath": "MotionRes/2dMotionRes/video_xuanmeizhuang",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_stylecartoon",
+    "name": "贴纸-漫畫風格",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_fenge",
+      "resPath": "MotionRes/2dMotionRes/video_StyleCartoon",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_zuanshifajia",
+    "name": "贴纸-鑽石髮夾",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_zuanshifajia",
+      "resPath": "MotionRes/2dMotionRes/video_zuanshifajia",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_chunrikouzhao",
+    "name": "贴纸-春日口罩",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_diejia_te_chunrikouzhao",
+      "resPath": "MotionRes/2dMotionRes/video_diejia_te_chunrikouzhao",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_anlian",
+    "name": "贴纸-暗戀",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_shejiao_anlian",
+      "resPath": "MotionRes/2dMotionRes/video_shejiao_anlian",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_keaimaoer",
+    "name": "贴纸-可愛貓人",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_te_keaimaoer",
+      "resPath": "MotionRes/2dMotionRes/video_te_keaimaoer",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_toumingyanjing",
+    "name": "贴纸-透明眼鏡",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_toumingyanjing",
+      "resPath": "MotionRes/2dMotionRes/video_toumingyanjing",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_xiaohuangmao",
+    "name": "贴纸-小黃帽",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_xiaohuangmao",
+      "resPath": "MotionRes/2dMotionRes/video_xiaohuangmao",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_kunkunxiongmao",
+    "name": "贴纸-睏睏熊貓",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_te_kunkunxiongmao",
+      "resPath": "MotionRes/2dMotionRes/video_te_kunkunxiongmao",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_barrage",
+    "name": "贴纸-人間芭比",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_diejia_w_barrage",
+      "resPath": "MotionRes/2dMotionRes/video_diejia_w_barrage",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_littlefloweronthehead",
+    "name": "贴纸-頭頂小花",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_w_littlefloweronthehead",
+      "resPath": "MotionRes/2dMotionRes/video_w_littlefloweronthehead",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_maoxinvhai",
+    "name": "贴纸-猫系女孩",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_maoxinvhai",
+      "resPath": "MotionRes/2dMotionRes/video_maoxinvhai",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_litihuaduo",
+    "name": "贴纸-立体花朵",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_litihuaduo",
+      "resPath": "MotionRes/2dMotionRes/video_litihuaduo",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_naipingmianmo",
+    "name": "贴纸-奶瓶面膜",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_naipingmianmo",
+      "resPath": "MotionRes/2dMotionRes/video_naipingmianmo",
+      "effKey": ""
+    }
+  },
+  {
+    "showId": "tie_zhi_tuzifajia",
+    "name": "贴纸-兔子发夹",
+    "eff": {
+      "category": "MOTION",
+      "id": "video_diejia_tuzifajia",
+      "resPath": "MotionRes/2dMotionRes/video_diejia_tuzifajia",
+      "effKey": ""
+    }
+  }
+]
