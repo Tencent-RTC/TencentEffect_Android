@@ -1,0 +1,42 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdkVersion 34
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+//    api fileTree(dir: "libs", include: ['*.jar','*.aar'])
+    implementation rootProject.ext.appcompat
+    implementation rootProject.ext.material
+    implementation rootProject.ext.constraintlayout
+    implementation rootProject.ext.okhttp
+    implementation rootProject.ext.gson
+    implementation rootProject.ext.glide
+
+    api rootProject.ext.beautykit
+    api rootProject.ext.effect
+    api project(path: ':agora_adapter')
+}

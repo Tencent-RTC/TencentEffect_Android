@@ -1,0 +1,26 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+
+        def customMavenUrl = System.getenv('CUSTOM_MAVEN_URL')
+        if (customMavenUrl) {
+            println(">>> Using custom maven URL ${customMavenUrl}")
+            maven {
+                url customMavenUrl
+            }
+        }
+    }
+}
+
+include ':app'
+//include ':camerax'
+rootProject.name = "BasicBroadcast"

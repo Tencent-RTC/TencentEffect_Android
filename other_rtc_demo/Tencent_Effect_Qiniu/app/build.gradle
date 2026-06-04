@@ -1,0 +1,51 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 33
+    buildToolsVersion '33.0.0'
+
+    defaultConfig {
+//        applicationId "com.qiniu.pili.droid.streaming.demo"
+        applicationId "com.tencent.pitumotiondemo.effects"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 79
+        versionName "3.1.6"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+}
+
+dependencies {
+
+
+
+    if (buildWithCameraStreamingLibrary) {
+        implementation project(':library')
+    } else {
+        // 推流 SDK jar 包，为推流 SDK 必须依赖的库
+        implementation fileTree(include: ['*.jar'], dir: 'libs')
+    }
+
+
+    // 文件选择 jar 包，非必须
+    implementation 'com.github.angads25:filepicker:1.0.6'
+    // dns 相关 jar 包，必须依赖
+    implementation 'com.qiniu:happy-dns:1.0.0'
+    // 监听应用生命周期，必须依赖
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    // Material Design 库，解决 Theme.AppCompat 主题问题
+    implementation 'com.google.android.material:material:1.2.0'
+    implementation project(path: ':xmagic')
+}
