@@ -10,7 +10,6 @@ import com.tencent.effect.beautykit.model.TEPanelViewResModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,11 +29,12 @@ public class TEUIConfig {
     public int seekBarProgressColor = 0xFF006EFF; //Progress bar color
 
 
-    public boolean revertEffect2Json = false;   //如果设置为true,那么在点击面板还原按钮的时候就会还原到json配置的状态，否则还原到进入面板设置了 lastParam的状态
+    public boolean revertEffect2Json = true;   //如果设置为true,那么在点击面板还原按钮的时候就会还原到json配置的状态，否则还原到进入面板设置了 lastParam的状态
 
     public boolean cleanLightMakeup = false;   //此配置是当设置滤镜，或者单点美妆的时候是否清理轻美妆
 
-
+    private boolean useDisplayName = true;   //设置为true的时候，解析json中item 的name的时候 使用displayName ,设置为false 的时候使用的是
+    // displayNameEn 这个字段
 
     private Locale mLocale = Locale.getDefault();
 
@@ -53,6 +53,7 @@ public class TEUIConfig {
 
     public void setSystemLocal(Locale locale) {
         this.mLocale = locale;
+        this.useDisplayName = this.isZh();
     }
 
 
@@ -107,16 +108,17 @@ public class TEUIConfig {
     }
 
 
-    public boolean isDefaultLanguage() {
-        return this.isZh();
-    }
 
     public boolean isZh() {
         return "zh".equals(mLocale.getLanguage());
     }
 
-    public boolean isJA() {
-        return "ja".equals(mLocale.getLanguage());
+    public boolean isUseDisplayName() {
+        return this.useDisplayName;
+    }
+
+    public void setUseDisplayName(boolean useDisplayName) {
+        this.useDisplayName = useDisplayName;
     }
 
 

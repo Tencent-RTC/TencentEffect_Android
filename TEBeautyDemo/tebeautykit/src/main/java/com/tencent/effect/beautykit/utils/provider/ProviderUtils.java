@@ -51,6 +51,7 @@ public class ProviderUtils {
             XmagicConstant.EffectName.BEAUTY_SMOOTH2,
             XmagicConstant.EffectName.BEAUTY_SMOOTH3,
             XmagicConstant.EffectName.BEAUTY_SMOOTH4,
+            XmagicConstant.EffectName.BEAUTY_SMOOTH5,
 
     };
 

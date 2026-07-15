@@ -47,12 +47,12 @@ public class TEMotionDLModel {
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        this.url = url == null ? null : url.trim();
     }
 
     public TEMotionDLModel(String localDir, String fileName, String url) {
         this.setLocalDir(localDir);
         this.fileName = fileName;
-        this.url = url;
+        this.url = url == null ? null : url.trim();
     }
 }

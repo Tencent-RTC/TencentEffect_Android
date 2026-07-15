@@ -23,9 +23,10 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ['*.aar'])
+    api fileTree(dir: "libs", include: ['*.aar'])
     implementation fileTree(dir: "libs", include: ['*.jar'])
     implementation rootProject.ext.gson
+    implementation rootProject.ext.libpag
     implementation rootProject.ext.okhttp
 
     implementation rootProject.ext.glide
@@ -44,5 +45,23 @@ dependencies {
 gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-parameters"
+    }
+}
+
+// TEBeautyKit 版本号，在 gradle.properties 中统一定义
+def teBeautyKitVersion = project.findProperty('TEBeautyKitVersion') ?: '1.0.0'
+
+afterEvaluate {
+    tasks.matching { it.name == 'assembleRelease' }.configureEach {
+        doLast {
+            def aarFile = file('build/outputs/aar/tebeautykit-release.aar')
+            if (aarFile.exists()) {
+                def destFile = new File(aarFile.parentFile, "tebeautykit-${teBeautyKitVersion}.aar")
+                aarFile.renameTo(destFile)
+                println ">>> 已将 ${aarFile.name} 重命名为 ${destFile.name}"
+            } else {
+                println ">>> 警告：AAR 文件不存在: ${aarFile.absolutePath}"
+            }
+        }
     }
 }

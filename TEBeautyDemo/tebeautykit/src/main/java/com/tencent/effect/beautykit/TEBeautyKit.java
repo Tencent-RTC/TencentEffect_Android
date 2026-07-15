@@ -35,6 +35,7 @@ import com.tencent.effect.beautykit.utils.WorkThread;
 import com.tencent.xmagic.XmagicConstant;
 import com.tencent.xmagic.XmagicConstant.DeviceLevel;
 import com.tencent.xmagic.XmagicConstant.EffectMode;
+import com.tencent.xmagic.XmagicConstant.TEErrorCode;
 import com.tencent.xmagic.bean.TEImageOrientation;
 import com.tencent.xmagic.telicense.TELicenseCheck;
 import com.tencent.xmagic.util.FileUtil;
@@ -96,7 +97,7 @@ public class TEBeautyKit implements SensorEventListener {
 
     @Deprecated
     public static void create(@NonNull Context context, boolean isEnableHighPerformance, @NonNull OnInitListener initListener) {
-        TEBeautyKit.create(context, isEnableHighPerformance ? EffectMode.NORMAL : EffectMode.PRO, initListener);
+        TEBeautyKit.create(context, isEnableHighPerformance? EffectMode.NORMAL : EffectMode.PRO, initListener);
     }
 
     public static void create(@NonNull Context context, EffectMode effectMode, @NonNull OnInitListener initListener) {
@@ -111,8 +112,9 @@ public class TEBeautyKit implements SensorEventListener {
                     return;
                 }
                 this.mXMagicApi = initXMagicApi(mApplicationContext, effectMode);
+                final int initErrorCode = this.getInitErrorCode();
                 this.mHandler.post(() -> {
-                    initListener.onInitResult(this);
+                    initListener.onInitResult(this, initErrorCode);
                 });
             }
         }, this.hashCode());
@@ -126,22 +128,57 @@ public class TEBeautyKit implements SensorEventListener {
 
     @Deprecated
     public TEBeautyKit(Context context, boolean isEnableHighPerformance) {
-        this(context, isEnableHighPerformance ? EffectMode.NORMAL : EffectMode.PRO);
+        this(context, isEnableHighPerformance? EffectMode.NORMAL : EffectMode.PRO);
     }
 
     public TEBeautyKit(Context context, EffectMode effectMode) {
         this.initSensor(context);
         this.mXMagicApi = this.initXMagicApi(mApplicationContext, effectMode);
+        int initErrorCode = this.getInitErrorCode();
+        if (initErrorCode != TEErrorCode.TE_SUCCESS) {
+            LogUtils.e(TAG, "TEBeautyKit init failed, errorCode = " + initErrorCode);
+        }
     }
 
     public TEBeautyKit(XmagicApi xmagicApi) {
         this.mXMagicApi = xmagicApi;
     }
 
+    /**
+     * 获取 XmagicApi 初始化阶段的错误码。
+     * <p>
+     * 与 {@link #isInitialized()} 配合使用，可在 {@link OnInitListener#onInitResult(TEBeautyKit, int)}
+     * 回调中或同步构造完成后判断初始化是否成功。
+     *
+     * @return 错误码，等于 {@link TEErrorCode#TE_SUCCESS} 表示初始化成功；
+     *         若内部 XmagicApi 尚未创建，则返回 {@link TEErrorCode#TE_INIT_EXCEPTION}。
+     */
+    public int getInitErrorCode() {
+        if (this.mXMagicApi == null) {
+            return TEErrorCode.TE_INIT_EXCEPTION;
+        }
+        return this.mXMagicApi.getInitErrorCode();
+    }
+
+    /**
+     * 当前 TEBeautyKit 是否已成功初始化。
+     *
+     * @return true 表示底层 XmagicApi 已创建并初始化成功，可以安全调用 process 等接口；
+     *         false 表示尚未初始化、初始化失败或已销毁。
+     */
+    public boolean isInitialized() {
+        return this.mXMagicApi != null && this.mXMagicApi.isInitialized();
+    }
+
     private XmagicApi initXMagicApi(Context context, EffectMode effectMode) {
         XmagicApi api = new XmagicApi(context, effectMode, mResPath, (errorMsg, code) -> {
             LogUtils.e(TAG, "createXMagicApi  errorMsg = " + errorMsg + "  code = " + code);
         });
+        int initErrorCode = api.getInitErrorCode();
+        if(initErrorCode != TEErrorCode.TE_SUCCESS) {
+            LogUtils.e(TAG, "createXMagicApi  initErrorCode = " + initErrorCode);
+            return api;
+        }
 //        api.setFeatureEnableDisable(FeatureName.ANIMOJI_52_EXPRESSION, true);
 //        api.setFeatureEnableDisable(FeatureName.BODY_3D_POINT, true);
 //        api.setFeatureEnableDisable(FeatureName.HAND_DETECT, true);
@@ -515,6 +552,12 @@ public class TEBeautyKit implements SensorEventListener {
     }
 
 
+    public void setOutputTextureKeepRatio(float ratio) {
+        if (this.mXMagicApi != null) {
+            this.mXMagicApi.setOutputTextureKeepRatio(ratio);
+        }
+    }
+
     public TEParamEnhancingStrategy getParamEnhancingStrategy() {
         return mParamEnhancingStrategy;
     }
@@ -798,7 +841,22 @@ public class TEBeautyKit implements SensorEventListener {
 
 
     public interface OnInitListener {
+        /**
+         * 旧版初始化回调，不携带错误码。新代码建议实现
+         * {@link #onInitResult(TEBeautyKit, int)} 以获取初始化结果。
+         */
         void onInitResult(TEBeautyKit beautyKit);
+
+        /**
+         * 带错误码的初始化回调。默认实现会转调 {@link #onInitResult(TEBeautyKit)}
+         * 以保持向后兼容；新代码可重写本方法以根据 errorCode 处理初始化失败的情况。
+         *
+         * @param beautyKit  TEBeautyKit 实例（即使初始化失败也不为 null）
+         * @param errorCode  错误码，等于 {@link TEErrorCode#TE_SUCCESS} 表示初始化成功
+         */
+        default void onInitResult(TEBeautyKit beautyKit, int errorCode) {
+            onInitResult(beautyKit);
+        }
     }
 
 
