@@ -1,0 +1,50 @@
+{
+    "displayName": "濾鏡",
+    "downloadPath": "light_material/lut/",
+    "propertyList": [
+        {
+            "displayName": "無",
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "displayName": "白皙",
+            "icon": "beauty_panel/panel_icon/lut_icon/baixi_lf.png",
+            "resourceUri": "light_material/lut/baixi_lf.png",
+            "sdkParam": {
+                "effectValue": 60
+            }
+        },
+        {
+            "displayName": "清新",
+            "icon": "beauty_panel/panel_icon/lut_icon/moren_lf.png",
+            "resourceUri": "light_material/lut/moren_lf.png",
+            "sdkParam": {
+                "effectValue": 60
+            }
+        },
+        {
+            "displayName": "東京",
+            "icon": "beauty_panel/panel_icon/lut_icon/dongjing_lf.png",
+            "resourceUri": "light_material/lut/dongjing_lf.png",
+            "sdkParam": {
+                "effectValue": 60
+            }
+        },
+        {
+            "displayName": "心動",
+            "icon": "beauty_panel/panel_icon/lut_icon/xindong_lf.png",
+            "resourceUri": "light_material/lut/xindong_lf.png",
+            "sdkParam": {
+                "effectValue": 60
+            }
+        },
+        {
+            "displayName": "自然",
+            "icon": "beauty_panel/panel_icon/lut_icon/ziran_lf.png",
+            "resourceUri": "light_material/lut/ziran_lf.png",
+            "sdkParam": {
+                "effectValue": 60
+            }
+        }
+    ]
+}

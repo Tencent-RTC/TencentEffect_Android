@@ -1,0 +1,15 @@
+{
+    "displayName": "3D貼紙",
+    "downloadPath": "MotionRes/3dMotionRes/",
+    "propertyList": [
+        {
+            "displayName": "無",
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "displayName": "知性玫瑰",
+            "icon": "beauty_panel/panel_icon/motions_icon/video_zhixingmeigui.png",
+            "resourceUri": "MotionRes/3dMotionRes/video_zhixingmeigui"
+        }
+    ]
+}

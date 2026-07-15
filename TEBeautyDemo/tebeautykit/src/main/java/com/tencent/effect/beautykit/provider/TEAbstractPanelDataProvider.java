@@ -98,6 +98,7 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
             this.uncheckBeautyAndLut();
         }
         this.restoreUIStateFromParams(checkedTemplateBeautyData, "checkedTemplateBeautyData");   //将模板项同步到美颜、滤镜上
+        this.onTabSelected(0);  //永远选中第一个
         return allData;
     }
 
@@ -281,6 +282,9 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
      */
     private void initializeUIPropertyHierarchy(List<TEUIProperty> list, TEUIProperty.UICategory category,
                                                String titleType, TEUIProperty parentProperty) {
+        if (list == null) {
+            return;
+        }
         for (TEUIProperty property : list) {
             property.parentUIProperty = parentProperty;
             if (property.uiCategory == null) {

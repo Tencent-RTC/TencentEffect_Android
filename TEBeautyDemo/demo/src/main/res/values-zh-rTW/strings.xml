@@ -1,0 +1,23 @@
+<resources>
+
+    <string name="te_beauty_panel_menu_view_layout_makeup">美妝</string>
+    <string name="te_beauty_panel_menu_view_layout_lut">濾鏡</string>
+    <string name="te_beauty_panel_view_revert_tip_title">確定重置嗎</string>
+    <string name="te_beauty_panel_view_revert_tip_msg">重置會將目前所有特效恢復至預設效果，不可撤回</string>
+    <string name="te_beauty_panel_view_revert_tip_dialog_left_btn">取消</string>
+    <string name="te_beauty_panel_view_revert_tip_dialog_right_btn">重置</string>
+    <string name="te_beauty_panel_view_revert_btn_txt">重置</string>
+    <string name="te_beauty_panel_view_more_btn_txt">更多</string>
+    <string name="te_beauty_panel_view_download_dialog_tip">下載中</string>
+
+
+    <string name="te_beauty_panel_view_green_screen_tip_title">匯入圖片</string>
+    <string name="te_beauty_panel_view_green_screen_tip_msg">請您站在綠幕前，選擇一張圖片，將綠幕替換為所選圖片</string>
+    <string name="te_beauty_panel_view_blue_screen_tip_msg">請您站在藍幕前，選擇一張圖片，將藍幕替換為所選圖片</string>
+    <string name="te_beauty_panel_view_green_screen_tip_dialog_left_btn">取消</string>
+    <string name="te_beauty_panel_view_green_screen_tip_dialog_right_btn">選擇圖片</string>
+
+    <string name="te_beauty_panel_view_not_included_tips">該套餐不包含此能力</string>
+
+
+</resources>

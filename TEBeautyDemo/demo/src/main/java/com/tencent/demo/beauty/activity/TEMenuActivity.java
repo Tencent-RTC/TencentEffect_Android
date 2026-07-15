@@ -35,7 +35,7 @@ public class TEMenuActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TEUIConfig.getInstance().setSystemLocal(Locale.getDefault());
+//        TEUIConfig.getInstance().setSystemLocal(Locale.getDefault());
         setContentView(R.layout.te_beauty_activity_menu_layout);
         mLoadingView = findViewById(R.id.te_menu_loading_view);
         findViewById(R.id.btn_start_camera).setOnClickListener(view -> {

@@ -141,6 +141,15 @@
                     "uiState":1
                 },
                 {
+                    "displayName":"祛颈纹",
+                    "displayNameEn":"Neck Wrinkles",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_remove_neckwrinkle.png",
+                    "sdkParam":{
+                        "effectName":"beauty.removeNeckWrinkle",
+                        "effectValue":0
+                    }
+                },
+                {
                     "displayName":"瘦颧骨",
                     "displayNameEn":"Cheekbones",
                     "icon":"beauty_panel/panel_icon/beauty/beauty_thin_cheek.png",

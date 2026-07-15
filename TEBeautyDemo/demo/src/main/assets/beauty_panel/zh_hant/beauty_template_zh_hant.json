@@ -1,70 +1,52 @@
 {
-    "displayName": "美颜模板",
-    "displayNameEn": "Template",
+    "displayName": "美顏模板",
     "propertyList": [
         {
             "id": 0,
-            "displayName": "关闭",
-            "displayNameEn": "None",
+            "displayName": "關閉",
             "icon": "beauty_panel/panel_icon/beauty/none.png"
         },
         {
             "id": 1,
             "displayName": "自然",
-            "displayNameEn": "Nature",
             "icon": "beauty_panel/panel_icon/beauty_template/nature.png",
             "paramList": [
                 {
-                    "effectName": "smooth.smooth",
-                    "effectValue": 80
-                },
-                {
                     "effectName": "beauty.lutFoundationAlpha",
-                    "effectValue": 40
+                    "effectValue": 30
                 },
                 {
-                    "effectName":"beauty.lutClearAlpha",
-                    "effectValue":40
+                    "effectName": "smooth.smooth",
+                    "effectValue": 50
                 },
                 {
-                    "effectName":"basicV7.natureFace",
-                    "effectValue":30
+                    "effectName": "smooth.sharpen",
+                    "effectValue": 30
                 },
                 {
-                    "effectName":"beauty.removeLawLine",
-                    "effectValue":30
+                    "effectName": "basicV7.natureFace",
+                    "effectValue": 35
                 },
                 {
-                    "effectName":"basicV7.enlargeEye",
-                    "effectValue":30
-                },
-                {
-                    "effectName":"basicV7.thinNose",
-                    "effectValue":15
-                },
-                {
-                    "effectName":"basicV7.smileFace",
-                    "effectValue":20
+                    "effectName": "basicV7.enlargeEye",
+                    "effectValue": 35
                 }
-                            
             ],
             "uiState": 2
         },
         {
             "id": 2,
             "displayName": "女神",
-            "displayNameEn": "Goddess",
             "icon": "beauty_panel/panel_icon/beauty_template/nature.png",
             "paramList": [
-                {
-                    "effectName": "smooth.smooth",
-                    "effectValue": 60
-                },
                 {
                     "effectName": "beauty.lutFoundationAlpha",
                     "effectValue": 30
                 },
-                
+                {
+                    "effectName": "smooth.smooth",
+                    "effectValue": 60
+                },
                 {
                     "effectName": "beauty.lutClearAlpha",
                     "effectValue": 30
@@ -117,96 +99,72 @@
         },
         {
             "id": 3,
-            "displayName": "元气",
-            "displayNameEn": "Vitality",
+            "displayName": "元氣",
             "icon": "beauty_panel/panel_icon/beauty_template/energetic.png",
             "paramList": [
                 {
-                    "effectName": "smooth.smooth",
-                    "effectValue": 55
+                    "effectName": "beauty.lutFoundationAlpha",
+                    "effectValue": 30
                 },
                 {
-                    "effectName": "beauty.lutFoundationAlpha",
-                    "effectValue": 40
+                    "effectName": "smooth.smooth",
+                    "effectValue": 75
                 },
                 {
                     "effectName": "smooth.rosy",
                     "effectValue": 30
                 },
                 {
-                    "effectName":"beauty.lutClearAlpha",
-                    "effectValue":80
-                },
-                {
                     "effectName": "smooth.sharpen",
-                    "effectValue": 40
+                    "effectValue": 10
                 },
-                {
-                    "effectName":"beauty.faceFeatureSoftlight",
-                    "effectValue":40,
-                    "resourcePath":"/images/beauty/liti_ziran.png"
-                },
-                {
-                    "effectName":"beauty.eyeLighten",
-                    "effectValue":30
-                },
-                {
-                    "effectName":"beauty.removeEyeBags",
-                    "effectValue":80
-                },
-                {
-                    "effectName": "beauty.removeLawLine",
-                    "effectValue": 80
-                },
-                
                 {
                     "effectName": "basicV7.vFace",
                     "effectValue": 50
-                },
-                {
-                    "effectName": "basicV7.faceJaw",
-                    "effectValue": 10
                 },
                 {
                     "effectName": "basicV7.enlargeEye",
                     "effectValue": 40
                 },
                 {
+                    "effectName": "basicV7.chin",
+                    "effectValue": 20
+                },
+                {
+                    "effectName": "basicV7.forehead",
+                    "effectValue": -20
+                },
+                {
                     "effectName": "basicV7.thinNose",
                     "effectValue": 50
                 },
                 {
-                    "effectName":"basicV7.smileFace",
-                    "effectValue": 35
+                    "effectName": "basicV7.mouthSize",
+                    "effectValue": -10
                 },
                 {
                     "effectName": "lut",
-                    "resourcePath":"light_material/lut/ziran_lf.png",
+                    "resourcePath": "light_material/lut/ziran_lf.png",
                     "effectValue": 40
                 }
             ]
         },
         {
             "id": 4,
-            "displayName": "经典直播",
-            "displayNameEn": "Classic Live",
+            "displayName": "經典直播",
             "icon": "beauty_panel/panel_icon/beauty_template/energetic.png",
             "paramList": [
+                {
+                    "effectName": "beauty.lutFoundationAlpha",
+                    "effectValue": 50
+                },
                 {
                     "effectName": "smooth.smooth",
                     "effectValue": 60
                 },
                 {
-                    "effectName": "beauty.lutFoundationAlpha",
-                    "effectValue": 20
-                },
-                {
-                    "effectName":"smooth.rosy",
-                    "effectValue":40
-                },
-                {
                     "effectName": "beauty.lutClearAlpha",
-                    "effectValue": 50
+                    "effectValue": 20
                 },
                 {
                     "effectName": "basicV7.natureFace",
@@ -217,8 +175,8 @@
                     "effectValue": 30
                 },
                 {
-                    "effectName":"beauty.removeEyeBags",
-                    "effectValue":50
+                    "effectName": "beauty.removeEyeBags",
+                    "effectValue": 50
                 },
                 {
                     "effectName": "basicV7.thinNose",
@@ -236,8 +194,7 @@
         },
         {
             "id": 5,
-            "displayName": "异域",
-            "displayNameEn": "Exotic",
+            "displayName": "異域",
             "icon": "beauty_panel/panel_icon/beauty_template/energetic.png",
             "paramList": [
                 {
@@ -284,8 +241,7 @@
         },
         {
             "id": 6,
-            "displayName": "初级",
-            "displayNameEn": "Beginner",
+            "displayName": "初級",
             "icon": "beauty_panel/panel_icon/beauty_template/nature.png",
             "paramList": [
                 {
@@ -358,8 +314,7 @@
         },
         {
             "id": 7,
-            "displayName": "中级",
-            "displayNameEn": "Intermediate",
+            "displayName": "中級",
             "icon": "beauty_panel/panel_icon/beauty_template/gloddess.png",
             "paramList": [
                 {
@@ -436,8 +391,7 @@
         },
         {
             "id": 8,
-            "displayName": "高级",
-            "displayNameEn": "Advanced",
+            "displayName": "高級",
             "icon": "beauty_panel/panel_icon/beauty_template/gloddess.png",
             "paramList": [
                 {
@@ -515,7 +469,6 @@
         {
             "id": 9,
             "displayName": "英俊",
-            "displayNameEn": "Handsome",
             "icon": "beauty_panel/panel_icon/beauty_template/handsome.png",
             "paramList": [
                 {
@@ -555,8 +508,7 @@
         },
         {
             "id": 10,
-            "displayName": "经典1",
-            "displayNameEn": "Classic 1",
+            "displayName": "經典1",
             "icon": "beauty_panel/panel_icon/beauty_template/nature.png",
             "paramList": [
                 {
@@ -633,8 +585,7 @@
         },
         {
             "id": 11,
-            "displayName": "经典2",
-            "displayNameEn": "Classic 2",
+            "displayName": "經典2",
             "icon": "beauty_panel/panel_icon/beauty_template/nature.png",
             "paramList": [
                 {
@@ -661,8 +612,7 @@
         },
         {
             "id": 12,
-            "displayName": "经典3",
-            "displayNameEn": "Classic 3",
+            "displayName": "經典3",
             "icon": "beauty_panel/panel_icon/beauty_template/gloddess.png",
             "paramList": [
                 {
@@ -702,8 +652,7 @@
         },
         {
             "id": 13,
-            "displayName": "经典4",
-            "displayNameEn": "Classic 4",
+            "displayName": "經典4",
             "icon": "beauty_panel/panel_icon/beauty_template/energetic.png",
             "paramList": [
                 {

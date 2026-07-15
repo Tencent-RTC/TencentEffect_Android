@@ -140,7 +140,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         mainTabLayout.setTabSelectedListener((property, selectedTabIndex) -> {
             if (property.hasSubTitle) {
                 subTabLayout.setVisibility(VISIBLE);
-                subTabLayout.setData(property.propertyList, 12);
+                subTabLayout.setData(property.propertyList, 13);
             } else {
                 subTabLayout.setVisibility(GONE);
                 subTabLayout.setData(null, 0);
@@ -554,7 +554,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         if (propertyList == null || propertyList.isEmpty()) {
             return;
         }
-        mainTabLayout.setData(propertyList, 16);
+        mainTabLayout.setData(propertyList, 15);
     }
 
 

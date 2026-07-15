@@ -1,0 +1,75 @@
+{
+    "displayName": "畫質調整",
+    "propertyList": [
+        {
+            "displayName": "關閉",
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "displayName": "對比度",
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_contrast.png",
+            "sdkParam": {
+                "effectName": "beauty.imageContrastAlpha",
+                "effectValue": 0
+            }
+        },
+        {
+            "displayName": "飽和度",
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_saturation.png",
+            "sdkParam": {
+                "effectName": "smooth.saturation",
+                "effectValue": 0
+            }
+        },
+        {
+            "displayName": "清晰度",
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_sharpen.png",
+            "sdkParam": {
+                "effectName": "beauty.lutClearAlpha",
+                "effectValue": 80
+            },
+            "uiState": 1
+        },
+        {
+            "displayName": "銳化",
+            "icon": "beauty_panel/panel_icon/beauty/beauty_sharpen.png",
+            "sdkParam": {
+                "effectName": "smooth.sharpen",
+                "effectValue": 30
+            },
+            "uiState": 1
+        },
+        {
+            "displayName": "亮度",
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_brightness.png",
+            "sdkParam": {
+                "effectName": "beauty.imageBrightness",
+                "effectValue": 0
+            }
+        },
+        {
+            "displayName": "弱光降噪",
+            "icon": "beauty_panel/panel_icon/beauty/beauty_denoise.png",
+            "sdkParam": {
+                "effectName": "postEffect.denoise",
+                "effectValue": 0
+            }
+        },
+        {
+            "displayName": "色溫",
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_warmth.png",
+            "sdkParam": {
+                "effectName": "beauty.imageWarmth",
+                "effectValue": 0
+            }
+        },
+        {
+            "displayName": "色調",
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_tint.png",
+            "sdkParam": {
+                "effectName": "beauty.imageTint",
+                "effectValue": 0
+            }
+        }
+    ]
+}

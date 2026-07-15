@@ -24,7 +24,6 @@ import com.tencent.demo.utils.UriUtils;
 import com.tencent.effect.beautykit.TEBeautyKit;
 import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.model.TEPanelDataModel;
-import com.tencent.effect.beautykit.model.TEPanelViewResModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.utils.LogUtils;
 import com.tencent.effect.beautykit.view.panelview.TEPanelView;
@@ -33,6 +32,7 @@ import com.tencent.xmagic.XmagicConstant;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 图片美颜页面
@@ -71,26 +71,65 @@ public class TEImageBaseActivity2 extends AppCompatActivity implements TEPanelVi
     }
 
     public void initBeautyView(TEBeautyKit beautyKit) {
+
+        Locale locale = Locale.getDefault();
+
+        String language = locale.getLanguage();
+        String country = locale.getCountry();
+        String script = locale.getScript();
+
+        //这里是多语言适配的示例代码，判断出当前语言环境，加载对应语言的json文件，面板中默认的json中只支持简体中文和英文，如果现在需要支持繁体中文，咱们就可以这样操作
+        //在beauty_panel下创建一个zt_hant 的文件夹，然后复制现有的json文件到此目录，然后将disPlayName的值修改为繁体中文，在需要使用的时候加载这个json文件即可。
+        // 并且调用此方法 设置true, TEUIConfig.getInstance().setUseDisplayName(true);
+        // 注意：TEBeautyKit库中xml中定义的文字可以通过在自己项目中res下创建对应string.xml文件实现，此demo 就是在
+        // demo/src/main/res/values-zh-rTW/下创建对应的strings.xml文件，然后对 TEBeautyKit的字段进行翻译。
+        String panelJsonDir = "";
+        String jsonFileSuffix ="";
+        boolean isChineseTraditional = "zh".equals(language) &&
+                ("TW".equals(country) || "HK".equals(country) || "MO".equals(country) || "Hant".equals(script));
+        if (isChineseTraditional) {   //繁体中文
+            panelJsonDir = "beauty_panel/zh_hant/";
+            jsonFileSuffix = "_zh_hant.json";
+            TEUIConfig.getInstance().setUseDisplayName(true);
+        } else if ("zh".equals(locale.getLanguage())) {  //简体中文
+            TEUIConfig.getInstance().setUseDisplayName(true);
+            panelJsonDir = "beauty_panel/";
+            jsonFileSuffix = ".json";
+        } else {
+            TEUIConfig.getInstance().setUseDisplayName(false);
+            panelJsonDir = "beauty_panel/";
+            jsonFileSuffix = ".json";
+        }
+
         List<TEPanelDataModel> panelDataModels = TEUIConfig.getInstance().getPanelDataList();
         panelDataModels.clear();
+        //注意 demo中的加载的是S1-07套餐的 面板，这个套餐是最全的，在您的项目中具体加载哪个json文件可以参考官网的文档说明，
+        // 因为每个套餐对应的功能不一样，所以需要根据套餐加载对应的json
+        TEPanelDataModel template =
+                new TEPanelDataModel(panelJsonDir +"beauty_template"+jsonFileSuffix, TEUIProperty.UICategory.BEAUTY_TEMPLATE);
+        TEPanelDataModel beauty1 =
+                new TEPanelDataModel(panelJsonDir + "beauty"+jsonFileSuffix, TEUIProperty.UICategory.BEAUTY);
+        TEPanelDataModel beauty2 =
+                new TEPanelDataModel(panelJsonDir + "beauty_image"+jsonFileSuffix, TEUIProperty.UICategory.BEAUTY);
+        TEPanelDataModel beauty4 =
+                new TEPanelDataModel(panelJsonDir + "beauty_shape"+jsonFileSuffix, TEUIProperty.UICategory.BEAUTY);
+        TEPanelDataModel beauty3 =
+                new TEPanelDataModel(panelJsonDir + "beauty_makeup"+jsonFileSuffix, TEUIProperty.UICategory.BEAUTY);
 
-        TEPanelDataModel template = new TEPanelDataModel("beauty_panel/beauty_template.json", TEUIProperty.UICategory.BEAUTY_TEMPLATE);
-        TEPanelDataModel beauty1 = new TEPanelDataModel("beauty_panel/beauty.json", TEUIProperty.UICategory.BEAUTY);
-        TEPanelDataModel beauty2 = new TEPanelDataModel("beauty_panel/beauty_image.json", TEUIProperty.UICategory.BEAUTY);
-        TEPanelDataModel beauty4 = new TEPanelDataModel("beauty_panel/beauty_shape.json", TEUIProperty.UICategory.BEAUTY);
-        TEPanelDataModel beauty3 = new TEPanelDataModel("beauty_panel/beauty_makeup.json", TEUIProperty.UICategory.BEAUTY);
 
-
-        TEPanelDataModel lut = new TEPanelDataModel("beauty_panel/lut.json", TEUIProperty.UICategory.LUT);
-        TEPanelDataModel lightMakeup = new TEPanelDataModel("beauty_panel/light_makeup.json",
-                TEUIProperty.UICategory.LIGHT_MAKEUP);
-        TEPanelDataModel makeup = new TEPanelDataModel("beauty_panel/makeup.json", TEUIProperty.UICategory.MAKEUP);
-        TEPanelDataModel motion = new TEPanelDataModel("beauty_panel/motion_2d.json", TEUIProperty.UICategory.MOTION);
-        TEPanelDataModel motion2 = new TEPanelDataModel("beauty_panel/motion_3d.json", TEUIProperty.UICategory.MOTION);
-        TEPanelDataModel motion_gesture = new TEPanelDataModel("beauty_panel/motion_gesture.json",
-                TEUIProperty.UICategory.MOTION);
-        TEPanelDataModel seg = new TEPanelDataModel("beauty_panel/segmentation.json", TEUIProperty.UICategory.SEGMENTATION);
-
+        TEPanelDataModel lut = new TEPanelDataModel(panelJsonDir + "lut"+jsonFileSuffix, TEUIProperty.UICategory.LUT);
+        TEPanelDataModel lightMakeup =
+                new TEPanelDataModel(panelJsonDir + "light_makeup"+jsonFileSuffix, TEUIProperty.UICategory.LIGHT_MAKEUP);
+        TEPanelDataModel makeup =
+                new TEPanelDataModel(panelJsonDir + "makeup"+jsonFileSuffix, TEUIProperty.UICategory.MAKEUP);
+        TEPanelDataModel motion =
+                new TEPanelDataModel(panelJsonDir + "motion_2d"+jsonFileSuffix, TEUIProperty.UICategory.MOTION);
+        TEPanelDataModel motion2 =
+                new TEPanelDataModel(panelJsonDir + "motion_3d"+jsonFileSuffix, TEUIProperty.UICategory.MOTION);
+        TEPanelDataModel motion_gesture =
+                new TEPanelDataModel(panelJsonDir + "motion_gesture"+jsonFileSuffix, TEUIProperty.UICategory.MOTION);
+        TEPanelDataModel seg =
+                new TEPanelDataModel(panelJsonDir + "segmentation"+jsonFileSuffix, TEUIProperty.UICategory.SEGMENTATION);
 
 
         panelDataModels.add(template);
@@ -119,9 +158,9 @@ public class TEImageBaseActivity2 extends AppCompatActivity implements TEPanelVi
         }
 
         mTEPanelView.showView(this);
-        this.mPanelLayout.addView(mTEPanelView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        this.mPanelLayout.addView(mTEPanelView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
     }
-
 
     @Override
     public void onGLContextCreated() {

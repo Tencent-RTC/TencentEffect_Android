@@ -1,0 +1,15 @@
+{
+    "displayName": "手勢貼紙",
+    "downloadPath": "MotionRes/handMotionRes/",
+    "propertyList": [
+        {
+            "displayName": "無",
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "displayName": "櫻花女孩",
+            "resourceUri": "MotionRes/handMotionRes/video_sakuragirl",
+            "icon": "beauty_panel/panel_icon/motions_icon/video_sakuragirl.png"
+        }
+    ]
+}

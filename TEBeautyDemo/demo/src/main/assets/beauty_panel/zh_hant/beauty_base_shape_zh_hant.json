@@ -1,0 +1,49 @@
+{
+    "displayName": "基礎美型",
+    "propertyList": [
+        {
+            "displayName": "關閉",
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "displayName": "大眼",
+            "icon": "beauty_panel/panel_icon/beauty/beauty_enlarge_eye.png",
+            "sdkParam": {
+                "effectName": "basicV7.enlargeEye",
+                "effectValue": 20
+            },
+            "uiState": 1
+        },
+        {
+            "displayName": "瘦臉",
+            "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face.png",
+            "propertyList": [
+                {
+                    "displayName": "自然",
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face1.png",
+                    "sdkParam": {
+                        "effectName": "basicV7.natureFace",
+                        "effectValue": 30
+                    },
+                    "uiState": 1
+                },
+                {
+                    "displayName": "女神",
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face2.png",
+                    "sdkParam": {
+                        "effectName": "basicV7.godnessFace",
+                        "effectValue": 0
+                    }
+                },
+                {
+                    "displayName": "英俊",
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face3.png",
+                    "sdkParam": {
+                        "effectName": "basicV7.maleGodFace",
+                        "effectValue": 0
+                    }
+                }
+            ]
+        }
+    ]
+}

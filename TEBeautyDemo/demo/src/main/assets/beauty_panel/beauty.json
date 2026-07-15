@@ -119,6 +119,15 @@
                         "effectName":"smooth.smooth4",
                         "effectValue":40
                     }
+                },
+                {
+                    "displayName":"柔焦",
+                    "displayNameEn":"Soft Focus",
+                    "icon":"beauty_panel/panel_icon/beauty/beauty_smooth/beauty_smooth_5.png",
+                    "sdkParam":{
+                        "effectName":"smooth.smooth5",
+                        "effectValue":40
+                    }
                 }
             ]
         },

@@ -1,0 +1,35 @@
+{
+    "displayName": "2D貼紙",
+    "downloadPath": "MotionRes/2dMotionRes/",
+    "propertyList": [
+        {
+            "displayName": "無",
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "displayName": "可愛塗鴉",
+            "icon": "beauty_panel/panel_icon/motions_icon/video_keaituya.png",
+            "resourceUri": "MotionRes/2dMotionRes/video_keaituya"
+        },
+        {
+            "displayName": "貴妃臉",
+            "icon": "beauty_panel/panel_icon/motions_icon/video_guifeiface.png",
+            "resourceUri": "MotionRes/2dMotionRes/video_guifeiface"
+        },
+        {
+            "displayName": "上學前後",
+            "icon": "beauty_panel/panel_icon/motions_icon/video_kaixueqianhou.png",
+            "resourceUri": "MotionRes/2dMotionRes/video_kaixueqianhou"
+        },
+        {
+            "displayName": "閃動愛心",
+            "icon": "beauty_panel/panel_icon/motions_icon/video_boys.png",
+            "resourceUri": "MotionRes/2dMotionRes/video_boys"
+        },
+        {
+            "displayName": "元氣貼紙",
+            "icon": "beauty_panel/panel_icon/motions_icon/video_xuanmeizhuang.png",
+            "resourceUri": "MotionRes/2dMotionRes/video_xuanmeizhuang"
+        }
+    ]
+}

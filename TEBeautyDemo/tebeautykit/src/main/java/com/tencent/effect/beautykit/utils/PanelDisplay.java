@@ -12,7 +12,7 @@ public class PanelDisplay {
         if (uiProperty == null) {
             return null;
         }
-        String displayName = TEUIConfig.getInstance().isDefaultLanguage() ? uiProperty.displayName : uiProperty.displayNameEn;
+        String displayName = TEUIConfig.getInstance().isUseDisplayName() ? uiProperty.displayName : uiProperty.displayNameEn;
         if (displayName == null) {
             displayName = uiProperty.displayName;
         }
