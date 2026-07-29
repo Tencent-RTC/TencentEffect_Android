@@ -135,6 +135,9 @@ public class TEUIProperty {
                 case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYE_SEQUINS:
                 case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYEBROW:
                 case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYEBALL:
+                case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYELIDS:
+                case XmagicConstant.EffectName.BEAUTY_FACE_MAKEUP_EYEWOCAN:
+                case XmagicConstant.EffectName.BEAUTY_HAIR_COLOR_LUT:
                     return true;
                 default:
                     return false;
