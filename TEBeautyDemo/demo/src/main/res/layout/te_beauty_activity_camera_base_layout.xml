@@ -11,18 +11,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:surface_view="false"
-        app:transparent="true"  />
+        app:transparent="true" />
 
 
-    <ImageView
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+    <Button
         android:id="@+id/te_camera_layout_save_btn"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="340dp"
-        android:src="@mipmap/te_beauty_ok" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="150dp"
+        android:src="@mipmap/te_beauty_ok"
+        android:text="保存美颜参数"
+        app:layout_constraintBottom_toTopOf="@+id/te_camera_layout_beauty_panel_layout"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Switch
+        app:layout_constraintTop_toTopOf="@+id/te_camera_layout_save_btn"
+        app:layout_constraintRight_toLeftOf="@+id/te_camera_layout_save_btn"
+        android:id="@+id/switch_er"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:id="@+id/te_camera_layout_beauty_panel_layout"

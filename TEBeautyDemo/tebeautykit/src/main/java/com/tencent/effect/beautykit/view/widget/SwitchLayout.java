@@ -20,7 +20,7 @@ public class SwitchLayout extends LinearLayout {
     private @DrawableRes int bgDrawable = R.drawable.te_beauty_panel_switch_layout_bg;
     private @DrawableRes int checkedDrawable = R.drawable.te_beauty_panel_switch_layout_checked_bg;
     private @ColorRes int textCheckedColor = R.color.te_beauty_color_CC000000;
-    private @ColorRes int textCommonColor = R.color.te_beauty_color_4D000000;
+    private @ColorRes int textCommonColor = R.color.te_beauty_color_FFFFFFFF;
 
 
     private SwitchLayoutListener switchLayoutListener;

@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -173,14 +174,35 @@ public class FileUtil {
         if (TextUtils.isEmpty(httpUrl) || !httpUrl.startsWith("http")) {
             return null;
         }
-        String fileName = null;
-        URL url = null;
+        String path;
         try {
-            url = new URL(httpUrl);
+            // 使用 getPath() 而非 getFile()，避免把 ?query 拼进文件名
+            path = new URL(httpUrl).getPath();
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            // 解析失败时回退为手动截取，去掉 query/fragment
+            path = httpUrl;
+            int q = path.indexOf('?');
+            if (q >= 0) {
+                path = path.substring(0, q);
+            }
+            int f = path.indexOf('#');
+            if (f >= 0) {
+                path = path.substring(0, f);
+            }
         }
-        fileName = url.getFile();
-        return fileName.substring(fileName.lastIndexOf("/") + 1);
+        if (TextUtils.isEmpty(path) || "/".equals(path)) {
+            return null;
+        }
+        int idx = path.lastIndexOf('/');
+        String fileName = idx >= 0 ? path.substring(idx + 1) : path;
+        if (TextUtils.isEmpty(fileName)) {
+            return null;
+        }
+        try {
+            fileName = URLDecoder.decode(fileName, "UTF-8");
+        } catch (Exception ignore) {
+            // 解码失败时保留原始值
+        }
+        return fileName;
     }
 }

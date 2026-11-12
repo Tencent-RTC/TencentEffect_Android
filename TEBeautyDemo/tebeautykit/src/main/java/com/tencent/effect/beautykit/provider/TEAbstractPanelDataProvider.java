@@ -8,15 +8,16 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.tencent.effect.beautykit.config.TEUIConfig;
+import com.tencent.effect.beautykit.model.TEIndexFileModel;
 import com.tencent.effect.beautykit.model.TEPanelDataModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
+import com.tencent.effect.beautykit.utils.PanelDisplay;
 import com.tencent.xmagic.XmagicConstant;
 import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
 import com.tencent.xmagic.util.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -72,34 +73,103 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
         }
         indexUIPropertyMap.clear();
         TEUIProperty templateData = null;
-        for (TEPanelDataModel dataModel : this.panelDataModels) {
-            TEUIProperty uiProperty = this.loadUIPropertyFromJson(dataModel.jsonFilePath, context);
-            if (uiProperty == null) {
-                continue;
+        if (this.panelDataModels != null) {
+            int titleTypeIndex = 0;
+            // 统计 loadUIPropertyFromJson 方法本轮所有调用的累计耗时
+            long loadUIPropertyTotalNanos = 0L;
+            int loadUIPropertyCallCount = 0;
+            Gson gson = new Gson();
+            for (TEPanelDataModel dataModel : this.panelDataModels) {
+                titleTypeIndex++;
+                long start = System.nanoTime();
+                TEUIProperty uiProperty = this.loadUIPropertyFromJson(gson, dataModel.jsonFilePath, context);
+                loadUIPropertyTotalNanos += (System.nanoTime() - start);
+                loadUIPropertyCallCount++;
+                if (uiProperty != null && uiProperty.uiCategory == null) {
+                    uiProperty.uiCategory = dataModel.category;
+                }
+                if (uiProperty != null) {
+                    this.collectUIProperty(uiProperty, "group_" + titleTypeIndex);
+                    if (this.isBeautyTemplate(uiProperty)) {
+                        templateData = uiProperty;
+                    }
+                }
             }
-            if (uiProperty.uiCategory == null) {
-                uiProperty.uiCategory = dataModel.category;
+            Log.i(TAG, "loadUIPropertyFromJson total cost: " + (loadUIPropertyTotalNanos / 1_000_000.0)
+                    + " ms (" + loadUIPropertyTotalNanos + " ns), calls=" + loadUIPropertyCallCount);
+        } else {  //从index 文件中加载
+            if (TextUtils.isEmpty(TEUIConfig.getInstance().panelViewIndexJsonFilePath)) {
+                return null;
             }
-            uiProperty.titleType = uiProperty.displayName;
-            this.initializeUIPropertyHierarchy(uiProperty.propertyList, dataModel.category, uiProperty.titleType, uiProperty);
-            if (uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE) {
-                templateData = uiProperty;
+            IndexFileProvider indexFileProvider = new IndexFileProvider();
+            TEIndexFileModel fileModel =
+                    indexFileProvider.loadIndexJson(context, TEUIConfig.getInstance().panelViewIndexJsonFilePath);
+            if (fileModel == null || fileModel.data == null) {
+                return null;
             }
-            this.indexUIProperty(uiProperty);
-            this.allData.add(uiProperty);
+            TEUIConfig.getInstance().defaultDisPlayNameKey = fileModel.defaultLanguage;
+            int titleTypeIndex = 0;
+            // 统计 loadUIPropertyFromItem 方法本轮所有调用的累计耗时
+            long loadUIPropertyTotalNanos = 0L;
+            int loadUIPropertyCallCount = 0;
+            for (TEIndexFileModel.Item item : fileModel.data) {
+                titleTypeIndex++;
+                long start = System.nanoTime();
+                TEUIProperty uiProperty = indexFileProvider.loadUIPropertyFromItem(item, context);
+                loadUIPropertyTotalNanos += (System.nanoTime() - start);
+                loadUIPropertyCallCount++;
+                if (uiProperty != null) {
+                    this.collectUIProperty(uiProperty, "group_" + titleTypeIndex);
+                    if (this.isBeautyTemplate(uiProperty)) {
+                        templateData = uiProperty;
+                    }
+                }
+            }
+            Log.i(TAG, "loadUIPropertyFromItem total cost: " + (loadUIPropertyTotalNanos / 1_000_000.0)
+                    + " ms (" + loadUIPropertyTotalNanos + " ns), calls=" + loadUIPropertyCallCount);
         }
         if (originalParamList != null && !originalParamList.isEmpty()) {
             this.uncheckBeautyAndLut();
+            this.uncheckLightMakeup();
         }
         this.restoreUIStateFromParams(this.originalParamList, "originalParamList");     //将上次的数据进行同步
         //被选中的模板中的美颜数据
         List<TEUIProperty.TESDKParam> checkedTemplateBeautyData = ProviderUtils.processTemplateData(templateData);
         if (checkedTemplateBeautyData != null && !checkedTemplateBeautyData.isEmpty()) {
             this.uncheckBeautyAndLut();
+            this.uncheckLightMakeup();
         }
         this.restoreUIStateFromParams(checkedTemplateBeautyData, "checkedTemplateBeautyData");   //将模板项同步到美颜、滤镜上
         this.onTabSelected(0);  //永远选中第一个
         return allData;
+    }
+
+    /**
+     * 归一化处理单个 uiProperty 并收集到 allData：
+     * 1. 设置 titleType
+     * 2. 初始化层级（父子关系、SDKParam、effectName）
+     * 3. 建立 effectName → property 的索引
+     * 4. 加入 allData
+     *
+     * @param uiProperty 已加载好的 UI 属性对象，调用方需保证非 null
+     * @param titleType  该 UI 属性所属的分组标识
+     */
+    private void collectUIProperty(TEUIProperty uiProperty, String titleType) {
+        uiProperty.titleType = titleType;
+        this.initializeUIPropertyHierarchy(uiProperty.propertyList, uiProperty.uiCategory, uiProperty.titleType,
+                uiProperty);
+        this.indexUIProperty(uiProperty);
+        this.allData.add(uiProperty);
+    }
+
+    /**
+     * 判断给定的 UI 属性是否为美颜模板（BEAUTY_TEMPLATE）。
+     *
+     * @param uiProperty 待判定的 UI 属性对象，允许为 null
+     * @return 若非 null 且 uiCategory == BEAUTY_TEMPLATE 则返回 true，否则返回 false
+     */
+    private boolean isBeautyTemplate(TEUIProperty uiProperty) {
+        return uiProperty != null && uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE;
     }
 
 
@@ -173,7 +243,8 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
                     teuiProperty.sdkParam.effectValue = param.effectValue;
                     teuiProperty.sdkParam.extraInfo = param.extraInfo;
                 }
-                if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY || teuiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY) {
+                if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY ||
+                        teuiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY) {
                     teuiProperty.setUiState(TEUIProperty.UIState.IN_USE);
                     ProviderUtils.changeParentUIState(teuiProperty, TEUIProperty.UIState.IN_USE);
                 } else {
@@ -229,7 +300,8 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
         if (teuiProperty == null) {
             return null;
         }
-        if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE && teuiProperty.paramList != null && !teuiProperty.paramList.isEmpty()) { //在这里判断一下是不是模板数据，如果是直接返回
+        if (teuiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE && teuiProperty.paramList != null &&
+                !teuiProperty.paramList.isEmpty()) { //在这里判断一下是不是模板数据，如果是直接返回
             return TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME + teuiProperty.id;
         }
         if (teuiProperty.sdkParam == null) {
@@ -251,7 +323,8 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
     private String getNameMapKey(TEUIProperty.TESDKParam param) {
         StringBuilder keyBuilder = new StringBuilder();
         if (!TextUtils.isEmpty(param.effectName)) {
-            if (TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME.equals(param.effectName)) {   //在这里判断一下是不是模板数据，如果是直接返回
+            if (TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME.equals(
+                    param.effectName)) {   //在这里判断一下是不是模板数据，如果是直接返回
                 return TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME + param.effectValue;
             }
             keyBuilder.append(param.effectName);
@@ -290,7 +363,7 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
             if (property.uiCategory == null) {
                 property.uiCategory = category;
             }
-            ProviderUtils.createDlModelAndSDKParam(property, category);
+            ProviderUtils.createDlModelAndSDKParam(property, property.uiCategory);
             if (property.sdkParam != null) {
                 switch (property.uiCategory) {
                     case LUT:
@@ -327,7 +400,7 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
      * @param context      上下文对象，用于读取asset文件
      * @return 解析成功的TEUIProperty对象，如果失败则返回null
      */
-    private TEUIProperty loadUIPropertyFromJson(String jsonFilePath, Context context) {
+    private TEUIProperty loadUIPropertyFromJson(Gson gson,String jsonFilePath, Context context) {
         if (TextUtils.isEmpty(jsonFilePath)) {
             return null;
         }
@@ -340,8 +413,10 @@ public abstract class TEAbstractPanelDataProvider implements TEPanelDataProvider
         if (TextUtils.isEmpty(dataStr)) {
             return null;
         }
-        return new Gson().fromJson(dataStr.trim(), TEUIProperty.class);
+        return gson.fromJson(dataStr.trim(), TEUIProperty.class);
     }
 
     protected abstract void uncheckBeautyAndLut();
+
+    protected abstract void uncheckLightMakeup();
 }

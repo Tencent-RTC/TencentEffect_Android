@@ -11,12 +11,12 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.tencent.effect.beautykit.TEBeautyKit;
+import com.tencent.effect.beautykit.download.TEDownloadRegistry;
+import com.tencent.effect.beautykit.download.TEDownloadUrlHelper;
 import com.tencent.xmagic.XmagicConstant;
 import com.tencent.effect.beautykit.model.TEMotionDLModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.utils.FileUtil;
-
-import org.light.utils.GsonUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,6 +116,11 @@ public class ProviderUtils {
                     changeParamUIState(property, TEUIProperty.UIState.IN_USE);
                 }
             } else {
+                // 轻美妆与单点美妆/滤镜的互斥由上层 onClickPointMakeup / onClickLightMakeup 按 cleanLightMakeup 控制，
+                // 这里只负责"同为轻美妆"套装间的单选；跨类（如点击单点美妆）时跳过，避免误清轻美妆。
+                if (isLightMakeupCategory(property) && !isLightMakeupCategory(currentItem)) {
+                    continue;
+                }
                 changeParamUIState(property, TEUIProperty.UIState.INIT);
             }
         }
@@ -167,6 +172,18 @@ public class ProviderUtils {
             return true;
         }
         return false;
+    }
+
+
+    /**
+     * 判断是否为轻美妆相关分类（轻美妆套装 LIGHT_MAKEUP 或下钻态单项 LIGHT_MAKEUP_ITEM）。
+     *
+     * @param property UI 属性对象，允许为 null
+     * @return 若为轻美妆相关分类则返回 true，否则返回 false
+     */
+    private static boolean isLightMakeupCategory(TEUIProperty property) {
+        return property != null && (property.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP
+                || property.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP_ITEM);
     }
 
 
@@ -244,7 +261,10 @@ public class ProviderUtils {
                 if (uiProperty == null) {
                     continue;
                 }
-                if (uiProperty.getUiState() != TEUIProperty.UIState.INIT && uiProperty.sdkParam != null && uiProperty.uiCategory != TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM) {
+                if (uiProperty.getUiState() != TEUIProperty.UIState.INIT && uiProperty.sdkParam != null
+                        && uiProperty.uiCategory != TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM
+                        && uiProperty.uiCategory != TEUIProperty.UICategory.LIGHT_MAKEUP_ITEM
+                        && uiProperty.uiCategory != TEUIProperty.UICategory.LIGHT_MAKEUP_BACK) {
                     properties.add(uiProperty.sdkParam);
                 }
                 if (uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE && uiProperty.getUiState() != TEUIProperty.UIState.INIT && uiProperty.paramList != null && !uiProperty.paramList.isEmpty()) {
@@ -331,23 +351,71 @@ public class ProviderUtils {
             case SEGMENTATION:
                 if (!TextUtils.isEmpty(teuiProperty.resourceUri)) {
                     String downloadPath = ProviderUtils.getDownloadPath(teuiProperty);
-                    if (teuiProperty.resourceUri.startsWith(HTTP_NAME)) {
-                        teuiProperty.dlModel = new TEMotionDLModel(downloadPath, FileUtil.getFileNameByHttpUrl(teuiProperty.resourceUri), teuiProperty.resourceUri);
-                    }
                     if (teuiProperty.sdkParam == null) {
                         teuiProperty.sdkParam = new TEUIProperty.TESDKParam();
                     }
                     if (teuiProperty.resourceUri.startsWith(HTTP_NAME)) {
                         String fileName = FileUtil.getFileNameByHttpUrl(teuiProperty.resourceUri);
-                        if (!TextUtils.isEmpty(fileName) && fileName.endsWith(ZIP_NAME)) {
-                            fileName = teuiProperty.dlModel.getFileNameNoZip();
+                        if (!TextUtils.isEmpty(fileName)) {
+                            teuiProperty.dlModel = new TEMotionDLModel(downloadPath, fileName, teuiProperty.resourceUri);
+                            if (fileName.endsWith(ZIP_NAME)) {
+                                teuiProperty.sdkParam.resourcePath = downloadPath + teuiProperty.dlModel.getFileNameNoZip();
+                            } else if (!TEDownloadUrlHelper.hasExtension(fileName)) {
+                                // 无扩展名地址：优先用下载时持久化的真实路径恢复
+                                String recorded = TEDownloadRegistry.query(teuiProperty.resourceUri);
+                                teuiProperty.sdkParam.resourcePath = !TextUtils.isEmpty(recorded)
+                                        ? recorded : downloadPath + fileName;
+                            } else {
+                                teuiProperty.sdkParam.resourcePath = downloadPath + fileName;
+                            }
+                        } else {
+                            // 无法从 URL 解析出文件名时，回退为原始地址
+                            teuiProperty.sdkParam.resourcePath = teuiProperty.resourceUri;
                         }
-                        teuiProperty.sdkParam.resourcePath = downloadPath + fileName;
                     } else {
                         teuiProperty.sdkParam.resourcePath = teuiProperty.resourceUri;
                     }
                 }
                 break;
+            case BEAUTY_TEMPLATE:
+                processBeautyTemplateLutParams(teuiProperty);
+                break;
+        }
+    }
+
+
+    /**
+     * 处理美颜模板（BEAUTY_TEMPLATE）中的 LUT 参数：
+     * 遍历 {@code teuiProperty.paramList}，对 effectName == EFFECT_LUT 且 resourcePath 为
+     * http(s) 远端链接的项，构建 {@link TEMotionDLModel} 下载模型，并将 resourcePath
+     * 补全为"下载目录 + 文件名（zip 则去掉后缀）"的本地路径。
+     *
+     * @param teuiProperty 模板属性节点，为空或 paramList 为空时无操作
+     */
+    private static void processBeautyTemplateLutParams(TEUIProperty teuiProperty) {
+        if (teuiProperty == null || teuiProperty.paramList == null) {
+            return;
+        }
+        for (TEUIProperty.TESDKParam tesdkParam : teuiProperty.paramList) {
+            if (!XmagicConstant.EffectName.EFFECT_LUT.equals(tesdkParam.effectName)
+                    || tesdkParam.resourcePath == null
+                    || !tesdkParam.resourcePath.startsWith(HTTP_NAME)) {
+                continue;
+            }
+            String downloadPath = ProviderUtils.getDownloadPath(teuiProperty);
+            String fileName = FileUtil.getFileNameByHttpUrl(tesdkParam.resourcePath);
+            if (!TextUtils.isEmpty(fileName)) {
+                teuiProperty.dlModel = new TEMotionDLModel(downloadPath, fileName, tesdkParam.resourcePath);
+                if (fileName.endsWith(ZIP_NAME)) {
+                    tesdkParam.resourcePath = downloadPath + teuiProperty.dlModel.getFileNameNoZip();
+                } else if (!TEDownloadUrlHelper.hasExtension(fileName)) {
+                    String recorded = TEDownloadRegistry.query(tesdkParam.resourcePath);
+                    tesdkParam.resourcePath = !TextUtils.isEmpty(recorded)
+                            ? recorded : downloadPath + fileName;
+                } else {
+                    tesdkParam.resourcePath = downloadPath + fileName;
+                }
+            }
         }
     }
 
@@ -472,6 +540,118 @@ public class ProviderUtils {
             }
         }
         return null;
+    }
+
+
+    /**
+     * 移除 {@code teuiProperty} 下 <b>包含染发 LUT 子项的那一整个分组</b>。
+     * <p>
+     * 行为说明：
+     * <ol>
+     *     <li>在 {@code teuiProperty} 为根的属性树中递归查找 effectName 等于
+     *         {@link XmagicConstant.EffectName#BEAUTY_HAIR_COLOR_LUT} 的节点；</li>
+     *     <li>取该命中节点的 <b>父节点</b>，将其从 {@code teuiProperty.propertyList} 中整体移除；</li>
+     *     <li>若未找到、或命中节点无父节点，则不做任何操作。</li>
+     * </ol>
+     * 典型使用场景：某些套餐（如 S1_00）需要在 {@code BEAUTY_MAKEUP} 分类下裁掉
+     * 染发 LUT 所属的整个分组。
+     *
+     * @param teuiProperty 待处理的父节点，为空或 propertyList 为空时无操作
+     */
+    public static void removeHairColorGroup(TEUIProperty teuiProperty) {
+        if (teuiProperty == null || teuiProperty.propertyList == null || teuiProperty.propertyList.isEmpty()) {
+            return;
+        }
+        TEUIProperty parent = getParentByEffectName(teuiProperty, XmagicConstant.EffectName.BEAUTY_HAIR_COLOR_LUT);
+        if (parent != null) {
+            teuiProperty.propertyList.remove(parent);
+        }
+    }
+
+    /**
+     * 在 {@code teuiProperty} 为根的属性树中，深度优先递归查找
+     * {@link TEUIProperty.TESDKParam#effectName} 等于 {@code effectName} 的第一个节点，
+     * 并返回该命中节点的 <b>父节点</b>。
+     * <p>
+     * 说明：此处 <b>不依赖</b> {@link TEUIProperty#parentUIProperty}（该字段在部分调用时机尚未回填），
+     * 而是通过在递归下探时显式携带 parent 参数来定位父节点。
+     * <p>
+     * 匹配规则：
+     * <ul>
+     *     <li>当前节点若 {@code sdkParam != null} 且 effectName 完全相等，则视为命中，返回携带下来的 parent；</li>
+     *     <li>否则按顺序递归其 {@code propertyList} 中的每个子节点（此时当前节点作为下一层的 parent）；</li>
+     *     <li>返回首个命中的 parent。若命中节点本身即为根（parent 为 null），返回 null。</li>
+     * </ul>
+     *
+     * @param teuiProperty 待查找的属性树根节点，为空时返回 null
+     * @param effectName   要匹配的 effectName，为空时返回 null
+     * @return 首个命中节点的父节点；未找到或命中节点无父节点时返回 null
+     */
+    private static TEUIProperty getParentByEffectName(TEUIProperty teuiProperty, String effectName) {
+        if (teuiProperty == null || TextUtils.isEmpty(effectName)) {
+            return null;
+        }
+        return findParentByEffectName(null, teuiProperty, effectName);
+    }
+
+    /**
+     * 递归实现：以 {@code current} 为当前节点、{@code parent} 为其父节点向下查找。
+     * 命中时返回 parent；未命中则继续遍历 current 的子节点。
+     */
+    private static TEUIProperty findParentByEffectName(TEUIProperty parent,
+                                                       TEUIProperty current,
+                                                       String effectName) {
+        if (current == null) {
+            return null;
+        }
+        if (current.sdkParam != null && effectName.equals(current.sdkParam.effectName)) {
+            return parent;
+        }
+        if (current.propertyList == null || current.propertyList.isEmpty()) {
+            return null;
+        }
+        for (TEUIProperty child : current.propertyList) {
+            TEUIProperty foundParent = findParentByEffectName(current, child, effectName);
+            if (foundParent != null) {
+                return foundParent;
+            }
+        }
+        return null;
+    }
+    
+    
+
+    /**
+     * 删除 {@code teuiProperty.propertyList} 中 {@link TEUIProperty#uiCategory}
+     * 命中 {@code categories} 的一级子项（只遍历一层）。
+     * <p>
+     * 常用于套餐规则中"保留父分类但裁掉某些子分类"的场景。
+     *
+     * @param teuiProperty 待处理的父属性；为空或 propertyList 为空时无操作
+     * @param categories   需要删除的子分类；为空时无操作
+     */
+    public static void removeChildrenByCategory(TEUIProperty teuiProperty,
+                                                TEUIProperty.UICategory... categories) {
+        if (teuiProperty == null
+                || teuiProperty.propertyList == null
+                || teuiProperty.propertyList.isEmpty()
+                || categories == null
+                || categories.length == 0) {
+            return;
+        }
+        Iterator<TEUIProperty> iterator = teuiProperty.propertyList.iterator();
+        while (iterator.hasNext()) {
+            TEUIProperty item = iterator.next();
+            if (item == null) {
+                continue;
+            }
+            for (TEUIProperty.UICategory category : categories) {
+                if (item.uiCategory == category) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
     }
 
 }

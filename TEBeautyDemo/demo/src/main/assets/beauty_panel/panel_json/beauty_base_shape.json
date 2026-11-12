@@ -1,0 +1,78 @@
+{
+    "name": {
+        "zh": "美型",
+        "en": "Face Shape",
+        "ja": "フェイスシェイプ"
+    },
+    "uiCategory": "BEAUTY_SHAPE",
+    "propertyList": [
+        {
+            "name": {
+                "zh": "关闭",
+                "en": "None",
+                "ja": "オフ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "name": {
+                "zh": "大眼",
+                "en": "Big Eyes",
+                "ja": "デカ目"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_enlarge_eye.png",
+            "sdkParam": {
+                "effectName": "basicV7.enlargeEye",
+                "effectValue": 20
+            },
+            "uiState": 1
+        },
+        {
+            "name": {
+                "zh": "瘦脸",
+                "en": "Thin Face",
+                "ja": "小顔"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face.png",
+            "propertyList": [
+                {
+                    "name": {
+                        "zh": "自然",
+                        "en": "Natural",
+                        "ja": "ナチュラル"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face1.png",
+                    "sdkParam": {
+                        "effectName": "basicV7.natureFace",
+                        "effectValue": 30
+                    },
+                    "uiState": 1
+                },
+                {
+                    "name": {
+                        "zh": "女神",
+                        "en": "Goddess",
+                        "ja": "女神"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face2.png",
+                    "sdkParam": {
+                        "effectName": "basicV7.godnessFace",
+                        "effectValue": 0
+                    }
+                },
+                {
+                    "name": {
+                        "zh": "英俊",
+                        "en": "Handsome",
+                        "ja": "ハンサム"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face3.png",
+                    "sdkParam": {
+                        "effectName": "basicV7.maleGodFace",
+                        "effectValue": 0
+                    }
+                }
+            ]
+        }
+    ]
+}

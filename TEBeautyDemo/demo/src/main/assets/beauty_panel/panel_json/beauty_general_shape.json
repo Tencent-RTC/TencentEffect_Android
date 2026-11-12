@@ -1,0 +1,176 @@
+{
+    "name": {
+        "zh": "美型",
+        "en": "Face Shape",
+        "ja": "フェイスシェイプ"
+    },
+    "uiCategory": "BEAUTY_SHAPE",
+    "propertyList": [
+        {
+            "name": {
+                "zh": "关闭",
+                "en": "None",
+                "ja": "オフ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "name": {
+                "zh": "大眼",
+                "en": "Big Eyes",
+                "ja": "デカ目"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_enlarge_eye.png",
+            "sdkParam": {
+                "effectName": "basicV7.enlargeEye",
+                "effectValue": 20
+            },
+            "uiState": 1
+        },
+        {
+            "name": {
+                "zh": "瘦脸",
+                "en": "Thin Face",
+                "ja": "小顔"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face.png",
+            "propertyList": [
+                {
+                    "name": {
+                        "zh": "自然",
+                        "en": "Natural",
+                        "ja": "ナチュラル"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face1.png",
+                    "sdkParam": {
+                        "effectName": "basicV7.natureFace",
+                        "effectValue": 30
+                    },
+                    "uiState": 1
+                },
+                {
+                    "name": {
+                        "zh": "女神",
+                        "en": "Goddess",
+                        "ja": "女神"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face2.png",
+                    "sdkParam": {
+                        "effectName": "basicV7.godnessFace",
+                        "effectValue": 0
+                    }
+                },
+                {
+                    "name": {
+                        "zh": "英俊",
+                        "en": "Handsome",
+                        "ja": "ハンサム"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_thin_face3.png",
+                    "sdkParam": {
+                        "effectName": "basicV7.maleGodFace",
+                        "effectValue": 0
+                    }
+                }
+            ]
+        },
+        {
+            "name": {
+                "zh": "窄脸",
+                "en": "Face Width",
+                "ja": "顔幅"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_narrow_face.png",
+            "sdkParam": {
+                "effectName": "basicV7.thinFace",
+                "effectValue": 5
+            },
+            "uiState": 1
+        },
+        {
+            "name": {
+                "zh": "下巴",
+                "en": "Chin",
+                "ja": "あご"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_chin.png",
+            "sdkParam": {
+                "effectName": "basicV7.chin",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "额头高度",
+                "en": "Forehead Height",
+                "ja": "おでこ高さ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_forehead.png",
+            "sdkParam": {
+                "effectName": "basicV7.forehead",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "额头宽度",
+                "en": "Forehead Width",
+                "ja": "おでこ幅"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_forehead.png",
+            "sdkParam": {
+                "effectName": "basicV7.forehead2",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "瘦鼻",
+                "en": "Nose Size",
+                "ja": "小鼻"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_thin_nose.png",
+            "sdkParam": {
+                "effectName": "basicV7.thinNose",
+                "effectValue": 20
+            },
+            "uiState": 1
+        },
+        {
+            "name": {
+                "zh": "鼻子位置",
+                "en": "Nose Position",
+                "ja": "鼻位置"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_nose_position.png",
+            "sdkParam": {
+                "effectName": "basicV7.noseHeight",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "嘴型",
+                "en": "Lip Shape",
+                "ja": "口形"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_mouth_size.png",
+            "sdkParam": {
+                "effectName": "basicV7.mouthSize",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "脸型",
+                "en": "Face Shape",
+                "ja": "顔型"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_basic_face.png",
+            "sdkParam": {
+                "effectName": "liquefaction.basic3",
+                "effectValue": 0
+            }
+        }
+    ]
+}

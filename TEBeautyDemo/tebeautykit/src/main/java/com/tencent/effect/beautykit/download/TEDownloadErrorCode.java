@@ -10,9 +10,11 @@ public class TEDownloadErrorCode {
     public static final int DOWNLOADING = -6;
 
     public static final int RENAME_FAIL = -7;
+    public static final int DOWNLOAD_CANCELED = -8;
+    public static final int INVALID_ARGUMENT = -9;
 
-    public static String getErrorMsg(int errorCode){
-        switch (errorCode){
+    public static String getErrorMsg(int errorCode) {
+        switch (errorCode) {
             case NONE:
                 return "success";
             case NETWORK_ERROR:
@@ -29,6 +31,10 @@ public class TEDownloadErrorCode {
                 return "Downloading, please do not repeat";
             case RENAME_FAIL:
                 return "file rename filed";
+            case DOWNLOAD_CANCELED:
+                return "download canceled";
+            case INVALID_ARGUMENT:
+                return "invalid argument";
             default:
                 return "other error";
         }

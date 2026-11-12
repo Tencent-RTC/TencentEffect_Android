@@ -9,11 +9,13 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tencent.effect.beautykit.R;
+import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.utils.PanelDisplay;
 
@@ -24,6 +26,12 @@ public class TEBeautyTabLayout extends TabLayout {
 
     private static final String TAG = TEBeautyTabLayout.class.getName();
     private TEBeautyTabSelectedListener tabSelectedListener = null;
+
+    @ColorInt
+    public int textColor = TEUIConfig.getInstance().textColor;
+
+    @ColorInt
+    public int textCheckedColor = TEUIConfig.getInstance().textCheckedColor;
 
     public TEBeautyTabLayout(@NonNull Context context) {
         this(context, null);
@@ -47,14 +55,13 @@ public class TEBeautyTabLayout extends TabLayout {
             @Override
             public void onTabSelected(Tab tab) {
                 if (tab.getCustomView() instanceof TextView) {
-                    if (tab.getCustomView() instanceof TextView) {
-                        TextView textView = ((TextView) tab.getCustomView());
-                        textView.setTextColor(getResources().getColor(R.color.te_beauty_color_FFFFFFFF));
-                        textView.setTypeface(null, Typeface.BOLD);
-                        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) textView.getLayoutParams();
-                        layoutParams.rightMargin = 0;
-                        layoutParams.leftMargin = 0;
-                    }
+                    TextView textView = ((TextView) tab.getCustomView());
+                    textView.setTextColor(textCheckedColor);
+                    textView.setTypeface(null, Typeface.BOLD);
+                    LinearLayout.LayoutParams layoutParams =
+                            (LinearLayout.LayoutParams) textView.getLayoutParams();
+                    layoutParams.rightMargin = 0;
+                    layoutParams.leftMargin = 0;
                     if (tabSelectedListener != null) {
                         tabSelectedListener.onSelected((TEUIProperty) tab.getTag(), getSelectedTabPosition());
                     }
@@ -64,15 +71,14 @@ public class TEBeautyTabLayout extends TabLayout {
             @Override
             public void onTabUnselected(Tab tab) {
                 if (tab.getCustomView() instanceof TextView) {
-                    if (tab.getCustomView() instanceof TextView) {
-                        TextView textView = ((TextView) tab.getCustomView());
-                        textView.setTextColor(getResources().getColor(R.color.te_beauty_color_99FFFFFF));
-                        textView.setTypeface(null, Typeface.NORMAL);
-                        textView.setLayoutParams(textView.getLayoutParams());
-                        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) textView.getLayoutParams();
-                        layoutParams.rightMargin = 0;
-                        layoutParams.leftMargin = 0;
-                    }
+                    TextView textView = ((TextView) tab.getCustomView());
+                    textView.setTextColor(textColor);
+                    textView.setTypeface(null, Typeface.NORMAL);
+                    textView.setLayoutParams(textView.getLayoutParams());
+                    LinearLayout.LayoutParams layoutParams =
+                            (LinearLayout.LayoutParams) textView.getLayoutParams();
+                    layoutParams.rightMargin = 0;
+                    layoutParams.leftMargin = 0;
                 }
             }
 
@@ -93,10 +99,9 @@ public class TEBeautyTabLayout extends TabLayout {
             TabLayout.Tab tab = null;
             TEUIProperty property = data.get(index);
             TextView textView = new TextView(getContext());
-            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT
-            );
+            FrameLayout.LayoutParams layoutParams =
+                    new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT);
             layoutParams.rightMargin = 5;
             layoutParams.leftMargin = 5;
             textView.setLayoutParams(layoutParams);
@@ -139,6 +144,8 @@ public class TEBeautyTabLayout extends TabLayout {
 
 
     public void updateItemTextColor(int checkedColor, int normalColor) {
+        this.textCheckedColor = checkedColor;
+        this.textColor = normalColor;
         int tabCount = this.getTabCount();
         for (int i = 0; i < tabCount; i++) {
             Tab tab = getTabAt(i);

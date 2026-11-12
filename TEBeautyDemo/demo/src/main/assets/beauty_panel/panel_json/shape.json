@@ -1,0 +1,17 @@
+{
+    "uiCategory":"SHAPESET",
+    "dataList":[
+        {
+            "effectPlanSet":["A1_01","A1_02","A1_05","A1_06"],
+            "config":"beauty_base_shape.json"
+        },
+        {
+            "effectPlanSet":["A1_03","A1_04"],
+            "config":"beauty_general_shape.json"
+        },
+        {
+            "effectPlanSet":["S1_00","S1_01","S1_02","S1_03","S1_04","S1_07"],
+            "config":"beauty_shape.json"
+        }
+    ]
+}

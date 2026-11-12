@@ -1,0 +1,408 @@
+{
+    "name": {
+        "zh": "动效",
+        "en": "Motions",
+        "ja": "エフェクト"
+    },
+    "downloadPath": "MotionRes/motions/",
+    "uiCategory": "MOTION",
+    "hasSubTitle": true,
+    "propertyList": [
+        {
+            "name": {
+                "zh": "贴纸",
+                "en": "Stickers",
+                "ja": "ステッカー"
+            },
+            "propertyList": [
+                {
+                    "name": {
+                        "zh": "无",
+                        "en": "None",
+                        "ja": "なし"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/none.png"
+                },
+                {
+                    "name": {
+                        "zh": "可爱涂鸦",
+                        "en": "Cute graffiti",
+                        "ja": "かわいい落書き"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/video_keaituya.png",
+                    "resourceUri": "MotionRes/2dMotionRes/video_keaituya"
+                },
+                {
+                    "name": {
+                        "zh": "贵妃脸",
+                        "en": "Round",
+                        "ja": "丸顔"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/video_guifeiface.png",
+                    "resourceUri": "MotionRes/2dMotionRes/video_guifeiface"
+                },
+                {
+                    "name": {
+                        "zh": "上学前后",
+                        "en": "School",
+                        "ja": "登校前後"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/video_kaixueqianhou.png",
+                    "resourceUri": "MotionRes/2dMotionRes/video_kaixueqianhou"
+                },
+                {
+                    "name": {
+                        "zh": "闪动爱心",
+                        "en": "Hearts4",
+                        "ja": "ハートフラッシュ"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/video_boys.png",
+                    "resourceUri": "MotionRes/2dMotionRes/video_boys"
+                },
+                {
+                    "name": {
+                        "zh": "元气贴纸",
+                        "en": "Vigorous",
+                        "ja": "元気ステッカー"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/video_xuanmeizhuang.png",
+                    "resourceUri": "MotionRes/2dMotionRes/video_xuanmeizhuang"
+                },
+                {
+                    "name": {
+                        "zh": "知性玫瑰",
+                        "en": "Glasses1",
+                        "ja": "ローズメガネ"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/video_zhixingmeigui.png",
+                    "resourceUri": "MotionRes/3dMotionRes/video_zhixingmeigui"
+                },
+                {
+                    "name": {
+                        "zh": "樱花女孩",
+                        "en": "Sakura",
+                        "ja": "桜ガール"
+                    },
+                    "resourceUri": "MotionRes/handMotionRes/video_sakuragirl",
+                    "icon": "beauty_panel/panel_icon/motions_icon/video_sakuragirl.png"
+                }
+            ]
+        },
+        {
+            "uiCategory": "MAKEUP",
+            "name": {
+                "zh": "整妆",
+                "en": "Makeup",
+                "ja": "フルメイク"
+            },
+            "propertyList": [
+                {
+                    "uiCategory": "MAKEUP",
+                    "name": {
+                        "zh": "无",
+                        "en": "None",
+                        "ja": "なし"
+                    },
+                    "parentId": "makeup",
+                    "icon": "beauty_panel/panel_icon/beauty/none.png",
+                    "uiState": 0
+                },
+                {
+                    "name": {
+                        "zh": "学妹",
+                        "en": "Young",
+                        "ja": "学生風"
+                    },
+                    "icon": "beauty_panel/panel_icon/makeup_icon/video_makeup_xuemei.png",
+                    "resourceUri": "MotionRes/makeupRes/video_makeup_xuemei",
+                    "uiCategory": "MAKEUP",
+                    "sdkParam": {
+                        "effectValue": 60,
+                        "extraInfo": {
+                            "makeupLutStrength": "60"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": {
+                "zh": "虚拟背景",
+                "en": "Virtual background",
+                "ja": "バーチャル背景"
+            },
+            "uiCategory": "SEGMENTATION",
+            "propertyList": [
+                {
+                    "name": {
+                        "zh": "无",
+                        "en": "None",
+                        "ja": "なし"
+                    },
+                    "uiCategory": "SEGMENTATION",
+                    "icon": "beauty_panel/panel_icon/beauty/none.png"
+                },
+                {
+                    "name": {
+                        "zh": "自定义背景",
+                        "en": "Custom",
+                        "ja": "カスタム"
+                    },
+                    "uiCategory": "SEGMENTATION",
+                    "icon": "beauty_panel/panel_icon/motions_icon/add.png",
+                    "resourceUri": "MotionRes/segmentMotionRes/video_empty_segmentation",
+                    "sdkParam": {
+                        "extraInfo": {
+                            "segType": "custom_background"
+                        }
+                    }
+                },
+                {
+                    "uiCategory": "SEGMENTATION",
+                    "name": {
+                        "zh": "绿幕抠图V2",
+                        "en": "Green Screen V2",
+                        "ja": "グリーンスクリーンV2"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/greenscreen.png",
+                    "resourceUri": "MotionRes/segmentMotionRes/video_greenscreen_v2",
+                    "sdkParam": {
+                        "extraInfo": {
+                            "segType": "green_background_v2"
+                        }
+                    },
+                    "propertyList": [
+                        {
+                            "name": {
+                                "zh": "关闭",
+                                "en": "Off",
+                                "ja": "オフ"
+                            },
+                            "icon": "beauty_panel/panel_icon/beauty/none.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM"
+                        },
+                        {
+                            "name": {
+                                "zh": "导入图片",
+                                "en": "import image",
+                                "ja": "画像インポート"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/add.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE"
+                        },
+                        {
+                            "name": {
+                                "zh": "相似度",
+                                "en": "Similarity",
+                                "ja": "類似度"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_similarity.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM",
+                            "sdkParam": {
+                                "effectName": "green_background_v2.similarity",
+                                "effectValue": 30
+                            }
+                        },
+                        {
+                            "name": {
+                                "zh": "平滑度",
+                                "en": "Smoothness",
+                                "ja": "スムーズ度"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_smooth.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM",
+                            "sdkParam": {
+                                "effectName": "green_background_v2.smooth",
+                                "effectValue": 20
+                            }
+                        },
+                        {
+                            "name": {
+                                "zh": "边缘消除强度",
+                                "en": "Edge Elimination",
+                                "ja": "エッジ除去強度"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_corrosion.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM",
+                            "sdkParam": {
+                                "effectName": "green_background_v2.corrosion",
+                                "effectValue": 1
+                            }
+                        },
+                        {
+                            "name": {
+                                "zh": "灰度比例",
+                                "en": "Grayscale Ratio",
+                                "ja": "グレースケール比率"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_despill.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM",
+                            "sdkParam": {
+                                "effectName": "green_background_v2.despill",
+                                "effectValue": 30
+                            }
+                        },
+                        {
+                            "name": {
+                                "zh": "去阴影",
+                                "en": "Shadow Removal",
+                                "ja": "影除去"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_deshadow.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM",
+                            "sdkParam": {
+                                "effectName": "green_background_v2.deshadow",
+                                "effectValue": 1
+                            }
+                        }
+                    ]
+                },
+                {
+                    "uiCategory": "SEGMENTATION",
+                    "name": {
+                        "zh": "蓝幕抠图",
+                        "en": "Blue Screen",
+                        "ja": "ブルースクリーン"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/greenscreen.png",
+                    "resourceUri": "MotionRes/segmentMotionRes/video_bluescreen",
+                    "sdkParam": {
+                        "extraInfo": {
+                            "segType": "green_background_v2"
+                        }
+                    },
+                    "propertyList": [
+                        {
+                            "name": {
+                                "zh": "关闭",
+                                "en": "Off",
+                                "ja": "オフ"
+                            },
+                            "icon": "beauty_panel/panel_icon/beauty/none.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM"
+                        },
+                        {
+                            "name": {
+                                "zh": "导入图片",
+                                "en": "import image",
+                                "ja": "画像インポート"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/add.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE"
+                        },
+                        {
+                            "name": {
+                                "zh": "相似度",
+                                "en": "Similarity",
+                                "ja": "類似度"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_similarity.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM",
+                            "sdkParam": {
+                                "effectName": "green_background_v2.similarity",
+                                "effectValue": 35
+                            }
+                        },
+                        {
+                            "name": {
+                                "zh": "平滑度",
+                                "en": "Smoothness",
+                                "ja": "スムーズ度"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_smooth.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM",
+                            "sdkParam": {
+                                "effectName": "green_background_v2.smooth",
+                                "effectValue": 8
+                            }
+                        },
+                        {
+                            "name": {
+                                "zh": "边缘消除强度",
+                                "en": "Edge Elimination",
+                                "ja": "エッジ除去強度"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_corrosion.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM",
+                            "sdkParam": {
+                                "effectName": "green_background_v2.corrosion",
+                                "effectValue": 1
+                            }
+                        },
+                        {
+                            "name": {
+                                "zh": "灰度比例",
+                                "en": "Grayscale Ratio",
+                                "ja": "グレースケール比率"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_despill.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM",
+                            "sdkParam": {
+                                "effectName": "green_background_v2.despill",
+                                "effectValue": 10
+                            }
+                        },
+                        {
+                            "name": {
+                                "zh": "去阴影",
+                                "en": "Shadow Removal",
+                                "ja": "影除去"
+                            },
+                            "icon": "beauty_panel/panel_icon/motions_icon/greenscreen_deshadow.png",
+                            "uiCategory": "GREEN_BACKGROUND_V2_ITEM",
+                            "sdkParam": {
+                                "effectName": "green_background_v2.deshadow",
+                                "effectValue": 1
+                            }
+                        }
+                    ]
+                },
+                {
+                    "uiCategory": "SEGMENTATION",
+                    "name": {
+                        "zh": "背景模糊-弱",
+                        "en": "Blur(weak)",
+                        "ja": "背景ぼかし（弱）"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/video_segmentation_blur_45.png",
+                    "resourceUri": "MotionRes/segmentMotionRes/video_segmentation_blur_45"
+                },
+                {
+                    "uiCategory": "SEGMENTATION",
+                    "name": {
+                        "zh": "背景模糊-强",
+                        "en": "Blur(strong)",
+                        "ja": "背景ぼかし（強）"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/video_segmentation_blur_75.png",
+                    "resourceUri": "MotionRes/segmentMotionRes/video_segmentation_blur_75"
+                },
+                {
+                    "uiCategory": "SEGMENTATION",
+                    "name": {
+                        "zh": "背景透明",
+                        "en": "Transparent",
+                        "ja": "背景透明"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/video_segmentation_transparent_bg.png",
+                    "resourceUri": "MotionRes/segmentMotionRes/video_segmentation_transparent_bg"
+                },
+                {
+                    "uiCategory": "SEGMENTATION",
+                    "name": {
+                        "zh": "绿幕抠图",
+                        "en": "GreenScreen",
+                        "ja": "グリーンスクリーン"
+                    },
+                    "icon": "beauty_panel/panel_icon/motions_icon/greenscreen.png",
+                    "resourceUri": "MotionRes/segmentMotionRes/video_greenscreen",
+                    "sdkParam": {
+                        "extraInfo": {
+                            "segType": "green_background"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "defaultLanguage": "zh",
+    "data": [
+        {
+            "name": {
+                "zh": "模板",
+                "en": "Template",
+                "ja": "テンプレート"
+            },
+            "config": [
+                "beauty_template.json"
+            ]
+        },
+        {
+            "name": {
+                "zh": "美颜",
+                "en": "Beauty",
+                "ja": "美顔"
+            },
+            "config": [
+                "beauty.json",
+                "beauty_image.json",
+                "shape.json"
+            ]
+        },
+        {
+            "name": {
+                "zh": "美体",
+                "en": "Body",
+                "ja": "美ボディ"
+            },
+            "config": [
+                "beauty_body.json"
+            ]
+        },
+        {
+            "name": {
+                "zh": "滤镜",
+                "en": "Filter",
+                "ja": "フィルター"
+            },
+            "config": [
+                "lut.json"
+            ]
+        },
+        {
+            "name": {
+                "zh": "美妆",
+                "en": "Makeup",
+                "ja": "メイク"
+            },
+            "config": [
+                "beauty_makeup.json"
+            ]
+        },
+        {
+            "name": {
+                "zh": "特效",
+                "en": "Effects",
+                "ja": "エフェクト"
+            },
+            "config": [
+                "motions.json"
+            ]
+        }
+    ]
+}

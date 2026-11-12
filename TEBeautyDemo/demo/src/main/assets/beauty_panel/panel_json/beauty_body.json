@@ -1,0 +1,115 @@
+{
+    "name": {
+        "zh": "美体",
+        "en": "Body",
+        "ja": "ボディ"
+    },
+    "uiCategory": "BODY_BEAUTY",
+    "propertyList": [
+        {
+            "name": {
+                "zh": "关闭",
+                "en": "None",
+                "ja": "オフ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "name": {
+                "zh": "一键瘦身",
+                "en": "Slim",
+                "ja": "ワンタッチ痩身"
+            },
+            "icon": "beauty_panel/panel_icon/beauty_body/body_autohtin_body_strength.png",
+            "sdkParam": {
+                "effectName": "body.autothinBodyStrength",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "长腿",
+                "en": "Long Legs",
+                "ja": "脚長"
+            },
+            "icon": "beauty_panel/panel_icon/beauty_body/body_leg_stretch.png",
+            "sdkParam": {
+                "effectName": "body.legStretch",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "瘦腿",
+                "en": "Slim Legs",
+                "ja": "脚痩せ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty_body/body_slim_leg_strength.png",
+            "sdkParam": {
+                "effectName": "body.slimLegStrength",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "瘦胳膊",
+                "en": "Slim Arms",
+                "ja": "腕痩せ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty_body/body_slim_arm_strength.png",
+            "sdkParam": {
+                "effectName": "body.slimArmStrength",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "瘦腰",
+                "en": "Slim Waist",
+                "ja": "ウエスト痩せ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty_body/body_waish_strength.png",
+            "sdkParam": {
+                "effectName": "body.waistStrength",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "瘦肩",
+                "en": "Slim Shoulder",
+                "ja": "肩痩せ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty_body/body_thin_shoulder_strength.png",
+            "sdkParam": {
+                "effectName": "body.thinShoulderStrength",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "胸部调整",
+                "en": "Breast Adjust",
+                "ja": "バスト調整"
+            },
+            "icon": "beauty_panel/panel_icon/beauty_body/body_beauty_chest.png",
+            "sdkParam": {
+                "effectName": "body.enlargeChestStrength",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "小头",
+                "en": "Slim Head",
+                "ja": "小顔"
+            },
+            "icon": "beauty_panel/panel_icon/beauty_body/body_slim_head_strength.png",
+            "sdkParam": {
+                "effectName": "body.slimHeadStrength",
+                "effectValue": 0
+            }
+        }
+    ],
+    "uiState": 2
+}

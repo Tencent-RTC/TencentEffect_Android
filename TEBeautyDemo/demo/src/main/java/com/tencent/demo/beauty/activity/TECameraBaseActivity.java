@@ -10,7 +10,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Size;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,8 +25,8 @@ import com.tencent.demo.opengl.view.GLCameraXView;
 import com.tencent.demo.utils.BitmapUtil;
 import com.tencent.demo.utils.UriUtils;
 import com.tencent.effect.beautykit.TEBeautyKit;
+import com.tencent.effect.beautykit.config.EffectPlan;
 import com.tencent.effect.beautykit.config.TEUIConfig;
-import com.tencent.effect.beautykit.model.TEPanelDataModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.model.TEUIProperty.TESDKParam;
 import com.tencent.effect.beautykit.utils.LogUtils;
@@ -34,7 +36,6 @@ import com.tencent.xmagic.XmagicConstant.FeatureName;
 import com.tencent.effect.beautykit.view.panelview.TEPanelViewCallback;
 import java.io.File;
 import java.util.List;
-import java.util.Locale;
 
 public class TECameraBaseActivity extends AppCompatActivity implements TEPanelViewCallback, CustomTextureProcessor,
         TETitleBar.TETitleBarClickListener {
@@ -66,6 +67,17 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
             mBeautyKit = beautyKit;
             initBeautyView(beautyKit);
         });
+
+        ((Switch)findViewById(R.id.switch_er)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+               TEUIConfig teuiConfig = TEUIConfig.getInstance();
+               teuiConfig.isLayoutRtl = isChecked;
+                mTEPanelView.updateUIConfig(teuiConfig);
+            }
+        });
+
+//        TEUIConfig.getInstance().isLayoutRtl = true;
     }
 
     private void saveCurrentBeautyParams() {
@@ -86,80 +98,9 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
 
     public void initBeautyView(TEBeautyKit beautyKit) {
 
-        Locale locale = Locale.getDefault();
 
-        String language = locale.getLanguage();
-        String country = locale.getCountry();
-        String script = locale.getScript();
-
-        //这里是多语言适配的示例代码，判断出当前语言环境，加载对应语言的json文件，面板中默认的json中只支持简体中文和英文，如果现在需要支持繁体中文，咱们就可以这样操作
-        //在beauty_panel下创建一个zt_hant 的文件夹，然后复制现有的json文件到此目录，然后将disPlayName的值修改为繁体中文，在需要使用的时候加载这个json文件即可。
-        // 并且调用此方法 设置true, TEUIConfig.getInstance().setUseDisplayName(true);
-        // 注意：TEBeautyKit库中xml中定义的文字可以通过在自己项目中res下创建对应string.xml文件实现，此demo 就是在
-        // demo/src/main/res/values-zh-rTW/下创建对应的strings.xml文件，然后对 TEBeautyKit的字段进行翻译。
-        String panelJsonDir = "";
-        String jsonFileSuffix ="";
-        boolean isChineseTraditional = "zh".equals(language) &&
-                ("TW".equals(country) || "HK".equals(country) || "MO".equals(country) || "Hant".equals(script));
-        if (isChineseTraditional) {   //繁体中文
-            panelJsonDir = "beauty_panel/zh_hant/";
-            jsonFileSuffix = "_zh_hant.json";
-            TEUIConfig.getInstance().setUseDisplayName(true);
-        } else if ("zh".equals(locale.getLanguage())) {  //简体中文
-            TEUIConfig.getInstance().setUseDisplayName(true);
-            panelJsonDir = "beauty_panel/";
-            jsonFileSuffix = ".json";
-        } else {
-            TEUIConfig.getInstance().setUseDisplayName(false);
-            panelJsonDir = "beauty_panel/";
-            jsonFileSuffix = ".json";
-        }
-
-        List<TEPanelDataModel> panelDataModels = TEUIConfig.getInstance().getPanelDataList();
-        panelDataModels.clear();
-        //注意 demo中的加载的是S1-07套餐的 面板，这个套餐是最全的，在您的项目中具体加载哪个json文件可以参考官网的文档说明，
-        // 因为每个套餐对应的功能不一样，所以需要根据套餐加载对应的json
-        TEPanelDataModel template =
-                new TEPanelDataModel(panelJsonDir +"beauty_template"+jsonFileSuffix, TEUIProperty.UICategory.BEAUTY_TEMPLATE);
-        TEPanelDataModel beauty1 =
-                new TEPanelDataModel(panelJsonDir + "beauty"+jsonFileSuffix, TEUIProperty.UICategory.BEAUTY);
-        TEPanelDataModel beauty2 =
-                new TEPanelDataModel(panelJsonDir + "beauty_image"+jsonFileSuffix, TEUIProperty.UICategory.BEAUTY);
-        TEPanelDataModel beauty4 =
-                new TEPanelDataModel(panelJsonDir + "beauty_shape"+jsonFileSuffix, TEUIProperty.UICategory.BEAUTY);
-        TEPanelDataModel beauty3 =
-                new TEPanelDataModel(panelJsonDir + "beauty_makeup"+jsonFileSuffix, TEUIProperty.UICategory.BEAUTY);
-
-
-        TEPanelDataModel lut = new TEPanelDataModel(panelJsonDir + "lut"+jsonFileSuffix, TEUIProperty.UICategory.LUT);
-        TEPanelDataModel lightMakeup =
-                new TEPanelDataModel(panelJsonDir + "light_makeup"+jsonFileSuffix, TEUIProperty.UICategory.LIGHT_MAKEUP);
-        TEPanelDataModel makeup =
-                new TEPanelDataModel(panelJsonDir + "makeup"+jsonFileSuffix, TEUIProperty.UICategory.MAKEUP);
-        TEPanelDataModel motion =
-                new TEPanelDataModel(panelJsonDir + "motion_2d"+jsonFileSuffix, TEUIProperty.UICategory.MOTION);
-        TEPanelDataModel motion2 =
-                new TEPanelDataModel(panelJsonDir + "motion_3d"+jsonFileSuffix, TEUIProperty.UICategory.MOTION);
-        TEPanelDataModel motion_gesture =
-                new TEPanelDataModel(panelJsonDir + "motion_gesture"+jsonFileSuffix, TEUIProperty.UICategory.MOTION);
-        TEPanelDataModel seg =
-                new TEPanelDataModel(panelJsonDir + "segmentation"+jsonFileSuffix, TEUIProperty.UICategory.SEGMENTATION);
-
-
-        panelDataModels.add(template);
-        panelDataModels.add(beauty1);
-        panelDataModels.add(beauty2);
-        panelDataModels.add(beauty4);
-        panelDataModels.add(beauty3);
-        panelDataModels.add(lut);
-
-        panelDataModels.add(lightMakeup);
-        panelDataModels.add(makeup);
-
-        panelDataModels.add(motion);
-        panelDataModels.add(motion2);
-        panelDataModels.add(motion_gesture);
-        panelDataModels.add(seg);
+        TEUIConfig.getInstance().setPanelViewResAndEffectPlanName("beauty_panel/index.json", EffectPlan.S1_07);
+//        TEUIConfig.getInstance().setDisPlayNameKey("en");
 
         mTEPanelView = new TEPanelView(this);
         mTEPanelView.setTEPanelViewCallback(this);
@@ -167,6 +108,8 @@ public class TECameraBaseActivity extends AppCompatActivity implements TEPanelVi
 
         SharedPreferences sp = getSharedPreferences("demo_settings", Context.MODE_PRIVATE);
         String savedParams = sp.getString("current_beauty_params", "");
+
+        Log.e("打印日志信息",savedParams+"");
         if (!savedParams.isEmpty()) {
             mTEPanelView.setLastParamList(savedParams);
         }

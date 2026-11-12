@@ -25,7 +25,7 @@ public class Indicator {
      * 指示器固定宽度（单位：dp）
      * 固定宽度可以避免文本内容变化时尺寸变化导致的卡顿
      */
-    private static final int INDICATOR_FIXED_WIDTH_DP = 40;
+    private static final int INDICATOR_FIXED_WIDTH_DP = 33;
     
     // ==================== 成员变量 ====================
     
@@ -321,8 +321,8 @@ public class Indicator {
         // 确保缓存尺寸有效
         ensureCachedSize();
         
-        // 计算偏移量并更新位置
-        int xOffset = (int) (touchX - mCachedContentWidth / 2);
+        // 计算偏移量并更新位置（RTL 布局下 xoff 需单独换算，见 computeXOffset）
+        int xOffset = computeXOffset(touchX);
         int yOffset = -(mSeekBar.getMeasuredHeight() + mCachedContentHeight - mSeekBar.getPaddingTop() + mGap);
         mIndicatorPopW.update(mSeekBar, xOffset, yOffset, -1, -1);
         
@@ -346,6 +346,34 @@ public class Indicator {
             mCachedContentWidth = mIndicatorPopW.getContentView().getMeasuredWidth();
             mCachedContentHeight = mIndicatorPopW.getContentView().getMeasuredHeight();
         }
+    }
+
+    /**
+     * 计算 PopupWindow 的水平偏移量。
+     * <p>
+     * PopupWindow 的 showAsDropDown/update 在 RTL 布局下，Gravity.START 会被解析为 RIGHT，
+     * 此时 xoff 相对锚点右边缘计算（popupRight = anchorRight + xoff），
+     * 与 LTR（相对左边缘，popupLeft = anchorLeft + xoff）不同，需要单独换算，
+     * 以保证气泡中心始终对准滑块中心。
+     *
+     * @param thumbCenterX 滑块中心在 seekBar 本地坐标系中的 x（相对锚点左边缘）
+     */
+    private int computeXOffset(float thumbCenterX) {
+        int halfWidth = mCachedContentWidth / 2;
+        if (isRtl()) {
+            // RTL：popupLeft = anchorLeft + anchorWidth + xoff - width
+            // 令 popupLeft + width/2 == anchorLeft + thumbCenterX
+            // => xoff = thumbCenterX - anchorWidth + width/2
+            return (int) (thumbCenterX - mSeekBar.getWidth() + halfWidth);
+        }
+        return (int) (thumbCenterX - halfWidth);
+    }
+
+    /**
+     * 锚点是否处于从右向左（RTL）的布局方向。
+     */
+    private boolean isRtl() {
+        return mSeekBar.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
     }
 
     /**
@@ -396,7 +424,7 @@ public class Indicator {
         if (mIndicatorPopW != null) {
             ensureCachedSize();
             mIndicatorPopW.showAsDropDown(mSeekBar, 
-                    (int) (touchX - mCachedContentWidth / 2f),
+                    computeXOffset(touchX),
                     -(mSeekBar.getMeasuredHeight() + mCachedContentHeight - mSeekBar.getPaddingTop() + mGap));
             adjustArrow(touchX);
         }

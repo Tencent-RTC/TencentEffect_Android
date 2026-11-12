@@ -29,18 +29,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tencent.effect.beautykit.R;
 import com.tencent.effect.beautykit.TEBeautyKit;
 import com.tencent.effect.beautykit.config.TEUIConfig;
+import com.tencent.effect.beautykit.download.TEDownloadResult;
+import com.tencent.effect.beautykit.model.TEMotionDLModel;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.provider.TEGeneralDataProvider;
 import com.tencent.effect.beautykit.provider.TEPanelDataProvider;
 import com.tencent.effect.beautykit.utils.CustomDrawableUtils;
+import com.tencent.effect.beautykit.utils.FileUtil;
 import com.tencent.effect.beautykit.utils.LogUtils;
 import com.tencent.effect.beautykit.utils.PanelDisplay;
 import com.tencent.effect.beautykit.utils.ScreenUtils;
+import com.tencent.effect.beautykit.utils.provider.LightMakeupItemBuilder;
 import com.tencent.effect.beautykit.utils.provider.ProviderUtils;
 import com.tencent.effect.beautykit.view.widget.SwitchLayout;
 import com.tencent.effect.beautykit.view.widget.indicatorseekbar.IndicatorSeekBar;
 import com.tencent.effect.beautykit.view.widget.indicatorseekbar.OnSeekChangeListener;
 import com.tencent.effect.beautykit.view.widget.indicatorseekbar.SeekParams;
+import com.tencent.xmagic.XmagicConstant;
 
 
 import java.io.File;
@@ -137,7 +142,12 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         compareBtn = findViewById(R.id.te_panel_view_compare_btn);
 
         mainTabLayout = findViewById(R.id.te_panel_view_main_title_tab_layout);
+        mainTabLayout.setTabMode(uiConfig.tabMode);
+        mainTabLayout.updateItemTextColor(uiConfig.textCheckedColor, uiConfig.textColor);
         mainTabLayout.setTabSelectedListener((property, selectedTabIndex) -> {
+            if (selectedTabIndex != -1) {
+                panelDataProvider.onTabSelected(selectedTabIndex);
+            }
             if (property.hasSubTitle) {
                 subTabLayout.setVisibility(VISIBLE);
                 subTabLayout.setData(property.propertyList, 13);
@@ -148,6 +158,8 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             }
         });
         subTabLayout = findViewById(R.id.te_panel_view_sub_title_tab_layout);
+        subTabLayout.setTabMode(uiConfig.tabMode);
+        subTabLayout.updateItemTextColor(uiConfig.textCheckedColor, uiConfig.textColor);
         subTabLayout.setTabSelectedListener(this::onSelectedInternal);
 
 
@@ -174,7 +186,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
             recycleViewAdapter = new TEDetailPanelAdapter(gridLayoutManager, this);
         } else {
             linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-            recyclerView.setPadding(recycleViewPaddingLeft, 0, 0, 0);
+            recyclerView.setPaddingRelative(recycleViewPaddingLeft, 0, 0, 0);
             recyclerView.setLayoutManager(linearLayoutManager);
             recycleViewAdapter = new TEDetailPanelAdapter(linearLayoutManager, this);
         }
@@ -193,13 +205,55 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         });
         compareBtn.setOnTouchListener(new CompareBtnTouchListener());
         backBtn.setOnClickListener(this);
+        setLayoutDirect(uiConfig);
     }
 
 
-    public void onSelectedInternal(TEUIProperty uiProperty, int selectedTabIndex) {
-        if (selectedTabIndex != -1) {
-            panelDataProvider.onTabSelected(selectedTabIndex);
+    /**
+     * 根据 UI 配置设置面板的布局方向与文字方向。
+     * <p>
+     * 当 {@link TEUIConfig#isLayoutRtl} 为 {@code true} 时，面板整体切换为从右向左（RTL）展示，
+     * 用于适配阿拉伯语等 RTL 语言；否则保持默认的从左向右（LTR）布局。
+     * <p>
+     * 该方法会依次处理三部分方向：
+     * <ul>
+     *     <li>布局方向（{@link #setLayoutDirection(int)}）：镜像 start/end 属性并反转水平排列顺序；</li>
+     *     <li>文字方向（{@link #setTextDirection(int)}）：注意需使用 {@link View#TEXT_DIRECTION_RTL}，
+     *         与布局方向的 {@link View#LAYOUT_DIRECTION_RTL} 不是同一套常量，不能直接复用；</li>
+     *     <li>{@code IndicatorSeekBar} 的方向：由于其为纯自定义绘制控件、不读取系统布局方向，
+     *         需通过其自身的 {@code setR2L()} 单独同步。</li>
+     * </ul>
+     *
+     * @param teuiConfig UI 配置，用于读取 {@code isLayoutRtl} 开关
+     */
+    public void setLayoutDirect(TEUIConfig teuiConfig) {
+        // 根据配置决定面板布局方向：默认从左向右(LTR)，仅当 isLayoutRtl=true 时从右向左(RTL)
+        int direct = teuiConfig.isLayoutRtl ? View.LAYOUT_DIRECTION_RTL : View.LAYOUT_DIRECTION_LTR;
+
+        // 对整个面板视图树设置布局方向，自动镜像 start/end 属性并反转水平方向
+        setLayoutDirection(direct);
+        // 同步文字方向：
+        // 注意 setTextDirection 使用的是 TEXT_DIRECTION_* 常量体系（TEXT_DIRECTION_RTL = 4），
+        // 与 setLayoutDirection 的 LAYOUT_DIRECTION_*（LAYOUT_DIRECTION_RTL = 1）不是同一套，
+        // 不能直接复用 direct，否则会被误解析为 TEXT_DIRECTION_FIRST_STRONG，导致文字仍从左向右。
+        setTextDirection(teuiConfig.isLayoutRtl ? View.TEXT_DIRECTION_RTL : View.TEXT_DIRECTION_LTR);
+
+        // IndicatorSeekBar 是纯自定义绘制 View，不读取系统 layoutDirection，
+        // 需通过其自身的 setR2L() 单独同步从右向左的状态
+        boolean isRtl = direct == View.LAYOUT_DIRECTION_RTL;
+        if (indicatorSeekBar != null) {
+            indicatorSeekBar.setR2L(isRtl);
         }
+        // 返回按钮图标为 png，不会随布局方向自动镜像，
+        // RTL 下「返回」箭头应指向右，需手动做水平镜像
+        if (backBtn != null) {
+            backBtn.setScaleX(isRtl ? -1f : 1f);
+        }
+    }
+
+
+
+    public void onSelectedInternal(TEUIProperty uiProperty, int selectedTabIndex) {
         onClickTitle(uiProperty);
         this.initRecycleView(uiProperty);
         recycleViewAdapter.setProperties(uiProperty.propertyList);
@@ -265,6 +319,18 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         if (uiProperty == null) {
             return;
         }
+        // 轻美妆主态下，用户再次点击已选中的套装：主动触发下钻到单项列表。
+        if (uiProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP
+                && uiProperty.getUiState() == TEUIProperty.UIState.CHECKED_AND_IN_USE
+                && uiProperty.sdkParam != null
+                && !TextUtils.isEmpty(uiProperty.sdkParam.resourcePath)) {
+            List<TEUIProperty> itemList = LightMakeupItemBuilder.buildItemList(uiProperty);
+            if (itemList != null && !itemList.isEmpty()) {
+                uiProperty.propertyList = itemList;
+                showChildrenItems(uiProperty, itemList);
+                return;
+            }
+        }
         if (uiProperty.uiCategory == TEUIProperty.UICategory.GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE) {  //所以这里判断是不是绿幕2中的导入图片项
             TEUIProperty parentProperty = uiProperty.parentUIProperty;
             parentProperty.sdkParam.extraInfo.put(GREEN_PARAMS_V2, ProviderUtils.getGreenParamsV2(parentProperty));
@@ -308,6 +374,16 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         if (uiProperty == null) {
             return;
         }
+        // 轻美妆下钻态单项（口红/腮红/眼影/滤镜等）：只刷新子列表选中态和滑竿，
+        // 不下发 effect（真正下发由滑竿拖动时触发），也不下钻。
+        if (uiProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP_ITEM) {
+            panelDataProvider.onHandRecycleViewItemClick(uiProperty);
+            if (recycleViewAdapter != null) {
+                recycleViewAdapter.notifyDataSetChanged();
+            }
+            setSeekBarState(uiProperty);
+            return;
+        }
         List<TEUIProperty> uiPropertyList = panelDataProvider.onHandRecycleViewItemClick(uiProperty);
 
         if (uiPropertyList != null) {
@@ -327,7 +403,7 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         if (isNeedDownload(uiProperty)) {
             this.downloadHelper.startDownload(uiProperty, new TEDownloadHelper.DefaultTEDownloadListenerImp() {
                 @Override
-                public void onDownloadSuccess(String directory) {
+                public void onDownloadSuccess(TEDownloadResult result) {
                     recycleViewAdapter.notifyDataSetChanged();
                     setSeekBarState(uiProperty);
                     if (panelViewListener != null) {
@@ -365,6 +441,9 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         titleText.setVisibility(VISIBLE);
         titleText.setTag(currentItem);
         mainTitleLayout.setVisibility(INVISIBLE);
+        if (subTabLayout != null && subTabLayout.getVisibility() == VISIBLE) {
+            subTabLayout.setVisibility(GONE);
+        }
         recycleViewAdapter.setProperties(uiPropertyList);
         recycleViewAdapter.scrollToPosition(0);
     }
@@ -416,9 +495,38 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
 
 
     private void onSeekBarSeeking(SeekParams seekParams) {
+        LogUtils.i(TAG, "=== onSeekBarSeeking: fromUser=" + seekParams.fromUser
+                + ", progress=" + seekParams.progress
+                + ", tagIsProperty=" + (indicatorSeekBar.getTag() instanceof TEUIProperty)
+                + ", tag=" + indicatorSeekBar.getTag());
         if (seekParams.fromUser && indicatorSeekBar.getTag() instanceof TEUIProperty) {
             TEUIProperty focusProperty = (TEUIProperty) indicatorSeekBar.getTag();
             if (focusProperty == null || focusProperty.sdkParam == null) {
+                LogUtils.i(TAG, "=== onSeekBarSeeking: focusProperty null or sdkParam null");
+                return;
+            }
+            // 轻美妆下钻态单项：将滑竿值写入父套装的 extraInfo[effectName]，并整套重发
+            if (focusProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP_ITEM) {
+                TEUIProperty parent = focusProperty.parentUIProperty;
+                if (parent == null || parent.sdkParam == null) {
+                    LogUtils.i(TAG, "=== LIGHT_MAKEUP_ITEM: parent null or parent.sdkParam null");
+                    return;
+                }
+                LogUtils.i(TAG, "=== LIGHT_MAKEUP_ITEM drag: effectName=" + focusProperty.sdkParam.effectName
+                        + ", progress=" + seekParams.progress
+                        + ", parent.effectName=" + parent.sdkParam.effectName
+                        + ", parent.resourcePath=" + parent.sdkParam.resourcePath);
+                if (parent.sdkParam.extraInfo == null) {
+                    parent.sdkParam.extraInfo = new android.util.ArrayMap<>();
+                }
+                parent.sdkParam.extraInfo.put(focusProperty.sdkParam.effectName, String.valueOf(seekParams.progress));
+                // 同步 item 的 effectValue 快照，保证通用 setSeekBarState 读取到最新强度
+                focusProperty.sdkParam.effectValue = seekParams.progress;
+                if (panelViewListener != null) {
+                    panelViewListener.onUpdateEffect(parent.sdkParam);
+                } else {
+                    LogUtils.i(TAG, "=== LIGHT_MAKEUP_ITEM: panelViewListener is null");
+                }
                 return;
             }
             if ((focusProperty.uiCategory == TEUIProperty.UICategory.MAKEUP || focusProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP) && switchLayout.getVisibility() == VISIBLE) {
@@ -563,8 +671,25 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         if (titleProperty == null) {
             return;
         }
+        // 轻美妆套装是叶子项，propertyList 正常为 null，仅在「已选中后再次点击」时由
+        // onRecycleViewItemClick 临时挂载 LightMakeupItemBuilder 构建的单项列表用于下钻。
+        // 而 onHandRecycleViewItemClick 统一返回 uiProperty.propertyList 作为下钻判据（非 null 即下钻），
+        // 若不在此清理，残留列表会让后续「首次点击未选中套装」也直接下钻，
+        // 破坏「首次点击选中、二次点击才下钻」的交互，故返回时需置空。
+        // 也就是propertyList是 LIGHT_MAKEUP_ITEM 的时候才会将propertyList设置为null
+        if (titleProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP
+                && titleProperty.propertyList != null
+                && !titleProperty.propertyList.isEmpty()
+                && titleProperty.propertyList.get(0).uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP_ITEM) {
+            titleProperty.propertyList = null;
+        }
         TEUIProperty parentUIProperty = titleProperty.parentUIProperty;
-        if (parentUIProperty == null || parentUIProperty.parentUIProperty == null) {
+        // 回退一级需要展示 parentUIProperty.propertyList，这里判断该列表由谁承载：
+        // 若 parentUIProperty 是一级主 tab 或二级标题，其列表本就由 mainTabLayout / subTabLayout 渲染，
+        // 直接恢复主面板根状态即可；否则它是中间下钻节点，继续用 titleText + RecyclerView 承载。
+        if (parentUIProperty == null
+                || parentUIProperty.isMainTabNode()
+                || parentUIProperty.isSubTitleNode()) {
             this.showView();
         } else {
             titleText.setText(PanelDisplay.getDisplayName(parentUIProperty));
@@ -590,13 +715,41 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         if (uiProperty == null) {
             return false;
         }
-        if (uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY
-                || uiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY
-                || uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE) {
+        if (uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY_TEMPLATE && uiProperty.dlModel != null) {
+            for (TEUIProperty.TESDKParam tesdkParam : uiProperty.paramList) {
+                if (XmagicConstant.EffectName.EFFECT_LUT.equals(tesdkParam.effectName)) {
+                    if (!isLocalResourceExists(tesdkParam.resourcePath)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        if (uiProperty.uiCategory == TEUIProperty.UICategory.BEAUTY || uiProperty.uiCategory == TEUIProperty.UICategory.BODY_BEAUTY) {
             return false;
         }
         return uiProperty.sdkParam != null && !TextUtils.isEmpty(uiProperty.resourceUri) && uiProperty.resourceUri.startsWith("http")
-                && !new File(TEBeautyKit.getResPath() + uiProperty.sdkParam.resourcePath).exists();
+                && !isLocalResourceExists(uiProperty.sdkParam.resourcePath);
+    }
+
+    /**
+     * 判断本地资源是否已存在。
+     * <p>
+     * {@code resourcePath} 既可能是相对 {@code TEBeautyKit.getResPath()} 的路径（配置解析阶段约定），
+     * 也可能是绝对路径（自定义 downloadPath）。这里统一容错处理。
+     */
+    private boolean isLocalResourceExists(String resourcePath) {
+        if (TextUtils.isEmpty(resourcePath)) {
+            return false;
+        }
+        String resPath = TEBeautyKit.getResPath();
+        if (TextUtils.isEmpty(resPath)) {
+            return false;
+        }
+        if (resourcePath.startsWith(File.separator)) {
+            return new File(resourcePath).exists();
+        }
+        return new File(resPath + resourcePath).exists();
     }
 
 
@@ -674,6 +827,8 @@ public class TEDetailPanel extends FrameLayout implements View.OnClickListener,
         if (this.recycleViewAdapter != null) {
             this.recycleViewAdapter.updateUIConfig(uiConfig);
         }
+
+        setLayoutDirect(uiConfig);
     }
 
 
