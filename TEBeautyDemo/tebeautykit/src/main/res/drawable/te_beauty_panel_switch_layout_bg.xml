@@ -4,5 +4,5 @@
 
 
     <corners android:radius="15dp" />
-    <solid android:color="@color/te_beauty_color_A6FFFFFF" />
+    <solid android:color="@color/te_beauty_color_4C000000" />
 </shape>

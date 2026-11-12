@@ -1,14 +1,12 @@
 package com.tencent.effect.beautykit.view.panelview;
 
 import android.annotation.SuppressLint;
-import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -22,6 +20,7 @@ import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 import com.tencent.effect.beautykit.utils.PanelDisplay;
 import com.tencent.effect.beautykit.utils.ScreenUtils;
+import com.tencent.effect.beautykit.view.widget.MarqueeTextView;
 import com.tencent.effect.beautykit.view.widget.PanelItemSelectorLayout;
 
 import java.io.File;
@@ -91,16 +90,20 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
         loadImage(uiProperty, holder.tePanelItemIcon);
         holder.itemView.setOnClickListener(this);
         if (uiProperty.getUiState() == TEUIProperty.UIState.CHECKED_AND_IN_USE) {
-            holder.tePanelItemLabel.setTextColor(this.uiConfig.textCheckedColor);
-            holder.tePanelItemLabel.setTypeface(null, Typeface.BOLD);
-            if (holder.bgLayout.getCheckedColor() != this.uiConfig.panelItemCheckedColor) {
-                holder.bgLayout.setCheckedColor(this.uiConfig.panelItemCheckedColor);
-            }
+            holder.tePanelItemLabel.setTextColor(this.uiConfig.panelItemCheckedColor);
+            holder.tePanelItemLabel.startMarquee();
             holder.bgLayout.setChecked(true);
+            // 轻美妆主态下，选中的套装（排除 none item）展示编辑按钮，提示用户可下钻单项调节
+            if (uiProperty.uiCategory == TEUIProperty.UICategory.LIGHT_MAKEUP && uiProperty.sdkParam != null) {
+                holder.editBtn.setVisibility(View.VISIBLE);
+            } else {
+                holder.editBtn.setVisibility(View.GONE);
+            }
         } else {
-            holder.tePanelItemLabel.setTextColor(this.uiConfig.textColor);
-            holder.tePanelItemLabel.setTypeface(null, Typeface.NORMAL);
+            holder.tePanelItemLabel.setTextColor(this.uiConfig.panelItemColor);
+            holder.tePanelItemLabel.stopMarquee();
             holder.bgLayout.setChecked(false);
+            holder.editBtn.setVisibility(View.GONE);
         }
         if (uiProperty.isGSV2ImportImageItem()) {
             holder.tePanelItemRightDivider.setBackgroundColor(this.uiConfig.panelDividerColor);
@@ -109,7 +112,6 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
             holder.tePanelItemRightDivider.setVisibility(View.GONE);
         }
         if (isShowPoint(uiProperty)) {
-            holder.tePanelItemPointView.setBackgroundColor(this.uiConfig.panelItemCheckedColor);
             holder.tePanelItemPointView.setVisibility(View.VISIBLE);
         } else {
             holder.tePanelItemPointView.setVisibility(View.GONE);
@@ -198,7 +200,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
 
 
     static class UIPropertyHolder extends RecyclerView.ViewHolder {
-        TextView tePanelItemLabel;
+        MarqueeTextView tePanelItemLabel;
         ImageView tePanelItemIcon;
         View itemView;
 
@@ -208,6 +210,8 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
 
         ShapeableImageView tePanelItemPointView;
 
+        ImageView editBtn;
+
         public UIPropertyHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
@@ -216,6 +220,7 @@ class TEDetailPanelAdapter extends RecyclerView.Adapter<TEDetailPanelAdapter.UIP
             tePanelItemIcon = itemView.findViewById(R.id.te_panel_view_item_layout_icon);
             tePanelItemRightDivider = itemView.findViewById(R.id.te_panel_view_item_layout_right_divider);
             tePanelItemPointView = itemView.findViewById(R.id.te_panel_view_item_layout_point_view);
+            editBtn = itemView.findViewById(R.id.te_beauty_panel_view_item_edit_btn);
         }
     }
 

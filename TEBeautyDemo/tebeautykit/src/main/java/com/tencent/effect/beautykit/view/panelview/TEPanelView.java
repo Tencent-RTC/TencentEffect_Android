@@ -113,10 +113,16 @@ public class TEPanelView extends FrameLayout implements ITEPanelView {
         if (dataList != null) {
             tePanelDataProvider.setPanelDataList(dataList);
         } else {
-            if (TEUIConfig.getInstance().getPanelDataList() != null && !TEUIConfig.getInstance().getPanelDataList().isEmpty()) {
+            if (TEUIConfig.getInstance().getPanelDataList() != null &&
+                    !TEUIConfig.getInstance().getPanelDataList().isEmpty()) {
                 tePanelDataProvider.setPanelDataList(TEUIConfig.getInstance().getPanelDataList());
+            } else if (TEUIConfig.getInstance().getEffectPlan() != null) {
+//                tePanelDataProvider.setPanelDataList(TEUIConfig.getInstance().getEffectPlan().getPanelDataList());
             } else {
-                throw new RuntimeException("please set panel data list");
+//                throw new RuntimeException("请在使用美颜面板之前先调用TEUIConfig的setPlanName " +
+//                        "方法来设置套餐名，这样面板才能知道加载哪些json文件。 " +
+//                        "Please call TEUIConfig#setPlanName to set the plan name before using the beauty panel, " +
+//                        "so that the panel knows which json files to load.");
             }
         }
         if (this.lastParamList != null && !this.lastParamList.isEmpty()) {

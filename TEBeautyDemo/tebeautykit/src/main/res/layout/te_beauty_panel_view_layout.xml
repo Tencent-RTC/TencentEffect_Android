@@ -17,43 +17,41 @@
             android:id="@+id/te_panel_view_switch"
             android:layout_width="95dp"
             android:layout_height="30dp"
-            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
             android:background="@color/te_beauty_color_FFFFFFFF"
             android:orientation="horizontal"
             android:visibility="gone"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.tencent.effect.beautykit.view.widget.indicatorseekbar.IndicatorSeekBar
             android:id="@+id/te_panel_view_seekBar"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            app:layout_constraintLeft_toRightOf="@+id/te_panel_view_switch"
-            app:layout_constraintRight_toLeftOf="@+id/te_panel_view_compare_btn"
+            android:layout_height="30dp"
+            app:layout_constraintStart_toEndOf="@+id/te_panel_view_switch"
+            app:layout_constraintEnd_toStartOf="@+id/te_panel_view_compare_btn"
             app:layout_constraintTop_toTopOf="parent"
-            app:te_isb_indicator_color="@color/te_beauty_color_main_color"
-            app:te_isb_show_indicator="circular_bubble"
+            app:te_isb_indicator_color="@color/te_beauty_color_FFFFFFFF"
+            app:te_isb_indicator_text_color="@color/te_beauty_color_FF000000"
+            app:te_isb_indicator_text_size="10sp"
+            app:te_isb_show_indicator="rounded_rectangle"
             app:te_isb_show_tick_texts="false"
             app:te_isb_thumb_drawable="@drawable/te_beauty_seekbar_thumb"
-            app:te_isb_thumb_size="40dp"
-            app:te_isb_tick_marks_color="#FFFFFFFF"
-            app:te_isb_tick_texts_color="@color/te_beauty_color_CC000000"
-            app:te_isb_tick_texts_size="10sp"
-            app:te_isb_ticks_count="0"
-            app:te_isb_track_background_color="@color/te_beauty_color_FFFFFFFF"
-            app:te_isb_track_background_size="4dp"
-            app:te_isb_track_progress_color="@color/te_beauty_color_main_color"
-            app:te_isb_track_progress_size="4dp"
+            app:te_isb_thumb_size="35dp"
+            app:te_isb_track_background_color="@color/te_beauty_color_A6FFFFFF"
+            app:te_isb_track_background_size="2dp"
+            app:te_isb_track_progress_color="@color/te_beauty_color_FFFFFFFF"
+            app:te_isb_track_progress_size="2dp"
             app:te_isb_track_rounded_corners="true" />
 
 
         <ImageView
             android:id="@+id/te_panel_view_compare_btn"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_marginEnd="15dp"
             android:src="@drawable/te_beauty_panel_view_compare_icon"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -84,10 +82,10 @@
 
                 <LinearLayout
                     android:id="@+id/te_panel_view_top_right_layout"
-                    android:layout_width="75dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="10dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -96,7 +94,7 @@
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
                         android:layout_marginTop="10dp"
-                        android:layout_marginRight="3dp"
+                        android:layout_marginEnd="3dp"
                         android:layout_marginBottom="10dp"
                         android:background="@color/te_beauty_color_FFCCCCCC" />
 
@@ -119,8 +117,8 @@
                     android:id="@+id/te_panel_view_main_title_tab_layout"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    app:tabIndicatorHeight="0dp"
-                    android:layout_toLeftOf="@+id/te_panel_view_top_right_layout" />
+                    android:layout_toStartOf="@+id/te_panel_view_top_right_layout"
+                    app:tabIndicatorHeight="0dp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -129,10 +127,10 @@
 
                 <ImageView
                     android:id="@+id/te_panel_view_back_btn"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
                     android:padding="2dp"
                     android:src="@drawable/te_beauty_panel_back_icon" />
 
@@ -163,8 +161,8 @@
             android:id="@+id/te_panel_view_sub_title_tab_layout"
             android:layout_width="match_parent"
             android:layout_height="32dp"
-            app:tabIndicatorHeight="0dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:tabIndicatorHeight="0dp" />
 
 
         <androidx.recyclerview.widget.RecyclerView

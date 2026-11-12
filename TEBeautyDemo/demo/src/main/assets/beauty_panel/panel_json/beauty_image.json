@@ -1,0 +1,116 @@
+{
+    "name": {
+        "zh": "画质调整",
+        "en": "Quality Adjustment",
+        "ja": "画質調整"
+    },
+    "uiCategory": "BEAUTY_IMAGE",
+    "propertyList": [
+        {
+            "name": {
+                "zh": "关闭",
+                "en": "None",
+                "ja": "オフ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "name": {
+                "zh": "对比度",
+                "en": "Contrast",
+                "ja": "コントラスト"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_contrast.png",
+            "sdkParam": {
+                "effectName": "beauty.imageContrastAlpha",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "饱和度",
+                "en": "Saturation",
+                "ja": "彩度"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_saturation.png",
+            "sdkParam": {
+                "effectName": "smooth.saturation",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "清晰度",
+                "en": "Sharpness",
+                "ja": "鮮明度"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_sharpen.png",
+            "sdkParam": {
+                "effectName": "beauty.lutClearAlpha",
+                "effectValue": 80
+            },
+            "uiState": 1
+        },
+        {
+            "name": {
+                "zh": "锐化",
+                "en": "Sharpen",
+                "ja": "シャープ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_sharpen.png",
+            "sdkParam": {
+                "effectName": "smooth.sharpen",
+                "effectValue": 30
+            },
+            "uiState": 1
+        },
+        {
+            "name": {
+                "zh": "亮度",
+                "en": "Brightness",
+                "ja": "明るさ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_brightness.png",
+            "sdkParam": {
+                "effectName": "beauty.imageBrightness",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "弱光降噪",
+                "en": "Denoise",
+                "ja": "低照度ノイズ除去"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_denoise.png",
+            "sdkParam": {
+                "effectName": "postEffect.denoise",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "色温",
+                "en": "Warmth",
+                "ja": "色温度"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_warmth.png",
+            "sdkParam": {
+                "effectName": "beauty.imageWarmth",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "色调",
+                "en": "Tint",
+                "ja": "色合い"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_image_tint.png",
+            "sdkParam": {
+                "effectName": "beauty.imageTint",
+                "effectValue": 0
+            }
+        }
+    ]
+}

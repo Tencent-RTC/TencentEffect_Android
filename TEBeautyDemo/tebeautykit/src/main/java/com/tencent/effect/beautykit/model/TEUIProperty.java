@@ -13,7 +13,9 @@ public class TEUIProperty {
 
 
     public int id = -1;    //美颜模板数据中的id，用于区分美颜模板
+    @Deprecated
     public String displayName;
+    @Deprecated
     public String displayNameEn;
     public String icon;
     public String resourceUri; // If this resource is locally integrated, configure the local resource path here. If it is downloaded from the network, configure the download address of the resource here.
@@ -23,7 +25,21 @@ public class TEUIProperty {
     public TESDKParam sdkParam;
     public List<TESDKParam> paramList;
 
-    public TEUIProperty parentUIProperty;
+    /**
+     * 轻美妆场景下，单项（口红/腮红/眼影/滤镜等）的展示信息映射表。
+     * key 为 makeup.json 中的 effectName（例如 "beauty.faceFeatureLipsLut"、"lut"），
+     * value 为对应的 UI 展示信息（name/icon）。
+     * 由 beauty_makeup.json 的"轻美妆"节点顶层 itemDisplayMap 反序列化而来，其它场景无需使用。
+     */
+    public Map<String, LightMakeupItemDisplay> itemDisplayMap;
+
+    /**
+     * 父节点回链，仅在运行时构建，用于向上追溯层级关系（下载路径、UI 状态传播等）。
+     * <p>
+     * 使用 {@code transient} 排除 Gson 序列化：Gson 默认会跳过 transient 字段，
+     * 从而避免"子 → 父 → 子"的无限递归导致 {@link StackOverflowError}。
+     */
+    public transient TEUIProperty parentUIProperty;
     public UICategory uiCategory;
     public String titleType;
     public TEMotionDLModel dlModel = null;
@@ -33,6 +49,8 @@ public class TEUIProperty {
     private int uiState = 0;
 
 
+    public Map<String,String> name;
+    public List<TEIndexFileModel.DataSetItem> dataList;
 
     public int getUiState() {
         return uiState;
@@ -50,15 +68,31 @@ public class TEUIProperty {
 
     public enum UICategory {
         BEAUTY,
+        BEAUTY_IMAGE,
+        BEAUTY_SHAPE,
         BODY_BEAUTY,
+        BEAUTY_MAKEUP,  //
         LUT,
         MOTION,
         MAKEUP,
         LIGHT_MAKEUP,
+        LIGHT_MAKEUP_ITEM,   //轻美妆下钻态中的单项（口红/腮红/眼影/滤镜等）
+        LIGHT_MAKEUP_BACK,   //轻美妆下钻态列表的"返回"占位项（兜底）
         BEAUTY_TEMPLATE,
         SEGMENTATION,
+        SHAPESET,
         GREEN_BACKGROUND_V2_ITEM,   //绿幕子项
         GREEN_BACKGROUND_V2_ITEM_IMPORT_IMAGE, //绿幕子项中的导入图片项
+    }
+
+
+    /**
+     * 轻美妆单项的展示信息。
+     * 从 beauty_makeup.json "轻美妆"节点顶层的 itemDisplayMap 节点反序列化而来。
+     */
+    public static class LightMakeupItemDisplay {
+        public Map<String, String> name;   // 多语言名称，key 为语言代码，如 {zh, en, ja}
+        public String icon;
     }
 
 
@@ -114,6 +148,27 @@ public class TEUIProperty {
     }
 
     /**
+     * 当前节点是否是一级主 tab 节点（即面板顶部 mainTabLayout 承载的节点）。
+     *
+     * @return 无父节点时返回 true
+     */
+    public boolean isMainTabNode() {
+        return this.parentUIProperty == null;
+    }
+
+    /**
+     * 当前节点是否是二级标题节点（即面板 subTabLayout 承载的节点）。
+     * <p>
+     * 注意 {@link #hasSubTitle} 的语义是"该节点的<b>孩子</b>是二级标题"，
+     * 因此判断"自己是不是二级标题"需要看父节点的该标记。
+     *
+     * @return 父节点存在且父节点标记了 hasSubTitle 时返回 true
+     */
+    public boolean isSubTitleNode() {
+        return this.parentUIProperty != null && this.parentUIProperty.hasSubTitle;
+    }
+
+    /**
      * 用于判断是否是 绿幕2中的导入图片的item
      *
      * @return
@@ -124,6 +179,11 @@ public class TEUIProperty {
 
 
     public boolean isBeautyMakeupNoneItem() {
+        // 轻美妆下钻态单项（LIGHT_MAKEUP_ITEM）复用单点美妆的 effectName 且 resourcePath 为空，
+        // 但它不是"美妆无效果占位项"，需排除，否则会被 setSeekBarState 误判而隐藏滑竿。
+        if (this.uiCategory == UICategory.LIGHT_MAKEUP_ITEM) {
+            return false;
+        }
         if (this.sdkParam != null && TextUtils.isEmpty(this.sdkParam.resourcePath)) {
             switch (this.sdkParam.effectName) {
                 case XmagicConstant.EffectName.BEAUTY_MOUTH_LIPSTICK:

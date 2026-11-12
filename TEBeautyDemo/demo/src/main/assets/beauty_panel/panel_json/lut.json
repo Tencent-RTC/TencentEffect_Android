@@ -1,0 +1,79 @@
+{
+    "name": {
+        "zh": "滤镜",
+        "en": "Filters",
+        "ja": "フィルター"
+    },
+    "downloadPath": "light_material/lut/",
+    "uiCategory": "LUT",
+    "propertyList": [
+        {
+            "name": {
+                "zh": "无",
+                "en": "None",
+                "ja": "なし"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "name": {
+                "zh": "白皙",
+                "en": "White",
+                "ja": "色白"
+            },
+            "icon": "beauty_panel/panel_icon/lut_icon/baixi_lf.png",
+            "resourceUri": "light_material/lut/baixi_lf.png",
+            "sdkParam": {
+                "effectValue": 60
+            }
+        },
+        {
+            "name": {
+                "zh": "清新",
+                "en": "Refreshing",
+                "ja": "フレッシュ"
+            },
+            "icon": "beauty_panel/panel_icon/lut_icon/moren_lf.png",
+            "resourceUri": "light_material/lut/moren_lf.png",
+            "sdkParam": {
+                "effectValue": 60
+            }
+        },
+        {
+            "name": {
+                "zh": "东京",
+                "en": "Tokyo",
+                "ja": "東京"
+            },
+            "icon": "beauty_panel/panel_icon/lut_icon/dongjing_lf.png",
+            "resourceUri": "light_material/lut/dongjing_lf.png",
+            "sdkParam": {
+                "effectValue": 60
+            }
+        },
+        {
+            "name": {
+                "zh": "心动",
+                "en": "Allure",
+                "ja": "ときめき"
+            },
+            "icon": "beauty_panel/panel_icon/lut_icon/xindong_lf.png",
+            "resourceUri": "light_material/lut/xindong_lf.png",
+            "sdkParam": {
+                "effectValue": 60
+            }
+        },
+        {
+            "name": {
+                "zh": "自然",
+                "en": "Natural",
+                "ja": "ナチュラル"
+            },
+            "icon": "beauty_panel/panel_icon/lut_icon/ziran_lf.png",
+            "resourceUri": "light_material/lut/ziran_lf.png",
+            "sdkParam": {
+                "effectValue": 60
+            }
+        }
+    ]
+}

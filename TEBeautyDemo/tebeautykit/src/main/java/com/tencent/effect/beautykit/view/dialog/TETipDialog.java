@@ -9,10 +9,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.tencent.effect.beautykit.R;
+import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.model.TEUIProperty;
 
 
@@ -46,6 +48,7 @@ public class TETipDialog extends AlertDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.te_beauty_tip_dialog_layout);
+        applyRtlLayoutDirection();
         titleTv = findViewById(R.id.tip_dialog_title);
         msgTv = findViewById(R.id.tip_dialog_msg_tv);
         leftBtn = findViewById(R.id.tip_dialog_left_btn);
@@ -66,6 +69,20 @@ public class TETipDialog extends AlertDialog {
         });
         setData();
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+    }
+
+    /**
+     * 当配置开启从右向左（阿拉伯语等 RTL 场景）时，设置对话框的布局方向与文字方向。
+     */
+    private void applyRtlLayoutDirection() {
+        if (!TEUIConfig.getInstance().isLayoutRtl) {
+            return;
+        }
+        if (getWindow() != null && getWindow().getDecorView() != null) {
+            View decorView = getWindow().getDecorView();
+            decorView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            decorView.setTextDirection(View.TEXT_DIRECTION_RTL);
+        }
     }
 
     private void setData() {

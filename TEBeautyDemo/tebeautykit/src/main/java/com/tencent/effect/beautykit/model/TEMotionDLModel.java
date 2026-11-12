@@ -9,6 +9,7 @@ import java.io.File;
 public class TEMotionDLModel {
 
     private String localDir;
+    private boolean localDirAbsolute = false;
     private String fileName;
     private String url;
 
@@ -16,8 +17,17 @@ public class TEMotionDLModel {
         return localDir;
     }
 
+    /**
+     * 本地目录是否为绝对路径。绝对路径时下载管理器会直接使用该目录，而不再拼接
+     * {@link com.tencent.effect.beautykit.TEBeautyKit#getResPath()}。
+     */
+    public boolean isLocalDirAbsolute() {
+        return localDirAbsolute;
+    }
+
     public void setLocalDir(String localDir) {
         this.localDir = localDir;
+        this.localDirAbsolute = localDir != null && localDir.startsWith(File.separator);
         if (localDir.startsWith(File.separator)) {
             this.localDir = this.localDir.replaceFirst(File.separator, "");
         }

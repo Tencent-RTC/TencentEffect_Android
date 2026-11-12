@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tencent.effect.beautykit.R;
+import com.tencent.effect.beautykit.config.TEUIConfig;
 
 
 public class TEProgressDialog {
@@ -31,8 +32,20 @@ public class TEProgressDialog {
         mDialog = new Dialog(context, R.style.te_beauty_loading_dialog);
         mDialog.setCancelable(false);
         LinearLayout layout = (LinearLayout) v.findViewById(R.id.beauty_ll_progress);
+        applyRtlLayoutDirection(layout);
         mDialog.setContentView(layout, new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT));
+    }
+
+    /**
+     * 当配置开启从右向左（阿拉伯语等 RTL 场景）时，设置加载对话框的布局方向与文字方向。
+     */
+    private void applyRtlLayoutDirection(View rootView) {
+        if (!TEUIConfig.getInstance().isLayoutRtl) {
+            return;
+        }
+        rootView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        rootView.setTextDirection(View.TEXT_DIRECTION_RTL);
     }
 
     public void setCancelable(boolean cancelable) {

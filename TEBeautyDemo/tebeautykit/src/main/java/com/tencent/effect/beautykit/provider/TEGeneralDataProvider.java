@@ -2,6 +2,7 @@ package com.tencent.effect.beautykit.provider;
 
 import android.content.Context;
 import android.util.ArrayMap;
+import android.util.Log;
 
 import com.tencent.effect.beautykit.config.TEUIConfig;
 import com.tencent.effect.beautykit.manager.TEParamManager;
@@ -41,6 +42,21 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
                 this.obtainPointMakeup(teuiProperty);
                 //判断是否有默认设置
                 pointMakeupChecked = !ProviderUtils.getUsedProperties(pointMakeup).isEmpty() || pointMakeupChecked;
+                // 轻美妆既可能作为独立一级标题存在（见下方 LIGHT_MAKEUP 分支），
+                // 也可能被配置在"单点美妆"标题下作为二级标题；而单点美妆在解析后
+                // uiCategory 会被归并成 BEAUTY（见 EffectPlan），导致顶层遍历时只能看到 BEAUTY，
+                // 因此需继续深入遍历其二级标题（propertyList）才能发现嵌套的轻美妆。
+                if (teuiProperty.propertyList != null && !teuiProperty.propertyList.isEmpty()) {
+                    for (TEUIProperty property : teuiProperty.propertyList) {
+                        if (property == null || property.uiCategory != TEUIProperty.UICategory.LIGHT_MAKEUP) {
+                            continue;
+                        }
+                        hasLightMakeup = true;
+                        //判断是否有默认设置
+                        lightMakeupChecked =
+                                !ProviderUtils.getUsedProperties(Collections.singletonList(property)).isEmpty();
+                    }
+                }
             }
             if (teuiProperty.uiCategory == TEUIProperty.UICategory.LUT) {
                 pointMakeupChecked = !ProviderUtils.getUsedProperties(pointMakeup).isEmpty() || pointMakeupChecked;
@@ -88,6 +104,7 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
             case BEAUTY_TEMPLATE:
                 this.hasBeautyTemplateChecked = true;
                 this.uncheckBeautyAndLut();
+                this.uncheckLightMakeup();
                 this.checkItem(uiProperty, isFromUI);
                 break;
             case BEAUTY:
@@ -100,6 +117,17 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
                 break;
             case LIGHT_MAKEUP:  //此处需要将 单点美妆和滤镜全部设置为 未选中
                 this.onClickLightMakeup(uiProperty, isFromUI);
+                break;
+            case LIGHT_MAKEUP_ITEM:
+                // 下钻态下点击某个单项（口红/腮红/眼影/滤镜等）：仅切换子列表内的选中状态，
+                // 兄弟项统一回到 INIT；不下发 effect（真正下发由滑竿拖动时触发）。
+                if (uiProperty.parentUIProperty != null && uiProperty.parentUIProperty.propertyList != null) {
+                    ProviderUtils.revertUIStateToInit(uiProperty.parentUIProperty.propertyList);
+                }
+                ProviderUtils.changeParamUIState(uiProperty, TEUIProperty.UIState.CHECKED_AND_IN_USE);
+                break;
+            case LIGHT_MAKEUP_BACK:
+                // 返回项由 UI 层拦截处理，不走 provider 的选中逻辑。
                 break;
             case MAKEUP:
             case MOTION:
@@ -263,6 +291,7 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
         if (property == null) {
             return;
         }
+        this.uncheckBeautyTemplate();
         this.lightMakeupChecked = true;
         this.checkItem(property, isFromUI);
         if (!this.pointMakeupChecked) {
@@ -285,12 +314,14 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
     }
 
 
-    private void uncheckLightMakeup() {
+    @Override
+    protected void uncheckLightMakeup() {
         this.lightMakeupChecked = false;
-        List<TEUIProperty> lightMakeup = this.getDataByUICategory(TEUIProperty.UICategory.LIGHT_MAKEUP);
-        for (TEUIProperty teuiProperty : lightMakeup) {
-            unCheckItem(teuiProperty);
+        List<TEUIProperty> lightMakeup = new ArrayList<>();
+        for (TEUIProperty teuiProperty : allData) {
+            this.collectByUICategory(teuiProperty, TEUIProperty.UICategory.LIGHT_MAKEUP, lightMakeup);
         }
+        ProviderUtils.revertUIStateToInit(lightMakeup);
     }
 
 
@@ -334,6 +365,31 @@ public class TEGeneralDataProvider extends TEAbstractPanelDataProvider {
             }
         }
         return result;
+    }
+
+
+    /**
+     * 递归收集指定 uiCategory 的所有项（含一级标题与任意层级子项）。
+     * 轻美妆既可能是一级标题，也可能配置在单点美妆（BEAUTY）下的二级标题，
+     * 因此清理/查找轻美妆时不能只遍历一级标题，需要递归深入。
+     *
+     * @param property   当前节点，可为 null
+     * @param uiCategory 目标分类
+     * @param result     收集结果
+     */
+    private void collectByUICategory(TEUIProperty property, TEUIProperty.UICategory uiCategory,
+                                     List<TEUIProperty> result) {
+        if (property == null) {
+            return;
+        }
+        if (property.uiCategory == uiCategory) {
+            result.add(property);
+        }
+        if (property.propertyList != null) {
+            for (TEUIProperty child : property.propertyList) {
+                this.collectByUICategory(child, uiCategory, result);
+            }
+        }
     }
 
 

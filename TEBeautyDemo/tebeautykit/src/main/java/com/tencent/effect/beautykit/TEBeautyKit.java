@@ -303,8 +303,14 @@ public class TEBeautyKit implements SensorEventListener {
 
     public void setEffect(TEUIProperty.TESDKParam teParam) {
         if (this.mXMagicApi == null || teParam == null) {
+            LogUtils.i(TAG, "=== setEffect early-return: mXMagicApi=" + (this.mXMagicApi == null ? "null" : "ok")
+                    + ", teParam=" + (teParam == null ? "null" : "ok"));
             return;
         }
+        LogUtils.i(TAG, "=== setEffect called: effectName=" + teParam.effectName
+                + ", effectValue=" + teParam.effectValue
+                + ", resourcePath=" + teParam.resourcePath
+                + ", extraInfo=" + (teParam.extraInfo != null ? teParam.extraInfo.toString() : "null"));
         TEUIProperty.TESDKParam param = this.isEnableEnhancedMode ? this.mParamEnhancingStrategy.enhanceParam(teParam) : teParam;
         LogUtils.d(TAG, "setEffect " + this.isEnableEnhancedMode + "    " + param.toString());
         this.applySDKParameterWithTemplateHandling(param);
@@ -630,24 +636,33 @@ public class TEBeautyKit implements SensorEventListener {
      * @param licenseKey License key obtained from the platform
      * @param callback   SetupSDKCallback interface
      */
-    public static void setupSDK(Context context, String licenseUrl, String licenseKey, @NonNull SetupSDKCallback callback) {
+    public static void setupSDK(Context context, String licenseUrl, String licenseKey,
+                                @NonNull SetupSDKCallback callback) {
         mResPath = new File(context.getFilesDir(), "xmagic").getAbsolutePath() + File.separator;
+        final SetupSDKCallback setupSDKCallback;
+        if (callback == null) {
+            setupSDKCallback = (errorCode, msg) -> {
+            };
+        } else {
+            setupSDKCallback = callback;
+        }
         if (isNeedCopy(context)) {
             LogUtils.i(TAG, "need to copy resource");
             new Thread(() -> {
                 if (copyRes(context)) {
                     LogUtils.i(TAG, "Success to copy resource");
                     writeVersionToSp(context);
-                    TELicenseCheck.getInstance().setTELicense(context, licenseUrl, licenseKey, callback::onResult);
+                    TELicenseCheck.getInstance()
+                            .setTELicense(context, licenseUrl, licenseKey, setupSDKCallback::onResult);
                 } else {
                     LogUtils.i(TAG, "Failed to copy resource");
-                    callback.onResult(-14, "Failed to copy resource");
+                    setupSDKCallback.onResult(-14, "Failed to copy resource");
                     TELicenseCheck.getInstance().setTELicense(context, licenseUrl, licenseKey, null);
                 }
             }).start();
         } else {
             LogUtils.i(TAG, "No need to copy resources.");
-            TELicenseCheck.getInstance().setTELicense(context, licenseUrl, licenseKey, callback::onResult);
+            TELicenseCheck.getInstance().setTELicense(context, licenseUrl, licenseKey, setupSDKCallback::onResult);
         }
     }
 

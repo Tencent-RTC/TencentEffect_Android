@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name="com.tencent.demo.TEApplication"
@@ -19,6 +21,7 @@
         android:icon="@mipmap/te_beauty_app_icon"
         android:requestLegacyExternalStorage="true"
         android:label="@string/te_beauty_app_name"
+        android:supportsRtl="true"
         android:theme="@style/CUSTOM_THEME">
         <!--   android:requestLegacyExternalStorage="true" 重要, 否则 ≥ Android 10 时仍然无法读取 sdcard     -->
         <activity

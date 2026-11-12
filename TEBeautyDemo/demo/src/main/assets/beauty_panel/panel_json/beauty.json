@@ -1,0 +1,221 @@
+{
+    "name": {
+        "zh": "美颜",
+        "en": "Beauty",
+        "ja": "美顔"
+    },
+    "uiCategory": "BEAUTY",
+    "propertyList": [
+        {
+            "name": {
+                "zh": "关闭",
+                "en": "None",
+                "ja": "オフ"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/none.png"
+        },
+        {
+            "name": {
+                "zh": "美白",
+                "en": "Brighten",
+                "ja": "美白"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_whiten.png",
+            "propertyList": [
+                {
+                    "name": {
+                        "zh": "靓白",
+                        "en": "Bright White",
+                        "ja": "ブライトホワイト"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_whiten_liangbai.png",
+                    "sdkParam": {
+                        "effectName": "beauty.lutFoundationAlpha0",
+                        "effectValue": 40
+                    },
+                    "uiState": 2
+                },
+                {
+                    "name": {
+                        "zh": "自然",
+                        "en": "Natural White",
+                        "ja": "ナチュラル"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_whiten_nature.png",
+                    "sdkParam": {
+                        "effectName": "beauty.lutFoundationAlpha",
+                        "effectValue": 0
+                    }
+                },
+                {
+                    "name": {
+                        "zh": "粉白",
+                        "en": "Pinkish White",
+                        "ja": "ピンクホワイト"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_whiten_pink.png",
+                    "sdkParam": {
+                        "effectName": "beauty.lutFoundationAlpha2",
+                        "effectValue": 0
+                    }
+                },
+                {
+                    "name": {
+                        "zh": "冷白",
+                        "en": "Cool White",
+                        "ja": "クールホワイト"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_whiten_cool.png",
+                    "sdkParam": {
+                        "effectName": "beauty.lutFoundationAlpha3",
+                        "effectValue": 0
+                    }
+                }
+            ],
+            "uiState": 2
+        },
+        {
+            "name": {
+                "zh": "美黑",
+                "en": "Black",
+                "ja": "日焼け"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_black.png",
+            "propertyList": [
+                {
+                    "name": {
+                        "zh": "美黑",
+                        "en": "Black",
+                        "ja": "日焼け"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_black_01.png",
+                    "sdkParam": {
+                        "effectName": "beauty.lutBlackAlpha1",
+                        "effectValue": 0
+                    }
+                },
+                {
+                    "name": {
+                        "zh": "小麦色",
+                        "en": "Brown",
+                        "ja": "小麦色"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_black_wheat.png",
+                    "sdkParam": {
+                        "effectName": "beauty.lutBlackAlpha2",
+                        "effectValue": 0
+                    }
+                }
+            ]
+        },
+        {
+            "name": {
+                "zh": "磨皮",
+                "en": "Smooth Skin",
+                "ja": "美肌"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_smooth.png",
+            "uiState": 1,
+            "propertyList": [
+                {
+                    "name": {
+                        "zh": "幼龄",
+                        "en": "Young",
+                        "ja": "ヤング"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_smooth/beauty_smooth_1.png",
+                    "uiState": 1,
+                    "sdkParam": {
+                        "effectName": "smooth.smooth",
+                        "effectValue": 40
+                    }
+                },
+                {
+                    "name": {
+                        "zh": "质感",
+                        "en": "Texture",
+                        "ja": "テクスチャ"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_smooth/beauty_smooth_2.png",
+                    "sdkParam": {
+                        "effectName": "smooth.smooth2",
+                        "effectValue": 40
+                    }
+                },
+                {
+                    "name": {
+                        "zh": "真实",
+                        "en": "Realistic",
+                        "ja": "リアル"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_smooth/beauty_smooth_3.png",
+                    "sdkParam": {
+                        "effectName": "smooth.smooth3",
+                        "effectValue": 40
+                    }
+                },
+                {
+                    "name": {
+                        "zh": "经典",
+                        "en": "Classic",
+                        "ja": "クラシック"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_smooth/beauty_smooth_4.png",
+                    "sdkParam": {
+                        "effectName": "smooth.smooth4",
+                        "effectValue": 40
+                    }
+                },
+                {
+                    "name": {
+                        "zh": "柔焦",
+                        "en": "Soft Focus",
+                        "ja": "ソフトフォーカス"
+                    },
+                    "icon": "beauty_panel/panel_icon/beauty/beauty_smooth/beauty_smooth_5.png",
+                    "sdkParam": {
+                        "effectName": "smooth.smooth5",
+                        "effectValue": 40
+                    }
+                }
+            ]
+        },
+        {
+            "name": {
+                "zh": "AI 美颜",
+                "en": "AI Beauty Skin",
+                "ja": "AI 美顔"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_smooth_gan.png",
+            "sdkParam": {
+                "effectName": "beauty.skinRetouchAI",
+                "effectValue": 40
+            }
+        },
+        {
+            "name": {
+                "zh": "皮肤高光",
+                "en": "Skin Highlight",
+                "ja": "スキンハイライト"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_skin_highlight.png",
+            "sdkParam": {
+                "effectName": "beauty.skinHighlight",
+                "effectValue": 0
+            }
+        },
+        {
+            "name": {
+                "zh": "红润",
+                "en": "Rosy Skin",
+                "ja": "血色感"
+            },
+            "icon": "beauty_panel/panel_icon/beauty/beauty_ruddy.png",
+            "sdkParam": {
+                "effectName": "smooth.rosy",
+                "effectValue": 0
+            }
+        }
+    ],
+    "uiState": 2
+}
