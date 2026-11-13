@@ -73,6 +73,15 @@ public class TEParamManager {
         }
     }
 
+    /**
+     * 获取轻美妆
+     *
+     * @return
+     */
+    public TEUIProperty.TESDKParam getLightMakeup() {
+        return allData.get(XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP);
+    }
+
 
     /**
      * 获取模板数据
