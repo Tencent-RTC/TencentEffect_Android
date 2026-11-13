@@ -7,7 +7,6 @@ import static com.tencent.effect.beautykit.model.TEUIProperty.GreenBackgroundIte
 import static com.tencent.effect.beautykit.model.TEUIProperty.GreenBackgroundItemName.BACKGROUND_V2_SMOOTH;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.tencent.effect.beautykit.TEBeautyKit;
@@ -229,7 +228,7 @@ public class ProviderUtils {
             Iterator<TEUIProperty.TESDKParam> iterator = usedProperties.iterator();
             while (iterator.hasNext()) {
                 TEUIProperty.TESDKParam tesdkParam = iterator.next();
-                if (ProviderUtils.isBeautyOrLutName(tesdkParam.effectName)) {
+                if (ProviderUtils.isBeautyLutLightMakeupName(tesdkParam.effectName)) {
                     iterator.remove();
                 }
             }
@@ -238,9 +237,12 @@ public class ProviderUtils {
     }
 
 
-    public static boolean isBeautyOrLutName(String effectName) {
+    public static boolean isBeautyLutLightMakeupName(String effectName) {
         if (TextUtils.isEmpty(effectName)) {
             return false;
+        }
+        if(XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP.equals(effectName)){
+            return true;
         }
         if (XmagicConstant.EffectName.EFFECT_LUT.equals(effectName)) {
             return true;
@@ -251,7 +253,7 @@ public class ProviderUtils {
         if (TEUIProperty.TESDKParam.BEAUTY_TEMPLATE_EFFECT_NAME.equals(effectName)) {
             return false;
         }
-        return !XmagicConstant.EffectName.EFFECT_MOTION.equals(effectName) && !XmagicConstant.EffectName.EFFECT_MAKEUP.equals(effectName) && !XmagicConstant.EffectName.EFFECT_SEGMENTATION.equals(effectName) && !XmagicConstant.EffectName.EFFECT_LIGHT_MAKEUP.equals(effectName);
+        return !XmagicConstant.EffectName.EFFECT_MOTION.equals(effectName) && !XmagicConstant.EffectName.EFFECT_MAKEUP.equals(effectName) && !XmagicConstant.EffectName.EFFECT_SEGMENTATION.equals(effectName);
     }
 
 

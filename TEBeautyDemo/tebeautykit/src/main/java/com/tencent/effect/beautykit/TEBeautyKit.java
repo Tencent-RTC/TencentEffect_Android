@@ -307,10 +307,10 @@ public class TEBeautyKit implements SensorEventListener {
                     + ", teParam=" + (teParam == null ? "null" : "ok"));
             return;
         }
-        LogUtils.i(TAG, "=== setEffect called: effectName=" + teParam.effectName
-                + ", effectValue=" + teParam.effectValue
-                + ", resourcePath=" + teParam.resourcePath
-                + ", extraInfo=" + (teParam.extraInfo != null ? teParam.extraInfo.toString() : "null"));
+//        LogUtils.i(TAG, "=== setEffect called: effectName=" + teParam.effectName
+//                + ", effectValue=" + teParam.effectValue
+//                + ", resourcePath=" + teParam.resourcePath
+//                + ", extraInfo=" + (teParam.extraInfo != null ? teParam.extraInfo.toString() : "null"));
         TEUIProperty.TESDKParam param = this.isEnableEnhancedMode ? this.mParamEnhancingStrategy.enhanceParam(teParam) : teParam;
         LogUtils.d(TAG, "setEffect " + this.isEnableEnhancedMode + "    " + param.toString());
         this.applySDKParameterWithTemplateHandling(param);
@@ -747,7 +747,7 @@ public class TEBeautyKit implements SensorEventListener {
                     List<TEUIProperty.TESDKParam> tesdkParamList = (List<TEUIProperty.TESDKParam>) tesdkParam.tag;
                     teParamManager.putTEParams(ProviderUtils.clone0ValuedParam(tesdkParamList));
                 }
-                if (ProviderUtils.isBeautyOrLutName(tesdkParam.effectName)) {
+                if (ProviderUtils.isBeautyLutLightMakeupName(tesdkParam.effectName)) {
                     try {
                         TEUIProperty.TESDKParam cloneParam = tesdkParam.clone();
                         cloneParam.effectValue = 0;
@@ -763,11 +763,17 @@ public class TEBeautyKit implements SensorEventListener {
                 Object tag = sdkParam.tag;
                 teParamManager.putTEParams((List<TEUIProperty.TESDKParam>) tag);
             }
+            //如果teParamManager 包含了轻美妆代码，那么这个时候需要先设置轻美妆
+            TEUIProperty.TESDKParam lightMakeupItem = teParamManager.getLightMakeup();
+            if (lightMakeupItem != null) {
+                teParamManager.remove(lightMakeupItem);
+                applySDKParameterToXMagicApi(lightMakeupItem);
+            }
             List<TEUIProperty.TESDKParam> templateBeautyData = teParamManager.getParams();
             for (TEUIProperty.TESDKParam tesdkParam : templateBeautyData) {
                 applySDKParameterToXMagicApi(tesdkParam);
             }
-        } else if (ProviderUtils.isBeautyOrLutName(sdkParam.effectName)) {
+        } else if (ProviderUtils.isBeautyLutLightMakeupName(sdkParam.effectName)) {
             //需要检查一下之前是否设置过模板，如果设置过美颜模板，那么需要将模板的数据解析为 isBeautyOrLutName 数据添加到  mParamManager，并移除这个模板
             //最后设置isBeautyOrLutName 数据
             TEUIProperty.TESDKParam templateData = this.mParamManager.getTemplateData();
